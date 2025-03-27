@@ -53,21 +53,35 @@ const AdminOrders = () => {
 
       if (error) throw error;
       
-      // Convert data to our Order type
-      const convertedData: Order[] = data.map(item => ({
-        id: item.id,
-        userId: item.user_id,
-        products: item.products,
-        totalAmount: item.total_amount,
-        status: item.status as 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled',
-        trackingNumber: item.tracking_number,
-        shippingAddress: item.shipping_address as Address,
-        billingAddress: item.billing_address as Address,
-        paymentMethod: item.payment_method,
-        notes: item.notes,
-        createdAt: new Date(item.created_at),
-        updatedAt: new Date(item.updated_at)
-      }));
+      // Convert data to our Order type with proper JSON handling
+      const convertedData: Order[] = data.map(item => {
+        const products = typeof item.products === 'string' 
+          ? JSON.parse(item.products) 
+          : item.products as unknown as OrderItem[];
+          
+        const shippingAddress = typeof item.shipping_address === 'string'
+          ? JSON.parse(item.shipping_address)
+          : item.shipping_address as unknown as Address;
+          
+        const billingAddress = typeof item.billing_address === 'string'
+          ? JSON.parse(item.billing_address)
+          : item.billing_address as unknown as Address;
+        
+        return {
+          id: item.id,
+          userId: item.user_id,
+          products: products,
+          totalAmount: item.total_amount,
+          status: item.status as 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled',
+          trackingNumber: item.tracking_number,
+          shippingAddress: shippingAddress,
+          billingAddress: billingAddress,
+          paymentMethod: item.payment_method,
+          notes: item.notes,
+          createdAt: new Date(item.created_at),
+          updatedAt: new Date(item.updated_at)
+        };
+      });
       
       setOrders(convertedData);
     } catch (error: any) {

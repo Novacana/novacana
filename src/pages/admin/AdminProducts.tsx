@@ -81,12 +81,23 @@ const AdminProducts = () => {
   // Handle product creation
   const handleAddProduct = async (productData: Omit<Product, "id" | "createdAt" | "updatedAt">[]) => {
     try {
-      // Convert camelCase to snake_case for Supabase
-      const snakeCaseData = productData.map(product => toSnakeCase(product));
+      // Prepare data for Supabase by removing non-database fields
+      const supabaseData = productData.map(product => {
+        // Create a new object with only the fields that exist in the database
+        const {
+          manufacturer,
+          countryOfOrigin,
+          recommendedDosage,
+          ...dbProduct
+        } = product;
+        
+        // Convert camelCase to snake_case for Supabase
+        return toSnakeCase(dbProduct);
+      });
       
       const { error } = await supabase
         .from('products')
-        .insert(snakeCaseData);
+        .insert(supabaseData);
 
       if (error) throw error;
 
@@ -110,8 +121,16 @@ const AdminProducts = () => {
   // Handle product update
   const handleUpdateProduct = async (id: string, updates: Partial<Omit<Product, "id" | "createdAt" | "updatedAt">>) => {
     try {
+      // Remove non-database fields before sending to Supabase
+      const {
+        manufacturer,
+        countryOfOrigin,
+        recommendedDosage,
+        ...dbUpdates
+      } = updates;
+      
       // Convert camelCase to snake_case for Supabase
-      const snakeCaseUpdates = toSnakeCase(updates);
+      const snakeCaseUpdates = toSnakeCase(dbUpdates);
       
       const { error } = await supabase
         .from('products')

@@ -1,6 +1,7 @@
 
 import { Database as OriginalDatabase } from '@/integrations/supabase/types';
 import { Product, Order, Address, OrderItem } from '@/types';
+import { Json } from '@/integrations/supabase/types';
 
 // Extended Database Definition
 export interface Database extends OriginalDatabase {
@@ -26,26 +27,48 @@ export interface Database extends OriginalDatabase {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>;
-        Update: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>>;
+        Insert: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'manufacturer' | 'countryOfOrigin' | 'recommendedDosage'>;
+        Update: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'manufacturer' | 'countryOfOrigin' | 'recommendedDosage'>>;
+        Relationships: [];
       };
       orders: {
         Row: {
           id: string;
           user_id: string;
-          products: OrderItem[];
+          products: Json;
           total_amount: number;
           status: string;
           tracking_number?: string;
-          shipping_address: Address;
-          billing_address: Address;
+          shipping_address: Json;
+          billing_address: Json;
           payment_method: string;
           notes?: string;
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>;
-        Update: Partial<Omit<Order, 'id' | 'createdAt' | 'updatedAt'>>;
+        Insert: {
+          user_id: string;
+          products: Json;
+          total_amount: number;
+          status?: string;
+          tracking_number?: string;
+          shipping_address: Json;
+          billing_address: Json;
+          payment_method: string;
+          notes?: string;
+        };
+        Update: Partial<{
+          user_id: string;
+          products: Json;
+          total_amount: number;
+          status: string;
+          tracking_number?: string;
+          shipping_address: Json;
+          billing_address: Json;
+          payment_method: string;
+          notes?: string;
+        }>;
+        Relationships: [];
       };
     };
     Views: OriginalDatabase['public']['Views'];

@@ -30,6 +30,10 @@ export interface Product {
   origin?: string;
   createdAt: Date;
   updatedAt: Date;
+  // Adding the missing properties from the mock data
+  manufacturer?: string;
+  countryOfOrigin?: string;
+  recommendedDosage?: string;
 }
 
 export interface OrderItem {

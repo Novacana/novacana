@@ -145,17 +145,17 @@ const OrderForm = ({
         country: formData.billingCountry
       };
       
-      // Create order object in snake_case for Supabase
-      const orderData = toSnakeCase({
-        userId: user.id,
-        products: orderItems,
-        totalAmount: total,
+      // Create order object for Supabase with proper JSON conversion
+      const orderData = {
+        user_id: user.id,
+        products: orderItems as unknown as Json,
+        total_amount: total,
         status: 'pending',
-        shippingAddress,
-        billingAddress,
-        paymentMethod: formData.paymentMethod,
+        shipping_address: shippingAddress as unknown as Json,
+        billing_address: billingAddress as unknown as Json,
+        payment_method: formData.paymentMethod,
         notes: formData.notes || null
-      });
+      };
       
       // Insert order into Supabase
       const { data, error } = await supabase
