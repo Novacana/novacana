@@ -77,21 +77,19 @@ const AdminProducts = () => {
 
   const handleAddProduct = async (productData: Omit<Product, "id" | "createdAt" | "updatedAt">[]) => {
     try {
-      const supabaseData = productData.map(product => {
+      if (productData.length > 0) {
         const {
           manufacturer,
           countryOfOrigin,
           recommendedDosage,
           ...dbProduct
-        } = product;
+        } = productData[0];
         
-        return toSnakeCase(dbProduct);
-      });
+        const supabaseData = toSnakeCase(dbProduct);
 
-      if (supabaseData.length > 0) {
         const { error } = await supabase
           .from('products')
-          .insert(supabaseData[0]);
+          .insert(supabaseData);
 
         if (error) throw error;
       }

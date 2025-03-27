@@ -4,7 +4,7 @@ import { Product, Order, Address, OrderItem } from '@/types';
 import { Json } from '@/integrations/supabase/types';
 
 // Extended Database Definition
-export interface Database extends OriginalDatabase {
+export interface Database extends Omit<OriginalDatabase, 'public'> {
   public: {
     Tables: {
       products: {
@@ -42,7 +42,7 @@ export interface Database extends OriginalDatabase {
           shipping_address: Json;
           billing_address: Json;
           payment_method: string;
-          notes?: string | null;
+          notes: string | null;
           created_at: string;
           updated_at: string;
         };
