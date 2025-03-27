@@ -114,6 +114,31 @@ export const removeUserRole = async (userId: string, role: 'admin' | 'user' | 'p
 };
 
 /**
+ * Überprüft, ob bereits Admin-Benutzer existieren
+ */
+export const checkAdminExists = async (): Promise<boolean> => {
+  try {
+    console.log("Prüfe, ob Admin-Benutzer existieren");
+    
+    const { data, error, count } = await supabase
+      .from('user_roles')
+      .select('id', { count: 'exact' })
+      .eq('role', 'admin');
+    
+    if (error) {
+      console.error("Fehler bei der Prüfung auf Admin-Benutzer:", error);
+      return false;
+    }
+    
+    console.log("Anzahl der Admin-Benutzer:", count);
+    return count !== null && count > 0;
+  } catch (error) {
+    console.error("Fehler bei der Prüfung auf Admin-Benutzer:", error);
+    return false;
+  }
+};
+
+/**
  * Anleitung zum Hinzufügen eines Admin-Benutzers
  * 
  * Nach der Registrierung eines neuen Benutzers muss ein bestehender Administrator

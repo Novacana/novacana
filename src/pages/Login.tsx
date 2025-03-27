@@ -1,11 +1,13 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import LoginForm from "@/components/auth/LoginForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Pill, HeartPulse, Info } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { checkAdminExists } from "@/utils/authUtils";
+import FirstAdminSetup from "@/components/auth/FirstAdminSetup";
 
 const Login = () => {
   const { t } = useLanguage();
@@ -14,6 +16,17 @@ const Login = () => {
     error: null,
     success: false
   });
+  const [adminExists, setAdminExists] = useState<boolean | null>(null);
+  
+  useEffect(() => {
+    const checkForAdmins = async () => {
+      const hasAdmin = await checkAdminExists();
+      console.log("Admin Existenz-Check:", hasAdmin);
+      setAdminExists(hasAdmin);
+    };
+    
+    checkForAdmins();
+  }, []);
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -52,6 +65,12 @@ const Login = () => {
                 </div>
               </div>
               <LoginForm setFormStatus={setFormStatus} />
+              
+              {adminExists === false && (
+                <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <FirstAdminSetup />
+                </div>
+              )}
             </div>
           </div>
         </div>

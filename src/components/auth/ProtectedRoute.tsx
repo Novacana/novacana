@@ -42,7 +42,7 @@ const ProtectedRoute = ({
   };
 
   useEffect(() => {
-    console.log("ProtectedRoute initialisiert");
+    console.log("ProtectedRoute initialisiert, adminOnly:", adminOnly);
     let isMounted = true;
     
     // Erst Authentifizierungs-Listener einrichten
@@ -80,7 +80,8 @@ const ProtectedRoute = ({
         
         if (currentSession?.user) {
           console.log("Benutzer hat aktive Session, prüfe Admin-Status...");
-          await checkAdminStatus(currentSession.user.id);
+          const adminResult = await checkAdminStatus(currentSession.user.id);
+          console.log("Admin-Status Result:", adminResult, "adminOnly:", adminOnly);
         } else {
           setIsAdmin(false);
         }
@@ -100,7 +101,7 @@ const ProtectedRoute = ({
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [adminOnly]);
 
   // Handle DocCheck OAuth callback if needed
   if (showDocCheckCallback) {
