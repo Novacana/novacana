@@ -10,7 +10,6 @@ import { checkAdminExists } from "@/utils/authUtils";
 import FirstAdminSetup from "@/components/auth/FirstAdminSetup";
 import MasterAdminCreator from "@/components/auth/MasterAdminCreator";
 import { Button } from "@/components/ui/button";
-import { useState as useStateDialog } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Login = () => {
@@ -22,6 +21,7 @@ const Login = () => {
   });
   const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const [showMasterAdmin, setShowMasterAdmin] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   
   useEffect(() => {
     const checkForAdmins = async () => {
@@ -78,7 +78,7 @@ const Login = () => {
               )}
 
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <Dialog>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" className="w-full">
                       <Info className="h-4 w-4 mr-2" />
