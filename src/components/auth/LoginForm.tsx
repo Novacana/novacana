@@ -41,8 +41,12 @@ const LoginForm = () => {
   const resetEmailConfirmation = async (userEmail: string) => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.resendConfirmationEmail({
-        email: userEmail
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: userEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`
+        }
       });
       
       if (error) {
