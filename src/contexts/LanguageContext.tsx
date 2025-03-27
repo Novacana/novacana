@@ -23,11 +23,12 @@ const translations = {
     'nav.cart': 'Warenkorb',
     
     // Home Hero
-    'hero.badge': 'Pharmazeutischer Großhandel',
+    'hero.badge': 'Cannabisgroßhandel',
     'hero.title': 'Medizinisches Cannabis',
     'hero.subtitle': 'Für Apotheken',
-    'hero.description': 'Novacana ist ein lizenzierter pharmazeutischer Großhandel, spezialisiert auf medizinische Cannabisprodukte für Apotheken in ganz Deutschland.',
+    'hero.description': 'Novacana ist Ihr zuverlässiger Partner für die Versorgung von Apotheken mit medizinischen Cannabisprodukten in ganz Deutschland.',
     'hero.cta.contact': 'Kontaktieren Sie uns',
+    'hero.cta.register': 'Als Apotheke registrieren',
     'hero.cta.products': 'Produkte ansehen',
     'hero.license': 'Lizenzierter pharmazeutischer Großhandel mit Teilsortiment Cannabis',
     'hero.card.title': 'Qualitativ hochwertiges medizinisches Cannabis',
@@ -38,7 +39,7 @@ const translations = {
     // Features
     'features.title': 'Warum Novacana wählen',
     'features.description': 'Als lizenzierter pharmazeutischer Großhändler bieten wir Apotheken zuverlässigen Zugang zu hochwertigen medizinischen Cannabisprodukten.',
-    'features.pharmaceutical': 'Pharmazeutischer Qualität',
+    'features.pharmaceutical': 'Pharmazeutische Qualität',
     'features.pharmaceutical.desc': 'Alle unsere Produkte erfüllen höchste pharmazeutische Standards und entsprechen den deutschen Vorschriften.',
     'features.delivery': 'Schnelle Lieferung',
     'features.delivery.desc': 'Wir gewährleisten eine schnelle und zuverlässige Lieferung an Apotheken in ganz Deutschland.',
@@ -54,7 +55,7 @@ const translations = {
     // About
     'about.badge': 'Über Novacana',
     'about.title': 'Ihr vertrauenswürdiger Partner für medizinisches Cannabis',
-    'about.description': 'Gegründet im Jahr 2020 ist Novacana GmbH ein lizenzierter pharmazeutischer Großhändler, der sich auf medizinische Cannabisprodukte für Apotheken in ganz Deutschland spezialisiert hat.',
+    'about.description': 'Novacana ist ein lizenzierter pharmazeutischer Großhändler, der sich auf medizinische Cannabisprodukte für Apotheken in ganz Deutschland spezialisiert hat.',
     'about.quality': 'Qualitätssicherung',
     'about.quality.desc': 'Jedes Produkt in unserem Sortiment durchläuft eine strenge Qualitätskontrolle, um sicherzustellen, dass es die höchsten pharmazeutischen Standards erfüllt.',
     'about.expertise': 'Expertise',
@@ -87,11 +88,12 @@ const translations = {
     'nav.cart': 'Cart',
     
     // Home Hero
-    'hero.badge': 'Pharmaceutical Wholesaler',
+    'hero.badge': 'Cannabis Wholesaler',
     'hero.title': 'Medical Cannabis',
     'hero.subtitle': 'For Pharmacies',
-    'hero.description': 'Novacana is a licensed pharmaceutical wholesaler specializing in medical cannabis products for pharmacies throughout Germany.',
+    'hero.description': 'Novacana is your reliable partner for supplying pharmacies with medical cannabis products throughout Germany.',
     'hero.cta.contact': 'Contact Us',
+    'hero.cta.register': 'Register as Pharmacy',
     'hero.cta.products': 'View Products',
     'hero.license': 'Licensed pharmaceutical wholesaler with partial assortment cannabis',
     'hero.card.title': 'Quality Medical Cannabis',
@@ -118,7 +120,7 @@ const translations = {
     // About
     'about.badge': 'About Novacana',
     'about.title': 'Your Trusted Partner for Medical Cannabis',
-    'about.description': 'Founded in 2020, Novacana GmbH is a licensed pharmaceutical wholesaler specializing in medical cannabis products for pharmacies throughout Germany.',
+    'about.description': 'Novacana is a licensed pharmaceutical wholesaler specializing in medical cannabis products for pharmacies throughout Germany.',
     'about.quality': 'Quality Assurance',
     'about.quality.desc': 'Every product in our assortment undergoes rigorous quality control to ensure it meets the highest pharmaceutical standards.',
     'about.expertise': 'Expertise',

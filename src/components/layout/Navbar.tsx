@@ -57,10 +57,8 @@ const Navbar = () => {
       <div className="container-content flex items-center justify-between h-16">
         {/* Logo */}
         <div className="flex-shrink-0 flex items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-nova-700 dark:text-nova-300">
-              Novacana
-            </span>
+          <Link to="/" className="flex items-center">
+            <img src="/logo.png" alt="Novacana" className="h-8 md:h-10" />
           </Link>
         </div>
 
@@ -74,8 +72,8 @@ const Navbar = () => {
                 className={cn(
                   "px-2 py-1 text-sm font-medium animated-underline",
                   item.current
-                    ? "text-nova-700 dark:text-nova-300"
-                    : "text-gray-600 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
+                    ? "text-black dark:text-white"
+                    : "text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
                 )}
               >
                 {item.name}
@@ -116,7 +114,7 @@ const Navbar = () => {
                 <Button variant="ghost" size="sm" className="flex items-center gap-1 relative">
                   <ShoppingCart size={16} />
                   <span>{t('nav.cart')}</span>
-                  <span className="absolute -top-2 -right-2 bg-nova-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                  <span className="absolute -top-2 -right-2 bg-black text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                     0
                   </span>
                 </Button>
@@ -125,12 +123,12 @@ const Navbar = () => {
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white">
                   {t('nav.login')}
                 </Button>
               </Link>
               <Link to="/register">
-                <Button variant="default" size="sm">
+                <Button variant="default" size="sm" className="bg-black hover:bg-gray-800 text-white">
                   {t('nav.register')}
                 </Button>
               </Link>
@@ -159,7 +157,7 @@ const Navbar = () => {
           
           <button
             type="button"
-            className="text-gray-700 dark:text-gray-200 hover:text-nova-500 dark:hover:text-nova-400 focus:outline-none"
+            className="text-gray-700 dark:text-gray-200 hover:text-black dark:hover:text-white focus:outline-none"
             onClick={toggleMenu}
             aria-expanded={isMenuOpen}
           >
@@ -186,8 +184,8 @@ const Navbar = () => {
               className={cn(
                 "block px-3 py-2 rounded-md text-base font-medium transition-colors",
                 item.current
-                  ? "text-nova-700 dark:text-nova-300 bg-nova-50 dark:bg-nova-900/20"
-                  : "text-gray-600 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
+                  ? "text-black dark:text-white"
+                  : "text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
               )}
               onClick={() => setIsMenuOpen(false)}
             >
@@ -199,14 +197,14 @@ const Navbar = () => {
               <>
                 <Link
                   to="/dashboard"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.dashboard')}
                 </Link>
                 <Link
                   to="/cart"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.cart')}
@@ -216,14 +214,14 @@ const Navbar = () => {
               <>
                 <Link
                   to="/login"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.login')}
                 </Link>
                 <Link
                   to="/register"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.register')}
