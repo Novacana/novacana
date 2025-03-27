@@ -57,9 +57,14 @@ const AboutUs = () => {
                 <div className="absolute inset-0 bg-gradient-to-tr from-green-200/30 to-blue-200/30 dark:from-green-900/20 dark:to-blue-900/20 rounded-2xl blur-xl transform rotate-2 scale-95"></div>
                 <Card className="relative overflow-hidden border-0 shadow-xl">
                   <img 
-                    src="https://images.unsplash.com/photo-1589140915708-8da71999e45a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                    src="/lovable-uploads/8bf41eac-d2f2-4214-9aa7-68fd837d1862.png" 
                     alt="Medizinisches Cannabis" 
-                    className="w-full h-64 object-cover"
+                    className="w-full h-auto object-cover"
+                    onError={(e) => {
+                      console.error("Image failed to load:", e);
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://placehold.co/800x400/gray/white?text=Medizinisches+Cannabis";
+                    }}
                   />
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
@@ -81,9 +86,14 @@ const AboutUs = () => {
               
               <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 overflow-hidden">
                 <img 
-                  src="/lovable-uploads/6f98e186-03e5-4093-849e-c97a26a093b3.png" 
+                  src="/lovable-uploads/b8e522e4-7a6e-483b-8d83-33bf4e6d3014.png" 
                   alt="Supply Chain" 
                   className="w-full h-auto rounded-xl mb-8"
+                  onError={(e) => {
+                    console.error("Supply Chain image failed to load:", e);
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://placehold.co/1200x600/gray/white?text=Supply+Chain";
+                  }}
                 />
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
