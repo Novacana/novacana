@@ -79,12 +79,12 @@ const Hero = () => {
             <div className="relative max-w-lg">
               <div className="absolute inset-0 bg-gradient-to-r from-gray-200/30 to-gray-300/30 dark:from-gray-800/30 dark:to-gray-700/30 rounded-2xl blur-xl transform -rotate-6 scale-95"></div>
               <div className="relative rounded-2xl overflow-hidden shadow-xl">
-                <img src="/images/medical-research.jpg" alt={language === 'de' ? "Medizinische Cannabisforschung" : "Medical Cannabis Research"} className="w-full h-auto rounded-2xl object-cover" onError={e => {
+                <img alt={language === 'de' ? "Medizinische Cannabisforschung" : "Medical Cannabis Research"} className="w-full h-auto rounded-2xl object-cover" onError={e => {
                 console.error("Bild konnte nicht geladen werden:", e);
                 const target = e.target as HTMLImageElement;
                 target.onerror = null;
                 target.src = "/placeholder.svg";
-              }} />
+              }} src="https://cdn.prod.website-files.com/6638878d99207e2fa2b8efb6/66e163656a0cea115f3334da_cannabis_apotheke_goeasy.webp" />
                 
               </div>
             </div>
