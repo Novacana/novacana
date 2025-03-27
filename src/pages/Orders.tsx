@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -7,7 +6,7 @@ import { CartItem, Product, OrderItem } from "@/types";
 import { products as mockProducts } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { toSnakeCase, toCamelCase } from "@/types/supabase";
+import { convertProductFromDB } from "@/utils/supabaseUtils";
 
 const Orders = () => {
   const { toast } = useToast();
@@ -41,25 +40,7 @@ const Orders = () => {
         }
         
         if (data.length > 0) {
-          const transformedProducts = data.map(item => ({
-            id: item.id,
-            name: item.name,
-            description: item.description,
-            shortDescription: item.short_description,
-            price: item.price,
-            imageUrl: item.image_url,
-            category: item.category,
-            stock: item.stock,
-            thcContent: item.thc_content,
-            cbdContent: item.cbd_content,
-            terpenes: item.terpenes,
-            weight: item.weight,
-            dosage: item.dosage,
-            effects: item.effects,
-            origin: item.origin,
-            createdAt: new Date(item.created_at),
-            updatedAt: new Date(item.updated_at)
-          }));
+          const transformedProducts = data.map(convertProductFromDB);
           setProducts(transformedProducts);
         } else {
           // Fallback to mock data if no products in database
@@ -83,7 +64,6 @@ const Orders = () => {
     fetchProducts();
   }, [toast]);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);

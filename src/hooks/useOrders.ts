@@ -1,10 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Order, OrderItem, Address } from "@/types";
-import { toSnakeCase } from "@/types/supabase";
-import { Json } from "@/integrations/supabase/types";
+import { Order } from "@/types";
+import { convertOrderFromDB, prepareOrderUpdates } from "@/utils/supabaseUtils";
 
 export const useOrders = () => {
   const { toast } = useToast();
@@ -22,34 +20,7 @@ export const useOrders = () => {
       if (error) throw error;
       
       // Convert data to our Order type with proper JSON handling
-      const convertedData: Order[] = data.map(item => {
-        const products = (typeof item.products === 'string' 
-          ? JSON.parse(item.products) 
-          : item.products) as OrderItem[];
-          
-        const shippingAddress = (typeof item.shipping_address === 'string'
-          ? JSON.parse(item.shipping_address)
-          : item.shipping_address) as Address;
-          
-        const billingAddress = (typeof item.billing_address === 'string'
-          ? JSON.parse(item.billing_address)
-          : item.billing_address) as Address;
-        
-        return {
-          id: item.id,
-          userId: item.user_id,
-          products: products,
-          totalAmount: item.total_amount,
-          status: item.status as 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled',
-          trackingNumber: item.tracking_number,
-          shippingAddress: shippingAddress,
-          billingAddress: billingAddress,
-          paymentMethod: item.payment_method,
-          notes: item.notes,
-          createdAt: new Date(item.created_at),
-          updatedAt: new Date(item.updated_at)
-        };
-      });
+      const convertedData: Order[] = data.map(convertOrderFromDB);
       
       setOrders(convertedData);
     } catch (error: any) {
@@ -70,7 +41,7 @@ export const useOrders = () => {
   ) => {
     try {
       // Convert camelCase to snake_case for Supabase
-      const snakeCaseUpdates = toSnakeCase(updates);
+      const snakeCaseUpdates = prepareOrderUpdates(updates);
       
       const { error } = await supabase
         .from('orders')

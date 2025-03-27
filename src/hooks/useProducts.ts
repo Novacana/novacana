@@ -1,8 +1,12 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Product } from "@/types";
+import { 
+  convertProductFromDB, 
+  convertProductToDB,
+  convertProductUpdatesToDB 
+} from "@/utils/supabaseUtils";
 
 export const useProducts = () => {
   const { toast } = useToast();
@@ -19,25 +23,7 @@ export const useProducts = () => {
 
       if (error) throw error;
       
-      const convertedData: Product[] = data.map(item => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        shortDescription: item.short_description,
-        price: item.price,
-        imageUrl: item.image_url,
-        category: item.category,
-        stock: item.stock,
-        thcContent: item.thc_content,
-        cbdContent: item.cbd_content,
-        terpenes: item.terpenes,
-        weight: item.weight,
-        dosage: item.dosage,
-        effects: item.effects,
-        origin: item.origin,
-        createdAt: new Date(item.created_at),
-        updatedAt: new Date(item.updated_at)
-      }));
+      const convertedData: Product[] = data.map(convertProductFromDB);
       
       setProducts(convertedData);
     } catch (error: any) {
@@ -55,30 +41,7 @@ export const useProducts = () => {
   const addProduct = async (productData: Omit<Product, "id" | "createdAt" | "updatedAt">[]) => {
     try {
       if (productData.length > 0) {
-        const {
-          manufacturer,
-          countryOfOrigin,
-          recommendedDosage,
-          ...dbProduct
-        } = productData[0];
-        
-        // Convert to the expected format for Supabase
-        const productToInsert = {
-          name: dbProduct.name,
-          description: dbProduct.description,
-          short_description: dbProduct.shortDescription,
-          price: dbProduct.price,
-          image_url: dbProduct.imageUrl,
-          category: dbProduct.category,
-          stock: dbProduct.stock,
-          thc_content: dbProduct.thcContent,
-          cbd_content: dbProduct.cbdContent,
-          terpenes: dbProduct.terpenes,
-          weight: dbProduct.weight,
-          dosage: dbProduct.dosage,
-          effects: dbProduct.effects,
-          origin: dbProduct.origin
-        };
+        const productToInsert = convertProductToDB(productData[0]);
 
         const { error } = await supabase
           .from('products')
@@ -107,30 +70,7 @@ export const useProducts = () => {
 
   const updateProduct = async (id: string, updates: Partial<Omit<Product, "id" | "createdAt" | "updatedAt">>) => {
     try {
-      const {
-        manufacturer,
-        countryOfOrigin,
-        recommendedDosage,
-        ...dbUpdates
-      } = updates;
-      
-      // Convert to the expected format for Supabase
-      const updatesToApply: Record<string, any> = {};
-      
-      if (dbUpdates.name !== undefined) updatesToApply.name = dbUpdates.name;
-      if (dbUpdates.description !== undefined) updatesToApply.description = dbUpdates.description;
-      if (dbUpdates.shortDescription !== undefined) updatesToApply.short_description = dbUpdates.shortDescription;
-      if (dbUpdates.price !== undefined) updatesToApply.price = dbUpdates.price;
-      if (dbUpdates.imageUrl !== undefined) updatesToApply.image_url = dbUpdates.imageUrl;
-      if (dbUpdates.category !== undefined) updatesToApply.category = dbUpdates.category;
-      if (dbUpdates.stock !== undefined) updatesToApply.stock = dbUpdates.stock;
-      if (dbUpdates.thcContent !== undefined) updatesToApply.thc_content = dbUpdates.thcContent;
-      if (dbUpdates.cbdContent !== undefined) updatesToApply.cbd_content = dbUpdates.cbdContent;
-      if (dbUpdates.terpenes !== undefined) updatesToApply.terpenes = dbUpdates.terpenes;
-      if (dbUpdates.weight !== undefined) updatesToApply.weight = dbUpdates.weight;
-      if (dbUpdates.dosage !== undefined) updatesToApply.dosage = dbUpdates.dosage;
-      if (dbUpdates.effects !== undefined) updatesToApply.effects = dbUpdates.effects;
-      if (dbUpdates.origin !== undefined) updatesToApply.origin = dbUpdates.origin;
+      const updatesToApply = convertProductUpdatesToDB(updates);
       
       const { error } = await supabase
         .from('products')
