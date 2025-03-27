@@ -6,7 +6,7 @@ import { ArrowRight, ShieldCheck, Clock, Truck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Hero = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
     <section className="relative py-20 md:py-32 overflow-hidden bg-white dark:bg-gray-900">
@@ -21,9 +21,15 @@ const Hero = () => {
           <div className="w-full lg:w-1/2 space-y-8 text-center lg:text-left">
             <div className="inline-block mb-6 animate-fade-in">
               <img 
-                src="/lovable-uploads/3b719661-6325-4bc7-a6fe-86a1b375b392.png" 
+                src="/lovable-uploads/ebe7e5a0-0f6a-4fad-9a30-2a81b6b7ed76.png" 
                 alt="Novacana" 
                 className="h-16 md:h-20 mx-auto lg:mx-0" 
+                onError={(e) => {
+                  console.error("Logo konnte nicht geladen werden:", e);
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = "/placeholder.svg";
+                }}
               />
             </div>
             
@@ -72,17 +78,24 @@ const Hero = () => {
               <div className="relative rounded-2xl overflow-hidden shadow-xl">
                 <img 
                   src="/images/medical-research.jpg" 
-                  alt="Medizinische Cannabisforschung" 
+                  alt={language === 'de' ? "Medizinische Cannabisforschung" : "Medical Cannabis Research"} 
                   className="w-full h-auto rounded-2xl object-cover"
                   onError={(e) => {
-                    console.error("Image failed to load:", e);
+                    console.error("Bild konnte nicht geladen werden:", e);
                     const target = e.target as HTMLImageElement;
-                    target.src = "https://images.unsplash.com/photo-1581093458791-9efa5922232e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80";
+                    target.onerror = null;
+                    target.src = "/placeholder.svg";
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
-                  <h3 className="text-xl font-bold mb-2">Qualitätskontrolle</h3>
-                  <p className="text-sm text-gray-200">Jedes Produkt durchläuft strenge Qualitätsprüfungen</p>
+                  <h3 className="text-xl font-bold mb-2">
+                    {language === 'de' ? "Qualitätskontrolle" : "Quality Control"}
+                  </h3>
+                  <p className="text-sm text-gray-200">
+                    {language === 'de' 
+                      ? "Jedes Produkt durchläuft strenge Qualitätsprüfungen" 
+                      : "Every product undergoes strict quality checks"}
+                  </p>
                 </div>
               </div>
             </div>

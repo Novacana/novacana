@@ -21,6 +21,7 @@ const translations = {
     'nav.register': 'Registrieren',
     'nav.dashboard': 'Dashboard',
     'nav.cart': 'Warenkorb',
+    'nav.logout': 'Abmelden',
     
     // Home Hero
     'hero.badge': 'Cannabisgroßhandel',
@@ -71,6 +72,33 @@ const translations = {
     'about.card.gdp': 'GDP-Zertifiziert',
     'about.card.wholesaler': 'Großhandelserlaubnis',
     
+    // Dashboard
+    'dashboard.title': 'Apotheken Dashboard',
+    'dashboard.orders.total': 'Alle Bestellungen',
+    'dashboard.orders.pending': 'Ausstehende Bestellungen',
+    'dashboard.orders.transit': 'In Lieferung',
+    'dashboard.orders.delivered': 'Gelieferte Bestellungen',
+    'dashboard.orders.all.time': 'Insgesamt',
+    'dashboard.orders.to.process': 'Zu bearbeiten',
+    'dashboard.orders.in.shipment': 'In Versand',
+    'dashboard.orders.completed': 'Abgeschlossen',
+    'dashboard.actions.orders': 'Bestellungen',
+    'dashboard.actions.profile': 'Profil',
+    'dashboard.actions.documents': 'Dokumente',
+    'dashboard.actions.settings': 'Einstellungen',
+    'dashboard.your.orders': 'Ihre Bestellungen',
+    'dashboard.order.products': 'Produkte bestellen',
+    'dashboard.table.orderNo': 'Bestellnr.',
+    'dashboard.table.date': 'Datum',
+    'dashboard.table.status': 'Status',
+    'dashboard.table.items': 'Artikel',
+    'dashboard.table.total': 'Summe',
+    'dashboard.table.actions': 'Aktionen',
+    'dashboard.status.delivered': 'Geliefert',
+    'dashboard.status.shipped': 'Versandt',
+    'dashboard.status.processing': 'In Bearbeitung',
+    'dashboard.logout': 'Abmelden',
+    
     // Language
     'language': 'Sprache',
     'language.de': 'Deutsch',
@@ -86,6 +114,7 @@ const translations = {
     'nav.register': 'Register',
     'nav.dashboard': 'Dashboard',
     'nav.cart': 'Cart',
+    'nav.logout': 'Logout',
     
     // Home Hero
     'hero.badge': 'Cannabis Wholesaler',
@@ -135,6 +164,33 @@ const translations = {
     'about.card.gmp.desc': 'Good Manufacturing Practice Certified',
     'about.card.gdp': 'GDP Certified',
     'about.card.wholesaler': 'Pharmaceutical Wholesale License',
+    
+    // Dashboard
+    'dashboard.title': 'Pharmacy Dashboard',
+    'dashboard.orders.total': 'Total Orders',
+    'dashboard.orders.pending': 'Pending Orders',
+    'dashboard.orders.transit': 'In Transit',
+    'dashboard.orders.delivered': 'Delivered',
+    'dashboard.orders.all.time': 'All time',
+    'dashboard.orders.to.process': 'To be processed',
+    'dashboard.orders.in.shipment': 'Orders in shipment',
+    'dashboard.orders.completed': 'Completed orders',
+    'dashboard.actions.orders': 'Orders',
+    'dashboard.actions.profile': 'Profile',
+    'dashboard.actions.documents': 'Documents',
+    'dashboard.actions.settings': 'Settings',
+    'dashboard.your.orders': 'Your Orders',
+    'dashboard.order.products': 'Order Products',
+    'dashboard.table.orderNo': 'Order No.',
+    'dashboard.table.date': 'Date',
+    'dashboard.table.status': 'Status',
+    'dashboard.table.items': 'Items',
+    'dashboard.table.total': 'Total',
+    'dashboard.table.actions': 'Actions',
+    'dashboard.status.delivered': 'Delivered',
+    'dashboard.status.shipped': 'Shipped',
+    'dashboard.status.processing': 'Processing',
+    'dashboard.logout': 'Log Out',
     
     // Language
     'language': 'Language',

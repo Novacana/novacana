@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ShoppingCart, Globe } from "lucide-react";
+import { Menu, X, User, ShoppingCart, Globe, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -17,14 +17,39 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Dies wird durch den tatsächlichen Auth-Status ersetzt
+  const navigate = useNavigate();
+
+  // Nur für Demonstrationszwecke - in der Produktionsversion durch echte Auth ersetzt
+  useEffect(() => {
+    // Überprüfen, ob ein Token im lokalen Speicher vorhanden ist
+    const token = localStorage.getItem("authToken");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  // Für Testzwecke - Mock Login/Logout
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    setIsLoggedIn(false);
+    navigate("/");
+  };
 
   // Navigation mit übersetzten Texten
-  const navigation = [
-    { name: t('nav.home'), href: "/", current: true },
-    { name: t('nav.products'), href: "/products", current: false },
-    { name: t('nav.about'), href: "/#about", current: false },
-    { name: t('nav.contact'), href: "/#contact", current: false },
-  ];
+  const getNavigation = () => {
+    const baseNavigation = [
+      { name: t('nav.home'), href: "/", current: true },
+      { name: t('nav.about'), href: "/#about", current: false },
+      { name: t('nav.contact'), href: "/#contact", current: false },
+    ];
+    
+    // Füge Produkte nur hinzu, wenn der Benutzer eingeloggt ist
+    if (isLoggedIn) {
+      baseNavigation.splice(1, 0, { name: t('nav.products'), href: "/products", current: false });
+    }
+    
+    return baseNavigation;
+  };
+
+  const navigation = getNavigation();
 
   // Prüfen, ob der Benutzer nach unten gescrollt hat
   useEffect(() => {
@@ -58,7 +83,17 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex-shrink-0 flex items-center">
           <Link to="/" className="flex items-center">
-            <img src="/logo.png" alt="Novacana" className="h-8 md:h-10" />
+            <img 
+              src="/lovable-uploads/ebe7e5a0-0f6a-4fad-9a30-2a81b6b7ed76.png" 
+              alt="Novacana" 
+              className="h-8 md:h-10"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                console.error("Logo konnte nicht geladen werden:", e);
+                target.src = "/placeholder.svg";
+              }}
+            />
           </Link>
         </div>
 
@@ -119,6 +154,10 @@ const Navbar = () => {
                   </span>
                 </Button>
               </Link>
+              <Button variant="ghost" size="sm" className="flex items-center gap-1" onClick={handleLogout}>
+                <LogOut size={16} />
+                <span>{t('nav.logout')}</span>
+              </Button>
             </>
           ) : (
             <>
@@ -209,6 +248,15 @@ const Navbar = () => {
                 >
                   {t('nav.cart')}
                 </Link>
+                <button
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  {t('nav.logout')}
+                </button>
               </>
             ) : (
               <>
