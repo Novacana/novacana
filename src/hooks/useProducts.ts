@@ -41,27 +41,37 @@ export const useProducts = () => {
 
   const addProduct = async (productData: Omit<Product, "id" | "createdAt" | "updatedAt">[]) => {
     try {
+      // Handle both single product and array of products
+      if (!Array.isArray(productData)) {
+        productData = [productData];
+      }
+      
       if (productData.length > 0) {
-        // Convert the product to database format with the correct type
-        const productToInsert = convertProductToDB(productData[0]);
-
-        // Ensure all required fields are present
-        if (!productToInsert.name || !productToInsert.description || 
-            !productToInsert.short_description || !productToInsert.image_url || 
-            !productToInsert.category || productToInsert.price === undefined) {
-          throw new Error("Missing required product fields");
+        // Convert all products to database format
+        const productsToInsert = productData.map(product => convertProductToDB(product));
+        
+        // Validate all products have required fields
+        for (const product of productsToInsert) {
+          if (!product.name || !product.description || 
+              !product.short_description || !product.image_url || 
+              !product.category || product.price === undefined) {
+            throw new Error("Missing required product fields");
+          }
         }
 
+        // Insert all products
         const { error } = await supabase
           .from('products')
-          .insert(productToInsert);
+          .insert(productsToInsert);
 
         if (error) throw error;
       }
 
       toast({
         title: "Product added",
-        description: "The product has been successfully added."
+        description: productData.length > 1 
+          ? `${productData.length} products have been successfully added.`
+          : "The product has been successfully added."
       });
 
       fetchProducts();

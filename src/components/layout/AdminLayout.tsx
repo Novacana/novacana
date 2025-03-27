@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
 }) => {
   const navigate = useNavigate();
   
-  // Admin-Bereich ohne Zugriffsbeschränkung rendern
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="container mx-auto px-4 py-8">
