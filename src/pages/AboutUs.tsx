@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, Leaf, Award, Flask, Users } from "lucide-react";
+import { CheckCircle, Leaf, Award, Users, Factory, Truck, Package, Box } from "lucide-react";
 
 const AboutUs = () => {
   const { t } = useLanguage();
@@ -73,6 +73,59 @@ const AboutUs = () => {
               </div>
             </div>
             
+            {/* Supply Chain Section */}
+            <div className="mb-24">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-12">
+                {t('aboutUs.supplyChain.title') || "Unsere Supply Chain"}
+              </h2>
+              
+              <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 overflow-hidden">
+                <img 
+                  src="/lovable-uploads/6f98e186-03e5-4093-849e-c97a26a093b3.png" 
+                  alt="Supply Chain" 
+                  className="w-full h-auto rounded-xl mb-8"
+                />
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 mb-4">
+                      <Factory size={32} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                      {t('aboutUs.supplyChain.production') || "Produktion"}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      {t('aboutUs.supplyChain.production.desc') || "Sorgfältige Auswahl von Premium-Cannabisproduzenten mit höchsten Qualitätsstandards"}
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 mb-4">
+                      <Package size={32} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                      {t('aboutUs.supplyChain.quality') || "Qualitätskontrolle"}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      {t('aboutUs.supplyChain.quality.desc') || "Jedes Produkt durchläuft strenge Qualitätsprüfungen"}
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 mb-4">
+                      <Truck size={32} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                      {t('aboutUs.supplyChain.delivery') || "Lieferung"}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      {t('aboutUs.supplyChain.delivery.desc') || "Sichere und schnelle Lieferung an Apotheken in ganz Deutschland"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <div className="mb-24">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-12">
                 {t('aboutUs.passion.title') || "Unsere Leidenschaft für Cannabis"}
@@ -96,7 +149,7 @@ const AboutUs = () => {
                 <Card className="bg-white dark:bg-gray-800 border-0 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                   <CardContent className="p-6">
                     <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4">
-                      <Flask size={24} />
+                      <Box size={24} />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                       {t('aboutUs.passion.research.title') || "Forschung & Entwicklung"}

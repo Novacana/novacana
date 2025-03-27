@@ -97,7 +97,7 @@ const About = () => {
             </div>
             
             <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
-              <Link to="/register">
+              <Link to="/about">
                 <Button size="lg" className="bg-black hover:bg-gray-800 text-white">
                   {t('about.button')}
                 </Button>
