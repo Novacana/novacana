@@ -62,32 +62,12 @@ const App = () => {
               <Route path="/imprint" element={<Imprint />} />
               <Route path="/privacy" element={<Privacy />} />
               
-              {/* Admin routes mit Zugriffsbeschränkung */}
-              <Route path="/admin" element={
-                <ProtectedRoute adminOnly={true}>
-                  <Admin />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/products" element={
-                <ProtectedRoute adminOnly={true}>
-                  <AdminProducts />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/orders" element={
-                <ProtectedRoute adminOnly={true}>
-                  <AdminOrders />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/users" element={
-                <ProtectedRoute adminOnly={true}>
-                  <AdminUsers />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/pharmacy-verifications" element={
-                <ProtectedRoute adminOnly={true}>
-                  <PharmacyVerifications />
-                </ProtectedRoute>
-              } />
+              {/* Admin routes - temporär ohne Zugriffsbeschränkung */}
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/products" element={<AdminProducts />} />
+              <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/pharmacy-verifications" element={<PharmacyVerifications />} />
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
