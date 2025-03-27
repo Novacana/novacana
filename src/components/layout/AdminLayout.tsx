@@ -23,24 +23,30 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [redirectTriggered, setRedirectTriggered] = useState(false);
   
   // Überprüfen, ob der Benutzer Admin-Rechte hat
   useEffect(() => {
+    let isMounted = true;
+    
     const checkAdminAccess = async () => {
       try {
-        setLoading(true);
         const { data: { session } } = await supabase.auth.getSession();
         
         console.log("AdminLayout - Session geprüft:", session?.user?.email);
         
         if (!session?.user) {
           console.log("AdminLayout - Kein Benutzer gefunden, Weiterleitung zum Login");
-          toast({
-            title: "Zugriff verweigert",
-            description: "Sie müssen angemeldet sein, um den Admin-Bereich zu nutzen.",
-            variant: "destructive"
-          });
-          navigate("/login?returnUrl=/admin");
+          
+          if (isMounted && !redirectTriggered) {
+            setRedirectTriggered(true);
+            toast({
+              title: "Zugriff verweigert",
+              description: "Sie müssen angemeldet sein, um den Admin-Bereich zu nutzen.",
+              variant: "destructive"
+            });
+            navigate("/login?returnUrl=/admin");
+          }
           return;
         }
         
@@ -49,31 +55,45 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         
         if (!adminStatus) {
           console.log("AdminLayout - Kein Admin-Zugriff, Weiterleitung zum Dashboard");
-          toast({
-            title: "Zugriff verweigert",
-            description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
-            variant: "destructive"
-          });
-          navigate("/dashboard");
+          
+          if (isMounted && !redirectTriggered) {
+            setRedirectTriggered(true);
+            toast({
+              title: "Zugriff verweigert",
+              description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
+              variant: "destructive"
+            });
+            navigate("/dashboard");
+          }
           return;
         }
         
         // Admin-Rechte bestätigt
-        setIsAdmin(true);
-        setLoading(false);
+        if (isMounted) {
+          setIsAdmin(true);
+          setLoading(false);
+        }
       } catch (error) {
         console.error("AdminLayout - Fehler beim Überprüfen der Admin-Rechte:", error);
-        toast({
-          title: "Fehler",
-          description: "Bei der Überprüfung Ihrer Berechtigungen ist ein Fehler aufgetreten.",
-          variant: "destructive"
-        });
-        navigate("/dashboard");
+        
+        if (isMounted && !redirectTriggered) {
+          setRedirectTriggered(true);
+          toast({
+            title: "Fehler",
+            description: "Bei der Überprüfung Ihrer Berechtigungen ist ein Fehler aufgetreten.",
+            variant: "destructive"
+          });
+          navigate("/dashboard");
+        }
       }
     };
     
     checkAdminAccess();
-  }, [navigate, toast]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate, toast, redirectTriggered]);
   
   // Zeige Ladeanimation, wenn noch geprüft wird
   if (loading) {

@@ -26,6 +26,7 @@ const ProtectedRoute = ({
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isPharmacist, setIsPharmacist] = useState(false);
+  const [checkedStatus, setCheckedStatus] = useState(false);
   const { toast } = useToast();
   const location = useLocation();
 
@@ -83,16 +84,20 @@ const ProtectedRoute = ({
           }
           
           setLoading(false);
+          setCheckedStatus(true);
         } else {
           setIsAdmin(false);
           setIsPharmacist(false);
           setLoading(false);
+          setCheckedStatus(true);
         }
       }
     );
 
     // Then check for existing session
     const checkSession = async () => {
+      if (checkedStatus) return; // Prevent multiple checks
+      
       try {
         console.log("Suche nach bestehender Session...");
         const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -117,10 +122,12 @@ const ProtectedRoute = ({
         }
         
         setLoading(false);
+        setCheckedStatus(true);
       } catch (error) {
         console.error("Fehler beim Abrufen der Session:", error);
         if (isMounted) {
           setLoading(false);
+          setCheckedStatus(true);
         }
       }
     };
@@ -131,7 +138,7 @@ const ProtectedRoute = ({
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [adminOnly, pharmacistOnly]);
+  }, [adminOnly, pharmacistOnly, checkedStatus]);
 
   // Handle DocCheck OAuth callback if needed
   if (showDocCheckCallback) {
@@ -161,11 +168,14 @@ const ProtectedRoute = ({
 
   // If not authenticated, redirect to login with return path
   if (!session || !user) {
-    toast({
-      title: "Zugriff verweigert",
-      description: "Sie müssen angemeldet sein, um auf diese Seite zuzugreifen.",
-      variant: "destructive"
-    });
+    // Prevent multiple toast calls
+    if (!loading && checkedStatus) {
+      toast({
+        title: "Zugriff verweigert",
+        description: "Sie müssen angemeldet sein, um auf diese Seite zuzugreifen.",
+        variant: "destructive"
+      });
+    }
     
     return (
       <Navigate
@@ -178,11 +188,14 @@ const ProtectedRoute = ({
   // If admin only route, check user role
   if (adminOnly && !isAdmin) {
     console.log("Zugriff verweigert: Admin-Rechte erforderlich");
-    toast({
-      title: "Zugriff verweigert",
-      description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
-      variant: "destructive"
-    });
+    // Prevent multiple toast calls
+    if (!loading && checkedStatus) {
+      toast({
+        title: "Zugriff verweigert",
+        description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
+        variant: "destructive"
+      });
+    }
     
     return (
       <Navigate
@@ -195,11 +208,14 @@ const ProtectedRoute = ({
   // If pharmacist only route, check user role
   if (pharmacistOnly && !isPharmacist && !isAdmin) {
     console.log("Zugriff verweigert: Apotheker-Rechte erforderlich");
-    toast({
-      title: "Zugriff verweigert",
-      description: "Sie benötigen Apotheker-Rechte, um auf diese Seite zuzugreifen.",
-      variant: "destructive"
-    });
+    // Prevent multiple toast calls
+    if (!loading && checkedStatus) {
+      toast({
+        title: "Zugriff verweigert",
+        description: "Sie benötigen Apotheker-Rechte, um auf diese Seite zuzugreifen.",
+        variant: "destructive"
+      });
+    }
     
     return (
       <Navigate
