@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   name: string;
@@ -34,6 +33,7 @@ export interface Product {
   manufacturer?: string;
   countryOfOrigin?: string;
   recommendedDosage?: string;
+  pzn?: string; // Added PZN (Pharmacy Central Number) property
 }
 
 export interface OrderItem {
