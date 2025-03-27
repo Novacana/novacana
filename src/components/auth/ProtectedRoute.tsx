@@ -4,6 +4,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 import DocCheckStatus from "./DocCheckStatus";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -19,8 +20,28 @@ const ProtectedRoute = ({
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { toast } = useToast();
   const location = useLocation();
+
+  // Check if user is an admin
+  const checkAdminStatus = async (userId: string) => {
+    try {
+      // First method: check if email is admin@example.com (fallback method)
+      if (user?.email === "admin@example.com") {
+        setIsAdmin(true);
+        return;
+      }
+      
+      // This is where you would check the database for admin role
+      // For now, we're using the simple email check above
+      
+      setIsAdmin(false);
+    } catch (error) {
+      console.error("Fehler beim Überprüfen des Admin-Status:", error);
+      setIsAdmin(false);
+    }
+  };
 
   useEffect(() => {
     // First set up the auth state listener
@@ -28,6 +49,11 @@ const ProtectedRoute = ({
       (event, currentSession) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
+        
+        if (currentSession?.user) {
+          checkAdminStatus(currentSession.user.id);
+        }
+        
         setLoading(false);
       }
     );
@@ -36,6 +62,11 @@ const ProtectedRoute = ({
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
+      
+      if (currentSession?.user) {
+        checkAdminStatus(currentSession.user.id);
+      }
+      
       setLoading(false);
     });
 
@@ -69,20 +100,19 @@ const ProtectedRoute = ({
   }
 
   // If admin only route, check user role
-  if (adminOnly) {
-    // Here you would check the user's role from your profiles table
-    // For now, we'll use a mock check - replace with actual DB check later
-    const userIsAdmin = user.email === "admin@example.com";
+  if (adminOnly && !isAdmin) {
+    toast({
+      title: "Zugriff verweigert",
+      description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
+      variant: "destructive"
+    });
     
-    if (!userIsAdmin) {
-      setError("You don't have permission to access this page");
-      return (
-        <Navigate
-          to="/dashboard"
-          replace
-        />
-      );
-    }
+    return (
+      <Navigate
+        to="/dashboard"
+        replace
+      />
+    );
   }
 
   // If everything is ok, render children
