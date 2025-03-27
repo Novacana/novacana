@@ -5,24 +5,27 @@ import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 import DocCheckStatus from "./DocCheckStatus";
 import { useToast } from "@/hooks/use-toast";
-import { checkIsAdmin } from "@/utils/authUtils";
+import { checkIsAdmin, checkIsPharmacist } from "@/utils/authUtils";
 import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   adminOnly?: boolean;
+  pharmacistOnly?: boolean;
   showDocCheckCallback?: boolean;
 }
 
 const ProtectedRoute = ({
   children,
   adminOnly = false,
+  pharmacistOnly = false,
   showDocCheckCallback = false,
 }: ProtectedRouteProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isPharmacist, setIsPharmacist] = useState(false);
   const { toast } = useToast();
   const location = useLocation();
 
@@ -41,8 +44,23 @@ const ProtectedRoute = ({
     }
   };
 
+  // Check if user is a pharmacist
+  const checkPharmacistStatus = async (userId: string) => {
+    try {
+      console.log("Prüfe Apotheker-Status für Benutzer:", userId);
+      const hasPharmacistRole = await checkIsPharmacist(userId);
+      console.log("Apotheker-Status für Benutzer:", userId, hasPharmacistRole);
+      setIsPharmacist(hasPharmacistRole);
+      return hasPharmacistRole;
+    } catch (error) {
+      console.error("Fehler beim Überprüfen des Apotheker-Status:", error);
+      setIsPharmacist(false);
+      return false;
+    }
+  };
+
   useEffect(() => {
-    console.log("ProtectedRoute initialisiert, adminOnly:", adminOnly);
+    console.log("ProtectedRoute initialisiert, adminOnly:", adminOnly, "pharmacistOnly:", pharmacistOnly);
     let isMounted = true;
     
     // Erst Authentifizierungs-Listener einrichten
@@ -56,10 +74,16 @@ const ProtectedRoute = ({
         setUser(currentSession?.user ?? null);
         
         if (currentSession?.user) {
-          console.log("Benutzer eingeloggt, prüfe Admin-Status...");
-          await checkAdminStatus(currentSession.user.id);
+          console.log("Benutzer eingeloggt, prüfe Status...");
+          const adminResult = await checkAdminStatus(currentSession.user.id);
+          
+          if (pharmacistOnly || adminOnly) {
+            const pharmacistResult = await checkPharmacistStatus(currentSession.user.id);
+            console.log("Status-Prüfung: Admin =", adminResult, "Apotheker =", pharmacistResult);
+          }
         } else {
           setIsAdmin(false);
+          setIsPharmacist(false);
         }
         
         setLoading(false);
@@ -79,11 +103,16 @@ const ProtectedRoute = ({
         setUser(currentSession?.user ?? null);
         
         if (currentSession?.user) {
-          console.log("Benutzer hat aktive Session, prüfe Admin-Status...");
+          console.log("Benutzer hat aktive Session, prüfe Status...");
           const adminResult = await checkAdminStatus(currentSession.user.id);
-          console.log("Admin-Status Result:", adminResult, "adminOnly:", adminOnly);
+          
+          if (pharmacistOnly || adminOnly) {
+            const pharmacistResult = await checkPharmacistStatus(currentSession.user.id);
+            console.log("Status-Prüfung: Admin =", adminResult, "Apotheker =", pharmacistResult);
+          }
         } else {
           setIsAdmin(false);
+          setIsPharmacist(false);
         }
         
         setLoading(false);
@@ -101,7 +130,7 @@ const ProtectedRoute = ({
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [adminOnly]);
+  }, [adminOnly, pharmacistOnly]);
 
   // Handle DocCheck OAuth callback if needed
   if (showDocCheckCallback) {
@@ -123,7 +152,9 @@ const ProtectedRoute = ({
     isAuthenticated: !!session, 
     user: user?.email, 
     isAdmin,
+    isPharmacist,
     adminRequired: adminOnly,
+    pharmacistRequired: pharmacistOnly,
     currentPath: location.pathname
   });
 
@@ -143,6 +174,23 @@ const ProtectedRoute = ({
     toast({
       title: "Zugriff verweigert",
       description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
+      variant: "destructive"
+    });
+    
+    return (
+      <Navigate
+        to="/dashboard"
+        replace
+      />
+    );
+  }
+
+  // If pharmacist only route, check user role
+  if (pharmacistOnly && !isPharmacist && !isAdmin) {
+    console.log("Zugriff verweigert: Apotheker-Rechte erforderlich");
+    toast({
+      title: "Zugriff verweigert",
+      description: "Sie benötigen Apotheker-Rechte, um auf diese Seite zuzugreifen.",
       variant: "destructive"
     });
     

@@ -9,7 +9,8 @@ import {
   Users, 
   Settings, 
   FileText,
-  TrendingUp
+  TrendingUp,
+  Stethoscope
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,11 @@ const AdminSidebar = () => {
       name: "Users",
       path: "/admin/users",
       icon: <Users size={18} />
+    },
+    {
+      name: "Apothekenverifizierung",
+      path: "/admin/pharmacy-verifications",
+      icon: <Stethoscope size={18} />
     },
     {
       name: "Reports",
