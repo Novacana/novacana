@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -26,7 +25,7 @@ const Products = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     category: "all",
-    priceRange: [0, 300],
+    priceRange: [0, 300] as [number, number],
     thcContent: "all",
     cbdContent: "all",
   });
