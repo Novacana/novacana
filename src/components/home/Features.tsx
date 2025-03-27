@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Leaf, Shield, Truck, Award, Clock, FileCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -55,7 +56,7 @@ const Features = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {features.map((feature, index) => (
             <div 
               key={feature.title} 
@@ -74,8 +75,43 @@ const Features = () => {
             </div>
           ))}
         </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-16">
+          <div>
+            <img 
+              src="/lovable-uploads/8e38db3b-c618-4827-bc84-c89ef43ebef7.png" 
+              alt="Medizinisches Cannabis Lager" 
+              className="rounded-xl shadow-lg w-full h-auto"
+              onError={(e) => {
+                console.error("Bild konnte nicht geladen werden:", e);
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = "/placeholder.svg";
+              }}
+            />
+          </div>
+          <div className="space-y-6">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {t('features.warehouse.title') || "Professionelles Großhandels-Lager"}
+            </h3>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              {t('features.warehouse.description') || "Unser GDP-zertifiziertes Lager garantiert die ordnungsgemäße Lagerung und Handhabung aller medizinischen Cannabisprodukte unter streng kontrollierten Bedingungen."}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300">
+                WDA
+              </span>
+              <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300">
+                GDP
+              </span>
+              <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300">
+                MedCanG
+              </span>
+            </div>
+          </div>
+        </div>
         
-        <div className="mb-16 text-center mt-16">
+        <div className="text-center mt-16">
           <img 
             src="/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png" 
             alt="Novacana" 

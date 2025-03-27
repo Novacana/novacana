@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -9,7 +10,6 @@ const Hero = () => {
 
   return (
     <section className="relative py-20 md:py-32 overflow-hidden bg-white dark:bg-gray-900">
-      {/* Background design elements */}
       <div className="absolute inset-0 z-0">
         <div className="absolute right-0 top-1/4 w-72 h-72 rounded-full bg-gray-100/70 dark:bg-gray-800/30 blur-3xl"></div>
         <div className="absolute left-1/4 bottom-0 w-96 h-96 rounded-full bg-gray-100/50 dark:bg-gray-800/20 blur-3xl"></div>
