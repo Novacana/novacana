@@ -31,24 +31,32 @@ const ProtectedRoute = ({
       const hasAdminRole = await checkIsAdmin(userId);
       console.log("Admin-Status für Benutzer:", userId, hasAdminRole);
       setIsAdmin(hasAdminRole);
+      return hasAdminRole;
     } catch (error) {
       console.error("Fehler beim Überprüfen des Admin-Status:", error);
       setIsAdmin(false);
+      return false;
     }
   };
 
   useEffect(() => {
     console.log("ProtectedRoute initialisiert");
+    let isMounted = true;
     
     // First set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log("Auth-Status geändert:", event, currentSession?.user?.email);
+        
+        if (!isMounted) return;
+        
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         if (currentSession?.user) {
-          checkAdminStatus(currentSession.user.id);
+          console.log("Benutzer eingeloggt, prüfe Admin-Status...");
+          const isAdminUser = await checkAdminStatus(currentSession.user.id);
+          console.log("Admin-Status nach Prüfung:", isAdminUser);
         } else {
           setIsAdmin(false);
         }
@@ -58,21 +66,37 @@ const ProtectedRoute = ({
     );
 
     // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      console.log("Bestehende Session gefunden:", currentSession?.user?.email);
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      
-      if (currentSession?.user) {
-        checkAdminStatus(currentSession.user.id);
-      } else {
-        setIsAdmin(false);
+    const checkSession = async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        console.log("Bestehende Session gefunden:", currentSession?.user?.email);
+        
+        if (!isMounted) return;
+        
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        
+        if (currentSession?.user) {
+          console.log("Benutzer hat aktive Session, prüfe Admin-Status...");
+          const isAdminUser = await checkAdminStatus(currentSession.user.id);
+          console.log("Admin-Status nach Prüfung:", isAdminUser);
+        } else {
+          setIsAdmin(false);
+        }
+        
+        setLoading(false);
+      } catch (error) {
+        console.error("Fehler beim Abrufen der Session:", error);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-      
-      setLoading(false);
-    });
+    };
+    
+    checkSession();
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
   }, []);
@@ -112,6 +136,7 @@ const ProtectedRoute = ({
 
   // If admin only route, check user role
   if (adminOnly && !isAdmin) {
+    console.log("Zugriff verweigert: Admin-Rechte erforderlich");
     toast({
       title: "Zugriff verweigert",
       description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",

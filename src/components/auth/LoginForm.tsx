@@ -24,12 +24,37 @@ const LoginForm = () => {
   const searchParams = new URLSearchParams(location.search);
   const returnUrl = searchParams.get("returnUrl") || "/dashboard";
 
+  // Hilfsfunktion zum Debuggen
+  const debugLogin = async () => {
+    try {
+      // Prüfen, ob der Benutzer in der Auth-Datenbank existiert
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      console.log("Auth User Data:", authData);
+      if (authError) console.error("Auth Error:", authError);
+
+      // Admin-Status prüfen (falls Benutzer existiert)
+      if (authData?.user) {
+        const { data: roleData, error: roleError } = await supabase.rpc('has_role', {
+          _user_id: authData.user.id,
+          _role: 'admin'
+        });
+        console.log("Admin Role Check:", roleData);
+        if (roleError) console.error("Role Check Error:", roleError);
+      }
+    } catch (err) {
+      console.error("Debug Error:", err);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
+      console.log("Versuche Anmeldung mit:", email);
+      
+      // Anmeldung versuchen
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -37,22 +62,36 @@ const LoginForm = () => {
 
       if (error) {
         console.error("Login error:", error);
-        throw error;
+        // Detailliertere Fehlermeldung
+        if (error.message.includes("Invalid login credentials")) {
+          setError("Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail und Ihr Passwort.");
+        } else {
+          setError(`Fehler bei der Anmeldung: ${error.message}`);
+        }
+        return;
       }
 
       if (data?.user) {
-        console.log("Login successful:", data.user);
+        console.log("Login erfolgreich:", data.user);
+        
+        // Debug-Informationen nach der Anmeldung
+        await debugLogin();
+        
         toast({
           title: "Erfolgreich angemeldet",
           description: `Willkommen zurück, ${data.user.email}!`,
         });
-        navigate(returnUrl);
+        
+        // Kurze Verzögerung, um sicherzustellen, dass die Session aktualisiert wird
+        setTimeout(() => {
+          navigate(returnUrl);
+        }, 500);
       }
     } catch (err: any) {
+      console.error("Login error:", err);
       setError(
         err.message || "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
       );
-      console.error("Login error:", err);
     } finally {
       setLoading(false);
     }
