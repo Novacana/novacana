@@ -1,79 +1,128 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { addUserRole } from "./roleUtils";
+import { toast } from "@/hooks/use-toast";
 
-/**
- * Verifiziert eine Apotheke im Rahmen des GDP-konformen Qualifizierungsprozesses
- * @param userId - Die ID des Benutzers
- * @param verificationData - Die Überprüfungsdaten der Apotheke
- */
-export const verifyPharmacy = async (userId: string, verificationData: {
+interface VerificationData {
   licenseId: string;
   businessDocuments: string[];
-  contactDetails: Record<string, string>;
-  verificationStatus?: string;
-}): Promise<boolean> => {
+  contactDetails: {
+    name: string;
+    address: string;
+    city: string;
+    postalCode: string;
+    phone: string;
+    contactPerson?: string;
+    email?: string;
+  };
+  verificationStatus: 'pending' | 'approved' | 'rejected';
+}
+
+/**
+ * Reicht eine Apothekenverifizierung zur Überprüfung ein
+ * @param userId Die ID des Benutzers, der verifiziert werden soll
+ * @param data Die Verifizierungsdaten
+ * @returns true, wenn erfolgreich, sonst false
+ */
+export const verifyPharmacy = async (
+  userId: string, 
+  data: VerificationData
+): Promise<boolean> => {
   try {
-    console.log(`Verifiziere Apotheke für Benutzer ${userId}`);
+    console.log("Einreichen der Verifizierung für Benutzer:", userId, data);
     
-    // Erstellen des Verifikationseintrags
-    const { error } = await supabase
+    // Prüfen, ob der Benutzer bereits eine Verifizierung hat
+    const { data: existingVerification, error: checkError } = await supabase
+      .from('pharmacy_verification')
+      .select('id, verification_status')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    if (checkError) {
+      console.error("Fehler beim Prüfen auf bestehende Verifizierung:", checkError);
+      throw new Error("Fehler beim Prüfen auf bestehende Verifizierung: " + checkError.message);
+    }
+    
+    // Wenn bereits eine Verifizierung existiert, aktualisieren wir sie nur, wenn sie abgelehnt wurde
+    if (existingVerification) {
+      if (existingVerification.verification_status === 'rejected') {
+        // Bei abgelehnter Verifizierung aktualisieren wir die Daten
+        const { error: updateError } = await supabase
+          .from('pharmacy_verification')
+          .update({
+            license_id: data.licenseId,
+            business_documents: data.businessDocuments,
+            contact_details: data.contactDetails,
+            verification_status: 'pending',
+            submitted_at: new Date().toISOString(),
+            rejection_reason: null,
+            reviewed_at: null,
+            reviewer_id: null
+          })
+          .eq('id', existingVerification.id);
+        
+        if (updateError) {
+          console.error("Fehler beim Aktualisieren der Verifizierung:", updateError);
+          throw new Error("Fehler beim Aktualisieren der Verifizierung: " + updateError.message);
+        }
+        
+        return true;
+      } else {
+        // Bei ausstehender oder genehmigter Verifizierung keine Änderung
+        console.log("Verifizierung existiert bereits mit Status:", existingVerification.verification_status);
+        return true;
+      }
+    }
+    
+    // Neue Verifizierung einreichen
+    const { error: insertError } = await supabase
       .from('pharmacy_verification')
       .insert({
         user_id: userId,
-        license_id: verificationData.licenseId,
-        business_documents: verificationData.businessDocuments,
-        contact_details: verificationData.contactDetails,
-        verification_status: verificationData.verificationStatus || 'pending'
-        // submitted_at wird automatisch durch den DEFAULT-Wert in der Datenbank gesetzt
+        license_id: data.licenseId,
+        business_documents: data.businessDocuments,
+        contact_details: data.contactDetails,
+        verification_status: 'pending'
       });
     
-    if (error) {
-      console.error("Fehler beim Erstellen des Verifikationseintrags:", error);
-      return false;
+    if (insertError) {
+      console.error("Fehler beim Einreichen der Verifizierung:", insertError);
+      throw new Error("Fehler beim Einreichen der Verifizierung: " + insertError.message);
     }
     
-    // Dem Benutzer die Apotheker-Rolle zuweisen
-    await addUserRole(userId, 'pharmacist');
-    
-    console.log(`Apothekenverifizierung für Benutzer ${userId} eingereicht`);
+    console.log("Verifizierung erfolgreich eingereicht");
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Fehler bei der Apothekenverifizierung:", error);
+    toast({
+      title: "Fehler bei der Verifizierung",
+      description: error.message || "Es ist ein unbekannter Fehler aufgetreten.",
+      variant: "destructive"
+    });
     return false;
   }
 };
 
 /**
- * Holt den Status der Apothekenverifizierung für einen Benutzer
- * @param userId - Die ID des Benutzers
+ * Prüft den Verifizierungsstatus einer Apotheke
+ * @param userId Die ID des Benutzers
+ * @returns Den Verifizierungsstatus oder null, wenn keine Verifizierung existiert
  */
-export const getPharmacyVerificationStatus = async (userId: string): Promise<{
-  status: string;
-  submittedAt: Date | null;
-  reviewedAt: Date | null;
-} | null> => {
+export const getPharmacyVerificationStatus = async (userId: string): Promise<string | null> => {
   try {
-    console.log(`Hole Verifizierungsstatus für Benutzer ${userId}`);
+    if (!userId) return null;
     
     const { data, error } = await supabase
       .from('pharmacy_verification')
-      .select('verification_status, submitted_at, reviewed_at')
+      .select('verification_status')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
     
     if (error) {
       console.error("Fehler beim Abrufen des Verifizierungsstatus:", error);
       return null;
     }
     
-    if (!data) return null;
-    
-    return {
-      status: data.verification_status,
-      submittedAt: data.submitted_at ? new Date(data.submitted_at) : null,
-      reviewedAt: data.reviewed_at ? new Date(data.reviewed_at) : null
-    };
+    return data ? data.verification_status : null;
   } catch (error) {
     console.error("Fehler beim Abrufen des Verifizierungsstatus:", error);
     return null;

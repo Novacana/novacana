@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { verifyPharmacy } from "@/utils/authUtils";
+import { verifyPharmacy, getPharmacyVerificationStatus } from "@/utils/pharmacyUtils";
 import { Upload, FilePlus, FileCheck, AlertCircle, CheckCircle, Clock } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -36,6 +37,19 @@ const PharmacyVerification: React.FC<PharmacyVerificationProps> = ({ userId, onC
     uploadedDocuments: [] as { name: string; url: string; type: string }[]
   });
 
+  // Bestehenden Verifizierungsstatus abrufen
+  useEffect(() => {
+    const checkVerificationStatus = async () => {
+      const status = await getPharmacyVerificationStatus(userId);
+      setVerificationStatus(status);
+    };
+
+    if (userId) {
+      checkVerificationStatus();
+    }
+  }, [userId]);
+
+  // Input-Handler
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -69,6 +83,7 @@ const PharmacyVerification: React.FC<PharmacyVerificationProps> = ({ userId, onC
         });
 
       if (uploadError) {
+        console.error("Upload-Fehler:", uploadError);
         throw new Error(`Fehler beim Hochladen: ${uploadError.message}`);
       }
 
@@ -76,6 +91,10 @@ const PharmacyVerification: React.FC<PharmacyVerificationProps> = ({ userId, onC
       const { data: urlData } = supabase.storage
         .from('pharmacy-documents')
         .getPublicUrl(filePath);
+
+      if (!urlData || !urlData.publicUrl) {
+        throw new Error("Konnte keine öffentliche URL für das Dokument generieren");
+      }
 
       // Dokument zur Liste hinzufügen
       const newDocument = {
@@ -94,9 +113,10 @@ const PharmacyVerification: React.FC<PharmacyVerificationProps> = ({ userId, onC
         description: `Datei "${file.name}" wurde hochgeladen.`,
       });
     } catch (error: any) {
+      console.error("Upload-Fehler:", error);
       toast({
         title: "Upload fehlgeschlagen",
-        description: error.message,
+        description: error.message || "Ein unbekannter Fehler ist aufgetreten",
         variant: "destructive"
       });
     } finally {
@@ -178,7 +198,7 @@ const PharmacyVerification: React.FC<PharmacyVerificationProps> = ({ userId, onC
           contactPerson: formData.contactPerson,
           email: formData.email
         },
-        verificationStatus: 'pending'
+        verificationStatus: 'pending' as const
       };
       
       // Verifizierung einreichen
@@ -195,15 +215,21 @@ const PharmacyVerification: React.FC<PharmacyVerificationProps> = ({ userId, onC
         throw new Error("Die Verifizierung konnte nicht abgeschlossen werden.");
       }
     } catch (error: any) {
+      console.error("Fehler bei der Verifizierung:", error);
       toast({
         title: "Fehler bei der Verifizierung",
-        description: error.message,
+        description: error.message || "Ein unbekannter Fehler ist aufgetreten",
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Keine Komponente anzeigen, wenn kein Benutzer vorhanden ist
+  if (!userId) {
+    return null;
+  }
 
   // Statusanzeige bei erfolgreichem Einreichen
   if (verificationStatus === 'pending') {
@@ -241,6 +267,38 @@ const PharmacyVerification: React.FC<PharmacyVerificationProps> = ({ userId, onC
         </CardContent>
       </Card>
     );
+  }
+
+  // Bei bereits genehmigter Verifizierung
+  if (verificationStatus === 'approved') {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-green-500" />
+            Verifizierung abgeschlossen
+          </CardTitle>
+          <CardDescription>
+            Ihre Apotheke wurde erfolgreich verifiziert
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Alert className="bg-green-50 border-green-200 text-green-800">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertTitle>Verifizierung genehmigt</AlertTitle>
+            <AlertDescription>
+              Ihre Apotheke wurde erfolgreich verifiziert. Sie haben nun Zugriff auf alle Funktionen für Apotheken.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Bei abgelehnter Verifizierung neuen Antrag ermöglichen
+  if (verificationStatus === 'rejected') {
+    // Formular für die erneute Einreichung anzeigen
+    // Die vorhandene Formularlogik wird hier wiederverwendet
   }
 
   // Mehrstufiger Verifizierungsprozess
