@@ -7,7 +7,7 @@ import { Product } from "@/types";
 import AdminLayout from "@/components/layout/AdminLayout";
 import ProductForm from "@/components/admin/ProductForm";
 import ProductSearch from "@/components/admin/ProductSearch";
-import ProductList from "@/components/admin/ProductList";
+import ProductTable from "@/components/admin/ProductTable";
 import ProductImport from "@/components/admin/ProductImport"; 
 import { useProducts } from "@/hooks/useProducts";
 import { 
@@ -25,7 +25,6 @@ const AdminProducts = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showImport, setShowImport] = useState(false);
   
   const { 
     products, 
@@ -60,17 +59,12 @@ const AdminProducts = () => {
     setShowAddForm(true);
   };
 
-  const handleImportClick = () => {
-    setShowImport(true);
-  };
-
   const handleProductsImported = (productsData: Omit<Product, "id" | "createdAt" | "updatedAt">[]) => {
     addProduct(productsData);
-    setShowImport(false);
   };
 
   return (
-    <AdminLayout title="Product Management">
+    <AdminLayout title="Produkt Management">
       <div className="flex flex-col space-y-6">
         <Tabs defaultValue="products" className="w-full">
           <TabsList className="mb-4">
@@ -88,18 +82,22 @@ const AdminProducts = () => {
             />
 
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, index) => (
-                  <div key={index} className="animate-pulse">
-                    <div className="aspect-video rounded bg-gray-200 dark:bg-gray-700 mb-4" />
-                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-3/4" />
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4 w-1/2" />
-                    <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded" />
-                  </div>
-                ))}
+              <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4">
+                <div className="animate-pulse space-y-4">
+                  <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                  {[...Array(5)].map((_, index) => (
+                    <div key={index} className="flex justify-between">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/6"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/6"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/6"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/6"></div>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : (
-              <ProductList 
+              <ProductTable 
                 products={products}
                 searchTerm={searchTerm}
                 onEdit={handleEditClick}
@@ -118,7 +116,7 @@ const AdminProducts = () => {
       <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add New Product</DialogTitle>
+            <DialogTitle>Neues Produkt hinzufügen</DialogTitle>
           </DialogHeader>
           <ProductForm onSubmit={handleAddProduct} />
         </DialogContent>
@@ -136,7 +134,7 @@ const AdminProducts = () => {
       >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Product</DialogTitle>
+            <DialogTitle>Produkt bearbeiten</DialogTitle>
           </DialogHeader>
           {currentProduct && (
             <ProductForm 
