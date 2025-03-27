@@ -17,13 +17,6 @@ export const handler = async (req: Request) => {
   }
 
   try {
-    // Supabase-Client mit SERVICE_ROLE erstellen (hat höhere Berechtigungen)
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
-    );
-
     // Anfragedaten verarbeiten
     const { action, userId, role } = await req.json();
     
@@ -44,6 +37,13 @@ export const handler = async (req: Request) => {
       );
     }
 
+    // Supabase-Client mit SERVICE_ROLE erstellen (hat höhere Berechtigungen)
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    );
+    
     let result;
     
     // Aktion basierend auf dem Parameter ausführen

@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -91,7 +92,7 @@ export const addUserRole = async (userId: string, role: 'admin' | 'user' | 'phar
   try {
     console.log(`Füge Rolle ${role} für Benutzer ${userId} hinzu`);
 
-    // Direkte SQL-Anfrage mit der service_role verwenden, um RLS zu umgehen
+    // Edge-Funktion aufrufen, um die Rolle hinzuzufügen
     const { data, error } = await supabase.functions.invoke('manage-user-roles', {
       body: { 
         action: 'add',
@@ -122,7 +123,7 @@ export const removeUserRole = async (userId: string, role: 'admin' | 'user' | 'p
   try {
     console.log(`Entferne Rolle ${role} von Benutzer ${userId}`);
     
-    // Edge-Funktion aufrufen, um RLS zu umgehen
+    // Edge-Funktion aufrufen, um die Rolle zu entfernen
     const { data, error } = await supabase.functions.invoke('manage-user-roles', {
       body: { 
         action: 'remove',
