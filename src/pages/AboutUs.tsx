@@ -1,16 +1,14 @@
-
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Leaf, Award, Users, Factory, Truck, Package, Box } from "lucide-react";
-
 const AboutUs = () => {
-  const { t } = useLanguage();
-  
-  return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
+  const {
+    t
+  } = useLanguage();
+  return <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
       <Navbar />
       <main className="flex-1">
         <section className="py-16 md:py-24 bg-gray-50 dark:bg-gray-800/50 relative overflow-hidden">
@@ -56,16 +54,11 @@ const AboutUs = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-tr from-green-200/30 to-blue-200/30 dark:from-green-900/20 dark:to-blue-900/20 rounded-2xl blur-xl transform rotate-2 scale-95"></div>
                 <Card className="relative overflow-hidden border-0 shadow-xl">
-                  <img 
-                    src="/lovable-uploads/8bf41eac-d2f2-4214-9aa7-68fd837d1862.png" 
-                    alt="Medizinisches Cannabis" 
-                    className="w-full h-auto object-cover"
-                    onError={(e) => {
-                      console.error("Image failed to load:", e);
-                      const target = e.target as HTMLImageElement;
-                      target.src = "https://placehold.co/800x400/gray/white?text=Medizinisches+Cannabis";
-                    }}
-                  />
+                  <img alt="Medizinisches Cannabis" className="w-full h-auto object-cover" onError={e => {
+                  console.error("Image failed to load:", e);
+                  const target = e.target as HTMLImageElement;
+                  target.src = "https://placehold.co/800x400/gray/white?text=Medizinisches+Cannabis";
+                }} src="/lovable-uploads/6be59494-1548-4c0d-b739-4625ec70c368.png" />
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                       {t('aboutUs.established') || "Gegründet 2019"}
@@ -85,16 +78,11 @@ const AboutUs = () => {
               </h2>
               
               <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 overflow-hidden">
-                <img 
-                  src="/lovable-uploads/b8e522e4-7a6e-483b-8d83-33bf4e6d3014.png" 
-                  alt="Supply Chain" 
-                  className="w-full h-auto rounded-xl mb-8"
-                  onError={(e) => {
-                    console.error("Supply Chain image failed to load:", e);
-                    const target = e.target as HTMLImageElement;
-                    target.src = "https://placehold.co/1200x600/gray/white?text=Supply+Chain";
-                  }}
-                />
+                <img src="/lovable-uploads/b8e522e4-7a6e-483b-8d83-33bf4e6d3014.png" alt="Supply Chain" className="w-full h-auto rounded-xl mb-8" onError={e => {
+                console.error("Supply Chain image failed to load:", e);
+                const target = e.target as HTMLImageElement;
+                target.src = "https://placehold.co/1200x600/gray/white?text=Supply+Chain";
+              }} />
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                   <div className="flex flex-col items-center text-center">
@@ -252,8 +240,6 @@ const AboutUs = () => {
         </section>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default AboutUs;
