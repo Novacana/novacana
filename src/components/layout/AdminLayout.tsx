@@ -1,9 +1,12 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { checkIsAdmin } from "@/utils/authUtils";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -17,6 +20,47 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   backUrl = "/admin" 
 }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Überprüfen, ob der Benutzer Admin-Rechte hat
+  useEffect(() => {
+    const checkAdminAccess = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+          toast({
+            title: "Zugriff verweigert",
+            description: "Sie müssen angemeldet sein, um den Admin-Bereich zu nutzen.",
+            variant: "destructive"
+          });
+          navigate("/login?returnUrl=/admin");
+          return;
+        }
+        
+        const isAdmin = await checkIsAdmin(session.user.id);
+        console.log("Admin-Status für Benutzer:", session.user.id, isAdmin);
+        
+        if (!isAdmin) {
+          toast({
+            title: "Zugriff verweigert",
+            description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
+            variant: "destructive"
+          });
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        console.error("Fehler beim Überprüfen der Admin-Rechte:", error);
+        toast({
+          title: "Fehler",
+          description: "Bei der Überprüfung Ihrer Berechtigungen ist ein Fehler aufgetreten.",
+          variant: "destructive"
+        });
+        navigate("/dashboard");
+      }
+    };
+    
+    checkAdminAccess();
+  }, [navigate, toast]);
   
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">

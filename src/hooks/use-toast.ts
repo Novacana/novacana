@@ -7,7 +7,7 @@ import type {
 } from "@/components/ui/toast";
 
 const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 1000000;
+const TOAST_REMOVE_DELAY = 10000; // Reduziert von 1000000 auf 10000 (10 Sekunden)
 
 type ToasterToast = ToastProps & {
   id: string;
@@ -147,6 +147,9 @@ function toast({ ...props }: Toast) {
       toast: { ...props, id },
     });
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
+
+  // Protokollieren des Toasts, um Debugging zu erleichtern
+  console.log("Toast erstellt:", { id, ...props });
 
   dispatch({
     type: "ADD_TOAST",
