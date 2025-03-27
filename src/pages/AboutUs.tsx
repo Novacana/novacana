@@ -78,11 +78,11 @@ const AboutUs = () => {
               </h2>
               
               <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 overflow-hidden">
-                <img src="/lovable-uploads/b8e522e4-7a6e-483b-8d83-33bf4e6d3014.png" alt="Supply Chain" className="w-full h-auto rounded-xl mb-8" onError={e => {
+                <img alt="Supply Chain" className="w-full h-auto rounded-xl mb-8" onError={e => {
                 console.error("Supply Chain image failed to load:", e);
                 const target = e.target as HTMLImageElement;
                 target.src = "https://placehold.co/1200x600/gray/white?text=Supply+Chain";
-              }} />
+              }} src="https://cannabis-apotheke.de/wp-content/uploads/gmp-farm-blog-cannabis-apotheke-1024x683.jpeg" />
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                   <div className="flex flex-col items-center text-center">
