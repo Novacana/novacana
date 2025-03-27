@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   name: string;
@@ -19,10 +18,11 @@ export interface Product {
   shortDescription: string;
   price: number;
   imageUrl: string;
-  category: 'flower' | 'extract' | 'oil' | 'capsule' | 'other';
+  category: string;
   stock: number;
   thcContent?: string;
   cbdContent?: string;
+  terpenes?: string[];
   weight?: string;
   recommendedDosage?: string;
   manufacturer?: string;

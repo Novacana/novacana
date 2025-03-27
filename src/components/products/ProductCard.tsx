@@ -5,13 +5,16 @@ import { Product } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { ShoppingCart, Info } from "lucide-react";
+import { ShoppingCart, Info, Flower } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const { t, language } = useLanguage();
+  
   const {
     id,
     name,
@@ -21,10 +24,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
     category,
     thcContent,
     cbdContent,
+    terpenes,
   } = product;
 
   // Format price to EUR
-  const formattedPrice = new Intl.NumberFormat("de-DE", {
+  const formattedPrice = new Intl.NumberFormat(language === "de" ? "de-DE" : "en-US", {
     style: "currency",
     currency: "EUR",
   }).format(price);
@@ -60,7 +64,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </p>
           
           <div className="flex justify-between items-center pt-2">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {thcContent && (
                 <span className="inline-flex items-center rounded-full bg-amber-100 dark:bg-amber-900/30 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-300">
                   THC: {thcContent}
@@ -69,6 +73,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
               {cbdContent && (
                 <span className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/30 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">
                   CBD: {cbdContent}
+                </span>
+              )}
+              {terpenes && terpenes[0] && (
+                <span className="inline-flex items-center rounded-full bg-purple-100 dark:bg-purple-900/30 px-2.5 py-0.5 text-xs font-medium text-purple-800 dark:text-purple-300">
+                  <Flower className="h-3 w-3 mr-1" />
+                  {terpenes[0]}
                 </span>
               )}
             </div>
@@ -84,14 +94,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <Link to={`/products/${id}`}>
             <Button variant="ghost" size="sm" className="rounded-full w-8 h-8 p-0">
               <Info size={16} />
-              <span className="sr-only">View details</span>
+              <span className="sr-only">{language === "de" ? "Details anzeigen" : "View details"}</span>
             </Button>
           </Link>
         </div>
         
         <Button className="w-full gap-1">
           <ShoppingCart size={16} />
-          <span>Add to Cart</span>
+          <span>{language === "de" ? "In den Warenkorb" : "Add to Cart"}</span>
         </Button>
       </CardFooter>
     </Card>
