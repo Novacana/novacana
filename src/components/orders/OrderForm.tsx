@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import { CartItem, Product, OrderItem, Address } from "@/types";
 import { ShoppingCart, Trash2, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toSnakeCase } from "@/types/supabase";
+import { Json } from "@/integrations/supabase/types";
 
 interface OrderFormProps {
   cartItems: CartItem[];
@@ -51,7 +51,6 @@ const OrderForm = ({
     notes: "",
   });
 
-  // Get product details for each cart item
   const cartProducts = cartItems.map((item) => {
     const product = products.find((p) => p.id === item.productId);
     return {
@@ -60,7 +59,6 @@ const OrderForm = ({
     };
   });
 
-  // Calculate totals
   const subtotal = cartProducts.reduce((total, item) => {
     if (!item.product) return total;
     return total + item.product.price * item.quantity;
@@ -98,7 +96,6 @@ const OrderForm = ({
       return;
     }
     
-    // Check for required fields
     if (!formData.shippingName || !formData.shippingStreet || !formData.shippingCity || 
         !formData.shippingPostalCode || !formData.billingName || !formData.billingStreet || 
         !formData.billingCity || !formData.billingPostalCode) {
@@ -113,14 +110,12 @@ const OrderForm = ({
     setIsLoading(true);
 
     try {
-      // Get the current user
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         throw new Error("You must be logged in to place an order");
       }
       
-      // Create order items from cart
       const orderItems: OrderItem[] = cartProducts.map(item => ({
         productId: item.productId,
         name: item.product?.name || '',
@@ -128,7 +123,6 @@ const OrderForm = ({
         price: item.product?.price || 0,
       }));
       
-      // Create shipping and billing addresses
       const shippingAddress: Address = {
         name: formData.shippingName,
         street: formData.shippingStreet,
@@ -145,7 +139,6 @@ const OrderForm = ({
         country: formData.billingCountry
       };
       
-      // Create order object for Supabase with proper JSON conversion
       const orderData = {
         user_id: user.id,
         products: orderItems as unknown as Json,
@@ -157,7 +150,6 @@ const OrderForm = ({
         notes: formData.notes || null
       };
       
-      // Insert order into Supabase
       const { data, error } = await supabase
         .from('orders')
         .insert(orderData)
@@ -189,7 +181,6 @@ const OrderForm = ({
     }
   };
 
-  // Format price to EUR
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("de-DE", {
       style: "currency",
@@ -197,7 +188,6 @@ const OrderForm = ({
     }).format(price);
   };
 
-  // Use the same billing address as shipping
   const copyShippingToBilling = () => {
     setFormData({
       ...formData,
@@ -239,7 +229,6 @@ const OrderForm = ({
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Cart Items */}
           <div className="glass-card p-6 rounded-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -339,7 +328,6 @@ const OrderForm = ({
             </div>
           </div>
           
-          {/* Shipping & Payment */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="glass-card p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -512,7 +500,6 @@ const OrderForm = ({
             </div>
           </div>
           
-          {/* Order Notes */}
           <div className="glass-card p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Order Notes
@@ -531,7 +518,6 @@ const OrderForm = ({
             </div>
           </div>
           
-          {/* Submit Button */}
           <div className="flex justify-end">
             <Button type="submit" size="lg" disabled={isLoading || cartProducts.length === 0}>
               {isLoading ? (

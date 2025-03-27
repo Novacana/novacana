@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Order, OrderItem, Address } from "@/types";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { toSnakeCase, toCamelCase } from "@/types/supabase";
+import { Json } from "@/integrations/supabase/types";
 
 // Status color map
 const statusColorMap: {
@@ -55,17 +55,17 @@ const AdminOrders = () => {
       
       // Convert data to our Order type with proper JSON handling
       const convertedData: Order[] = data.map(item => {
-        const products = typeof item.products === 'string' 
+        const products = (typeof item.products === 'string' 
           ? JSON.parse(item.products) 
-          : item.products as unknown as OrderItem[];
+          : item.products) as OrderItem[];
           
-        const shippingAddress = typeof item.shipping_address === 'string'
+        const shippingAddress = (typeof item.shipping_address === 'string'
           ? JSON.parse(item.shipping_address)
-          : item.shipping_address as unknown as Address;
+          : item.shipping_address) as Address;
           
-        const billingAddress = typeof item.billing_address === 'string'
+        const billingAddress = (typeof item.billing_address === 'string'
           ? JSON.parse(item.billing_address)
-          : item.billing_address as unknown as Address;
+          : item.billing_address) as Address;
         
         return {
           id: item.id,

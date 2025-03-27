@@ -30,7 +30,7 @@ export interface Product {
   origin?: string;
   createdAt: Date;
   updatedAt: Date;
-  // Adding the missing properties from the mock data
+  // Adding these properties explicitly since they appear in the code
   manufacturer?: string;
   countryOfOrigin?: string;
   recommendedDosage?: string;

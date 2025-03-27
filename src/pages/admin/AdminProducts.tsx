@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,6 @@ const AdminProducts = () => {
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  // Fetch products
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -40,7 +38,6 @@ const AdminProducts = () => {
 
       if (error) throw error;
       
-      // Convert data to our Product type
       const convertedData: Product[] = data.map(item => ({
         id: item.id,
         name: item.name,
@@ -78,12 +75,9 @@ const AdminProducts = () => {
     fetchProducts();
   }, []);
 
-  // Handle product creation
   const handleAddProduct = async (productData: Omit<Product, "id" | "createdAt" | "updatedAt">[]) => {
     try {
-      // Prepare data for Supabase by removing non-database fields
       const supabaseData = productData.map(product => {
-        // Create a new object with only the fields that exist in the database
         const {
           manufacturer,
           countryOfOrigin,
@@ -91,15 +85,16 @@ const AdminProducts = () => {
           ...dbProduct
         } = product;
         
-        // Convert camelCase to snake_case for Supabase
         return toSnakeCase(dbProduct);
       });
-      
-      const { error } = await supabase
-        .from('products')
-        .insert(supabaseData);
 
-      if (error) throw error;
+      if (supabaseData.length > 0) {
+        const { error } = await supabase
+          .from('products')
+          .insert(supabaseData[0]);
+
+        if (error) throw error;
+      }
 
       toast({
         title: "Product added",
@@ -118,10 +113,8 @@ const AdminProducts = () => {
     }
   };
 
-  // Handle product update
   const handleUpdateProduct = async (id: string, updates: Partial<Omit<Product, "id" | "createdAt" | "updatedAt">>) => {
     try {
-      // Remove non-database fields before sending to Supabase
       const {
         manufacturer,
         countryOfOrigin,
@@ -129,7 +122,6 @@ const AdminProducts = () => {
         ...dbUpdates
       } = updates;
       
-      // Convert camelCase to snake_case for Supabase
       const snakeCaseUpdates = toSnakeCase(dbUpdates);
       
       const { error } = await supabase
@@ -157,7 +149,6 @@ const AdminProducts = () => {
     }
   };
 
-  // Handle product deletion
   const handleDeleteProduct = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
@@ -185,7 +176,6 @@ const AdminProducts = () => {
     }
   };
 
-  // Filter products based on search term
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -195,7 +185,6 @@ const AdminProducts = () => {
 
   return (
     <AdminLayout title="Product Management">
-      {/* Search and Add Product Row */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -233,7 +222,6 @@ const AdminProducts = () => {
         </div>
       </div>
 
-      {/* Products List */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, index) => (
