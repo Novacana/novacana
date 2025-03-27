@@ -22,13 +22,13 @@ const About = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-gray-200/30 to-gray-300/30 dark:from-gray-800/20 dark:to-gray-700/20 rounded-2xl blur-xl transform rotate-3 scale-95"></div>
               <div className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl">
                 <img 
-                  src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1169&q=80" 
-                  alt="Apothekeninterieur" 
-                  className="w-full h-64 object-cover"
+                  src="/lovable-uploads/3cafb960-76e3-4c56-8900-a64f3a719a62.png" 
+                  alt="Regulatorische Konformität" 
+                  className="w-full h-auto object-cover"
                   onError={(e) => {
                     console.error("Image failed to load:", e);
                     const target = e.target as HTMLImageElement;
-                    target.src = "https://placehold.co/1170x640/gray/white?text=Apotheke";
+                    target.src = "https://placehold.co/1170x640/gray/white?text=Regulatorische+Konformität";
                   }}
                 />
                 <div className="p-6">
@@ -42,9 +42,10 @@ const About = () => {
                     <div className="text-xs text-gray-500 dark:text-gray-400 inline-block rounded-full px-3 py-1 bg-gray-100 dark:bg-gray-700">
                       {t('about.card.established')}
                     </div>
-                    <div className="flex space-x-2">
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">GMP</span>
+                    <div className="flex space-x-3">
+                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">WDA</span>
                       <span className="text-xs font-medium text-gray-700 dark:text-gray-300">GDP</span>
+                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">MedCanG</span>
                     </div>
                   </div>
                 </div>

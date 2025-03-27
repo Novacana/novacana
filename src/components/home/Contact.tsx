@@ -5,9 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Phone, Mail, MapPin, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Contact = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,12 +29,20 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
+    // Simulate form submission - in production, this would make an API call to send the email
     setTimeout(() => {
-      toast({
-        title: "Message Sent",
-        description: "Thank you for your message. We'll get back to you soon.",
+      console.log("Contact form submitted:", {
+        to: "info@novacana.de",
+        from: formData.email,
+        subject: `Kontaktanfrage von ${formData.name} (${formData.pharmacyName})`,
+        message: formData.message
       });
+      
+      toast({
+        title: t('contact.message.sent') || "Nachricht gesendet",
+        description: t('contact.message.confirmation') || "Vielen Dank für Ihre Nachricht. Wir werden uns in Kürze bei Ihnen melden.",
+      });
+      
       setFormData({
         name: "",
         email: "",
@@ -54,10 +64,10 @@ const Contact = () => {
       <div className="container-content relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Get in Touch
+            {t('contact.title') || "Kontakt"}
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Have questions about our products or services? Reach out to our team.
+            {t('contact.description') || "Haben Sie Fragen zu unseren Produkten oder Dienstleistungen? Kontaktieren Sie unser Team."}
           </p>
         </div>
 
@@ -65,19 +75,19 @@ const Contact = () => {
           {/* Contact Form */}
           <div className="glass-card rounded-xl p-6 md:p-8 shadow-lg">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-              Send Us a Message
+              {t('contact.form.title') || "Senden Sie uns eine Nachricht"}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Name
+                  {t('contact.form.name') || "Name"}
                 </label>
                 <Input
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Your name"
+                  placeholder={t('contact.form.name.placeholder') || "Ihr Name"}
                   required
                   className="w-full"
                 />
@@ -85,7 +95,7 @@ const Contact = () => {
               
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Email
+                  {t('contact.form.email') || "E-Mail"}
                 </label>
                 <Input
                   id="email"
@@ -93,7 +103,7 @@ const Contact = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Your email"
+                  placeholder={t('contact.form.email.placeholder') || "Ihre E-Mail-Adresse"}
                   required
                   className="w-full"
                 />
@@ -101,28 +111,28 @@ const Contact = () => {
               
               <div>
                 <label htmlFor="pharmacyName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Pharmacy Name
+                  {t('contact.form.pharmacy') || "Name der Apotheke"}
                 </label>
                 <Input
                   id="pharmacyName"
                   name="pharmacyName"
                   value={formData.pharmacyName}
                   onChange={handleChange}
-                  placeholder="Your pharmacy name"
+                  placeholder={t('contact.form.pharmacy.placeholder') || "Name Ihrer Apotheke"}
                   className="w-full"
                 />
               </div>
               
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Message
+                  {t('contact.form.message') || "Nachricht"}
                 </label>
                 <Textarea
                   id="message"
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="How can we help you?"
+                  placeholder={t('contact.form.message.placeholder') || "Wie können wir Ihnen helfen?"}
                   required
                   rows={4}
                   className="w-full"
@@ -136,12 +146,12 @@ const Contact = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Sending...
+                    {t('contact.form.sending') || "Wird gesendet..."}
                   </span>
                 ) : (
                   <span className="flex items-center">
                     <Send size={16} className="mr-2" />
-                    Send Message
+                    {t('contact.form.send') || "Nachricht senden"}
                   </span>
                 )}
               </Button>
@@ -152,17 +162,17 @@ const Contact = () => {
           <div className="space-y-8">
             <div className="glass-card rounded-xl p-6 shadow-lg">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-                Contact Information
+                {t('contact.info.title') || "Kontaktinformationen"}
               </h3>
               <ul className="space-y-6">
                 <li className="flex items-start">
                   <MapPin size={24} className="mr-4 text-nova-600 dark:text-nova-400 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Address</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">{t('contact.info.address') || "Adresse"}</h4>
                     <p className="text-gray-600 dark:text-gray-300">
                       Rheinstrasse 25<br />
                       64283 Darmstadt<br />
-                      Germany
+                      Deutschland
                     </p>
                   </div>
                 </li>
@@ -170,7 +180,7 @@ const Contact = () => {
                 <li className="flex items-start">
                   <Phone size={24} className="mr-4 text-nova-600 dark:text-nova-400 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Phone</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">{t('contact.info.phone') || "Telefon"}</h4>
                     <p className="text-gray-600 dark:text-gray-300">
                       <a href="tel:+496151123456" className="hover:text-nova-600 dark:hover:text-nova-400">
                         +49 6151 123456
@@ -182,7 +192,7 @@ const Contact = () => {
                 <li className="flex items-start">
                   <Mail size={24} className="mr-4 text-nova-600 dark:text-nova-400 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Email</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">{t('contact.info.email') || "E-Mail"}</h4>
                     <p className="text-gray-600 dark:text-gray-300">
                       <a href="mailto:info@novacana.de" className="hover:text-nova-600 dark:hover:text-nova-400">
                         info@novacana.de
@@ -195,16 +205,16 @@ const Contact = () => {
             
             <div className="glass-card rounded-xl p-6 shadow-lg">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                Business Hours
+                {t('contact.hours.title') || "Geschäftszeiten"}
               </h3>
               <dl className="space-y-2">
                 <div className="flex justify-between">
-                  <dt className="font-medium text-gray-700 dark:text-gray-300">Monday - Friday</dt>
-                  <dd className="text-gray-600 dark:text-gray-400">9:00 AM - 5:00 PM</dd>
+                  <dt className="font-medium text-gray-700 dark:text-gray-300">{t('contact.hours.weekdays') || "Montag - Freitag"}</dt>
+                  <dd className="text-gray-600 dark:text-gray-400">9:00 - 17:00 Uhr</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="font-medium text-gray-700 dark:text-gray-300">Saturday - Sunday</dt>
-                  <dd className="text-gray-600 dark:text-gray-400">Closed</dd>
+                  <dt className="font-medium text-gray-700 dark:text-gray-300">{t('contact.hours.weekend') || "Samstag - Sonntag"}</dt>
+                  <dd className="text-gray-600 dark:text-gray-400">{t('contact.hours.closed') || "Geschlossen"}</dd>
                 </div>
               </dl>
             </div>
