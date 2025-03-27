@@ -1,5 +1,6 @@
+
 import { Database as OriginalDatabase } from '@/integrations/supabase/types';
-import { Product, Order } from '@/types';
+import { Product, Order, Address, OrderItem } from '@/types';
 
 // Extended Database Definition
 export interface Database extends OriginalDatabase {
@@ -32,24 +33,12 @@ export interface Database extends OriginalDatabase {
         Row: {
           id: string;
           user_id: string;
-          products: any[];
+          products: OrderItem[];
           total_amount: number;
           status: string;
           tracking_number?: string;
-          shipping_address: {
-            name: string;
-            street: string;
-            city: string;
-            postalCode: string;
-            country: string;
-          };
-          billing_address: {
-            name: string;
-            street: string;
-            city: string;
-            postalCode: string;
-            country: string;
-          };
+          shipping_address: Address;
+          billing_address: Address;
           payment_method: string;
           notes?: string;
           created_at: string;

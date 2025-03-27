@@ -13,8 +13,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { CartItem, Product } from "@/types";
+import { CartItem, Product, OrderItem, Address } from "@/types";
 import { ShoppingCart, Trash2, ArrowLeft } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toSnakeCase } from "@/types/supabase";
 
 interface OrderFormProps {
   cartItems: CartItem[];
@@ -35,8 +37,16 @@ const OrderForm = ({
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    shippingAddress: "",
-    billingAddress: "",
+    shippingName: "",
+    shippingStreet: "",
+    shippingCity: "",
+    shippingPostalCode: "",
+    shippingCountry: "Germany",
+    billingName: "",
+    billingStreet: "",
+    billingCity: "",
+    billingPostalCode: "",
+    billingCountry: "Germany",
     paymentMethod: "invoice",
     notes: "",
   });
@@ -88,7 +98,10 @@ const OrderForm = ({
       return;
     }
     
-    if (!formData.shippingAddress || !formData.billingAddress) {
+    // Check for required fields
+    if (!formData.shippingName || !formData.shippingStreet || !formData.shippingCity || 
+        !formData.shippingPostalCode || !formData.billingName || !formData.billingStreet || 
+        !formData.billingCity || !formData.billingPostalCode) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -100,8 +113,60 @@ const OrderForm = ({
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("You must be logged in to place an order");
+      }
+      
+      // Create order items from cart
+      const orderItems: OrderItem[] = cartProducts.map(item => ({
+        productId: item.productId,
+        name: item.product?.name || '',
+        quantity: item.quantity,
+        price: item.product?.price || 0,
+      }));
+      
+      // Create shipping and billing addresses
+      const shippingAddress: Address = {
+        name: formData.shippingName,
+        street: formData.shippingStreet,
+        city: formData.shippingCity,
+        postalCode: formData.shippingPostalCode,
+        country: formData.shippingCountry
+      };
+      
+      const billingAddress: Address = {
+        name: formData.billingName,
+        street: formData.billingStreet,
+        city: formData.billingCity,
+        postalCode: formData.billingPostalCode,
+        country: formData.billingCountry
+      };
+      
+      // Create order object in snake_case for Supabase
+      const orderData = toSnakeCase({
+        userId: user.id,
+        products: orderItems,
+        totalAmount: total,
+        status: 'pending',
+        shippingAddress,
+        billingAddress,
+        paymentMethod: formData.paymentMethod,
+        notes: formData.notes || null
+      });
+      
+      // Insert order into Supabase
+      const { data, error } = await supabase
+        .from('orders')
+        .insert(orderData)
+        .select('*')
+        .single();
+        
+      if (error) {
+        throw error;
+      }
 
       toast({
         title: "Order Placed Successfully",
@@ -111,10 +176,12 @@ const OrderForm = ({
       onClearCart();
       navigate("/dashboard");
       
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Order submission error:", error);
+      
       toast({
         title: "Error",
-        description: "Failed to place your order. Please try again.",
+        description: error.message || "Failed to place your order. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -128,6 +195,18 @@ const OrderForm = ({
       style: "currency",
       currency: "EUR",
     }).format(price);
+  };
+
+  // Use the same billing address as shipping
+  const copyShippingToBilling = () => {
+    setFormData({
+      ...formData,
+      billingName: formData.shippingName,
+      billingStreet: formData.shippingStreet,
+      billingCity: formData.shippingCity,
+      billingPostalCode: formData.shippingPostalCode,
+      billingCountry: formData.shippingCountry,
+    });
   };
 
   return (
@@ -269,38 +348,151 @@ const OrderForm = ({
               
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="shippingAddress">Shipping Address *</Label>
-                  <Textarea
-                    id="shippingAddress"
-                    name="shippingAddress"
-                    value={formData.shippingAddress}
+                  <Label htmlFor="shippingName">Name *</Label>
+                  <Input
+                    id="shippingName"
+                    name="shippingName"
+                    value={formData.shippingName}
                     onChange={handleInputChange}
-                    rows={3}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="glass-card p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Payment Information
-              </h3>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="billingAddress">Billing Address *</Label>
-                  <Textarea
-                    id="billingAddress"
-                    name="billingAddress"
-                    value={formData.billingAddress}
-                    onChange={handleInputChange}
-                    rows={3}
                     required
                   />
                 </div>
                 
                 <div className="space-y-2">
+                  <Label htmlFor="shippingStreet">Street Address *</Label>
+                  <Input
+                    id="shippingStreet"
+                    name="shippingStreet"
+                    value={formData.shippingStreet}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="shippingCity">City *</Label>
+                    <Input
+                      id="shippingCity"
+                      name="shippingCity"
+                      value={formData.shippingCity}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="shippingPostalCode">Postal Code *</Label>
+                    <Input
+                      id="shippingPostalCode"
+                      name="shippingPostalCode"
+                      value={formData.shippingPostalCode}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="shippingCountry">Country *</Label>
+                  <Select
+                    value={formData.shippingCountry}
+                    onValueChange={handleSelectChange("shippingCountry")}
+                  >
+                    <SelectTrigger id="shippingCountry">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Germany">Germany</SelectItem>
+                      <SelectItem value="Austria">Austria</SelectItem>
+                      <SelectItem value="Switzerland">Switzerland</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            
+            <div className="glass-card p-6 rounded-lg">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Billing Information
+                </h3>
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  onClick={copyShippingToBilling}
+                  className="text-sm"
+                >
+                  Same as shipping
+                </Button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="billingName">Name *</Label>
+                  <Input
+                    id="billingName"
+                    name="billingName"
+                    value={formData.billingName}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="billingStreet">Street Address *</Label>
+                  <Input
+                    id="billingStreet"
+                    name="billingStreet"
+                    value={formData.billingStreet}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="billingCity">City *</Label>
+                    <Input
+                      id="billingCity"
+                      name="billingCity"
+                      value={formData.billingCity}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="billingPostalCode">Postal Code *</Label>
+                    <Input
+                      id="billingPostalCode"
+                      name="billingPostalCode"
+                      value={formData.billingPostalCode}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="billingCountry">Country *</Label>
+                  <Select
+                    value={formData.billingCountry}
+                    onValueChange={handleSelectChange("billingCountry")}
+                  >
+                    <SelectTrigger id="billingCountry">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Germany">Germany</SelectItem>
+                      <SelectItem value="Austria">Austria</SelectItem>
+                      <SelectItem value="Switzerland">Switzerland</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2 pt-4">
                   <Label htmlFor="paymentMethod">Payment Method *</Label>
                   <Select
                     value={formData.paymentMethod}

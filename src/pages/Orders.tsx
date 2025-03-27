@@ -3,9 +3,11 @@ import React, { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import OrderForm from "@/components/orders/OrderForm";
-import { CartItem, Product } from "@/types";
+import { CartItem, Product, OrderItem } from "@/types";
 import { products as mockProducts } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { toSnakeCase, toCamelCase } from "@/types/supabase";
 
 const Orders = () => {
   const { toast } = useToast();
@@ -26,13 +28,43 @@ const Orders = () => {
       }
     };
 
-    // Fetch products
+    // Fetch products from Supabase
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
-        // In a real app, this would be an API call
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        setProducts(mockProducts);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*');
+        
+        if (error) {
+          throw error;
+        }
+        
+        if (data.length > 0) {
+          const transformedProducts = data.map(item => ({
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            shortDescription: item.short_description,
+            price: item.price,
+            imageUrl: item.image_url,
+            category: item.category,
+            stock: item.stock,
+            thcContent: item.thc_content,
+            cbdContent: item.cbd_content,
+            terpenes: item.terpenes,
+            weight: item.weight,
+            dosage: item.dosage,
+            effects: item.effects,
+            origin: item.origin,
+            createdAt: new Date(item.created_at),
+            updatedAt: new Date(item.updated_at)
+          }));
+          setProducts(transformedProducts);
+        } else {
+          // Fallback to mock data if no products in database
+          setProducts(mockProducts);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
         toast({
@@ -40,6 +72,8 @@ const Orders = () => {
           description: "Failed to load product data. Please try again.",
           variant: "destructive",
         });
+        // Fallback to mock data on error
+        setProducts(mockProducts);
       } finally {
         setIsLoading(false);
       }

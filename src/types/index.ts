@@ -33,7 +33,6 @@ export interface Product {
 }
 
 export interface OrderItem {
-  id: string;
   productId: string;
   name: string; 
   quantity: number;
@@ -62,7 +61,7 @@ export interface Order {
   createdAt: Date;
   updatedAt: Date;
   
-  // Additional fields from original Order interface
+  // Additional fields for UI purposes
   pharmacyName?: string;
   pharmacyId?: string;
   orderNumber?: string;

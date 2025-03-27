@@ -9,7 +9,111 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          billing_address: Json
+          created_at: string
+          id: string
+          notes: string | null
+          payment_method: string
+          products: Json
+          shipping_address: Json
+          status: string
+          total_amount: number
+          tracking_number: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_address: Json
+          created_at?: string
+          id?: string
+          notes?: string | null
+          payment_method: string
+          products: Json
+          shipping_address: Json
+          status?: string
+          total_amount: number
+          tracking_number?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_address?: Json
+          created_at?: string
+          id?: string
+          notes?: string | null
+          payment_method?: string
+          products?: Json
+          shipping_address?: Json
+          status?: string
+          total_amount?: number
+          tracking_number?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          cbd_content: string | null
+          created_at: string
+          description: string
+          dosage: string | null
+          effects: string[] | null
+          id: string
+          image_url: string
+          name: string
+          origin: string | null
+          price: number
+          short_description: string
+          stock: number
+          terpenes: string[] | null
+          thc_content: string | null
+          updated_at: string
+          weight: string | null
+        }
+        Insert: {
+          category: string
+          cbd_content?: string | null
+          created_at?: string
+          description: string
+          dosage?: string | null
+          effects?: string[] | null
+          id?: string
+          image_url: string
+          name: string
+          origin?: string | null
+          price: number
+          short_description: string
+          stock?: number
+          terpenes?: string[] | null
+          thc_content?: string | null
+          updated_at?: string
+          weight?: string | null
+        }
+        Update: {
+          category?: string
+          cbd_content?: string | null
+          created_at?: string
+          description?: string
+          dosage?: string | null
+          effects?: string[] | null
+          id?: string
+          image_url?: string
+          name?: string
+          origin?: string | null
+          price?: number
+          short_description?: string
+          stock?: number
+          terpenes?: string[] | null
+          thc_content?: string | null
+          updated_at?: string
+          weight?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
