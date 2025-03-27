@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { addUserRole } from "@/utils/authUtils";
 import { Loader2, Shield } from "lucide-react";
 
 const MasterAdminCreator = () => {
@@ -60,11 +59,25 @@ const MasterAdminCreator = () => {
         return;
       }
 
-      // 2. Füge Admin-Rolle hinzu
-      const adminRoleSuccess = await addUserRole(signUpData.user.id, 'admin');
+      // 2. Die create_admin Funktion aufrufen, die Administratorberechtigungen mit Security Definer hinzufügt
+      const { data: adminRoleData, error: adminRoleError } = await supabase.rpc(
+        'create_admin',
+        { new_admin_id: signUpData.user.id }
+      );
       
-      if (!adminRoleSuccess) {
-        console.error("Fehler beim Hinzufügen der Admin-Rolle");
+      if (adminRoleError) {
+        console.error("Fehler beim Hinzufügen der Admin-Rolle:", adminRoleError);
+        toast({
+          title: "Fehler",
+          description: "Admin-Rolle konnte nicht hinzugefügt werden",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (!adminRoleData) {
+        console.error("Admin-Rolle konnte nicht hinzugefügt werden: Kein Rückgabewert");
         toast({
           title: "Fehler",
           description: "Admin-Rolle konnte nicht hinzugefügt werden",
