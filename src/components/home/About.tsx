@@ -22,13 +22,13 @@ const About = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-gray-200/30 to-gray-300/30 dark:from-gray-800/20 dark:to-gray-700/20 rounded-2xl blur-xl transform rotate-3 scale-95"></div>
               <div className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl">
                 <img 
-                  src="/lovable-uploads/3cafb960-76e3-4c56-8900-a64f3a719a62.png" 
-                  alt="Regulatorische Konformität" 
+                  src="/lovable-uploads/6f98e186-03e5-4093-849e-c97a26a093b3.png" 
+                  alt="Supply Chain" 
                   className="w-full h-auto object-cover"
                   onError={(e) => {
                     console.error("Image failed to load:", e);
                     const target = e.target as HTMLImageElement;
-                    target.src = "https://placehold.co/1170x640/gray/white?text=Regulatorische+Konformität";
+                    target.src = "https://placehold.co/1170x640/gray/white?text=Supply+Chain";
                   }}
                 />
                 <div className="p-6">

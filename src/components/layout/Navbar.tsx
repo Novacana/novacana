@@ -37,7 +37,7 @@ const Navbar = () => {
   const getNavigation = () => {
     const baseNavigation = [
       { name: t('nav.home'), href: "/", current: true },
-      { name: t('nav.about'), href: "/#about", current: false },
+      { name: t('nav.about'), href: "/about", current: false },
       { name: t('nav.contact'), href: "/#contact", current: false },
     ];
     
