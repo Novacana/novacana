@@ -1,21 +1,15 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { CartItem, Product, OrderItem, Address } from "@/types";
-import { ShoppingCart, Trash2, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { toSnakeCase } from "@/types/supabase";
+import OrderSummary from "./OrderSummary";
+import AddressForm from "./AddressForm";
+import OrderNotes from "./OrderNotes";
+import EmptyCart from "./EmptyCart";
 import { Json } from "@/integrations/supabase/types";
 
 interface OrderFormProps {
@@ -59,14 +53,6 @@ const OrderForm = ({
     };
   });
 
-  const subtotal = cartProducts.reduce((total, item) => {
-    if (!item.product) return total;
-    return total + item.product.price * item.quantity;
-  }, 0);
-  
-  const tax = subtotal * 0.19; // 19% VAT
-  const total = subtotal + tax;
-
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -82,6 +68,24 @@ const OrderForm = ({
       ...formData,
       [name]: value,
     });
+  };
+
+  const copyShippingToBilling = () => {
+    setFormData({
+      ...formData,
+      billingName: formData.shippingName,
+      billingStreet: formData.shippingStreet,
+      billingCity: formData.shippingCity,
+      billingPostalCode: formData.shippingPostalCode,
+      billingCountry: formData.shippingCountry,
+    });
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("de-DE", {
+      style: "currency",
+      currency: "EUR",
+    }).format(price);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,6 +119,14 @@ const OrderForm = ({
       if (!user) {
         throw new Error("You must be logged in to place an order");
       }
+      
+      const subtotal = cartProducts.reduce((total, item) => {
+        if (!item.product) return total;
+        return total + item.product.price * item.quantity;
+      }, 0);
+      
+      const tax = subtotal * 0.19; // 19% VAT
+      const total = subtotal + tax;
       
       const orderItems: OrderItem[] = cartProducts.map(item => ({
         productId: item.productId,
@@ -181,24 +193,6 @@ const OrderForm = ({
     }
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("de-DE", {
-      style: "currency",
-      currency: "EUR",
-    }).format(price);
-  };
-
-  const copyShippingToBilling = () => {
-    setFormData({
-      ...formData,
-      billingName: formData.shippingName,
-      billingStreet: formData.shippingStreet,
-      billingCity: formData.shippingCity,
-      billingPostalCode: formData.shippingPostalCode,
-      billingCountry: formData.shippingCountry,
-    });
-  };
-
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -215,308 +209,41 @@ const OrderForm = ({
       </div>
 
       {cartProducts.length === 0 ? (
-        <div className="text-center py-12 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
-          <ShoppingCart size={48} className="mx-auto text-gray-400 dark:text-gray-600" />
-          <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
-            Your cart is empty
-          </h3>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Add products to your cart from our catalog.
-          </p>
-          <div className="mt-6">
-            <Button onClick={() => navigate("/products")}>Browse Products</Button>
-          </div>
-        </div>
+        <EmptyCart />
       ) : (
         <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="glass-card p-6 rounded-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Cart Items
-              </h3>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onClearCart}
-                className="text-sm"
-              >
-                Clear Cart
-              </Button>
-            </div>
-            
-            <div className="divide-y divide-gray-200 dark:divide-gray-800">
-              {cartProducts.map((item) => (
-                <div key={item.productId} className="py-4 flex flex-col sm:flex-row sm:items-center">
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-base font-medium text-gray-900 dark:text-white truncate">
-                      {item.product?.name}
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                      {formatPrice(item.product?.price || 0)} per unit
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-center mt-2 sm:mt-0">
-                    <div className="flex items-center">
-                      <button
-                        type="button"
-                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-nova-600 dark:hover:text-nova-400"
-                        onClick={() => {
-                          if (item.quantity > 1) {
-                            onUpdateQuantity(item.productId, item.quantity - 1);
-                          }
-                        }}
-                      >
-                        -
-                      </button>
-                      <span className="mx-2 w-8 text-center">
-                        {item.quantity}
-                      </span>
-                      <button
-                        type="button"
-                        className="p-1 text-gray-600 dark:text-gray-300 hover:text-nova-600 dark:hover:text-nova-400"
-                        onClick={() => {
-                          const maxStock = item.product?.stock || 0;
-                          if (item.quantity < maxStock) {
-                            onUpdateQuantity(item.productId, item.quantity + 1);
-                          }
-                        }}
-                      >
-                        +
-                      </button>
-                    </div>
-                    
-                    <div className="ml-4 min-w-[80px] text-right">
-                      {formatPrice((item.product?.price || 0) * item.quantity)}
-                    </div>
-                    
-                    <button
-                      type="button"
-                      className="ml-4 p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
-                      onClick={() => onRemoveItem(item.productId)}
-                    >
-                      <Trash2 size={16} />
-                      <span className="sr-only">Remove</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="mt-6 border-t border-gray-200 dark:border-gray-800 pt-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Subtotal</span>
-                <span className="text-gray-900 dark:text-white font-medium">
-                  {formatPrice(subtotal)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm mt-2">
-                <span className="text-gray-600 dark:text-gray-400">VAT (19%)</span>
-                <span className="text-gray-900 dark:text-white font-medium">
-                  {formatPrice(tax)}
-                </span>
-              </div>
-              <div className="flex justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
-                <span className="text-lg font-medium text-gray-900 dark:text-white">
-                  Total
-                </span>
-                <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  {formatPrice(total)}
-                </span>
-              </div>
-            </div>
-          </div>
+          <OrderSummary 
+            cartProducts={cartProducts}
+            onRemoveItem={onRemoveItem}
+            onUpdateQuantity={onUpdateQuantity}
+            onClearCart={onClearCart}
+            formatPrice={formatPrice}
+          />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="glass-card p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Shipping Information
-              </h3>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="shippingName">Name *</Label>
-                  <Input
-                    id="shippingName"
-                    name="shippingName"
-                    value={formData.shippingName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="shippingStreet">Street Address *</Label>
-                  <Input
-                    id="shippingStreet"
-                    name="shippingStreet"
-                    value={formData.shippingStreet}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="shippingCity">City *</Label>
-                    <Input
-                      id="shippingCity"
-                      name="shippingCity"
-                      value={formData.shippingCity}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="shippingPostalCode">Postal Code *</Label>
-                    <Input
-                      id="shippingPostalCode"
-                      name="shippingPostalCode"
-                      value={formData.shippingPostalCode}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="shippingCountry">Country *</Label>
-                  <Select
-                    value={formData.shippingCountry}
-                    onValueChange={handleSelectChange("shippingCountry")}
-                  >
-                    <SelectTrigger id="shippingCountry">
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Germany">Germany</SelectItem>
-                      <SelectItem value="Austria">Austria</SelectItem>
-                      <SelectItem value="Switzerland">Switzerland</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
+            <AddressForm 
+              type="shipping"
+              formData={formData}
+              onChange={handleInputChange}
+              onSelectChange={handleSelectChange}
+            />
             
-            <div className="glass-card p-6 rounded-lg">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Billing Information
-                </h3>
-                <Button
-                  type="button"
-                  variant="link"
-                  size="sm"
-                  onClick={copyShippingToBilling}
-                  className="text-sm"
-                >
-                  Same as shipping
-                </Button>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="billingName">Name *</Label>
-                  <Input
-                    id="billingName"
-                    name="billingName"
-                    value={formData.billingName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="billingStreet">Street Address *</Label>
-                  <Input
-                    id="billingStreet"
-                    name="billingStreet"
-                    value={formData.billingStreet}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="billingCity">City *</Label>
-                    <Input
-                      id="billingCity"
-                      name="billingCity"
-                      value={formData.billingCity}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="billingPostalCode">Postal Code *</Label>
-                    <Input
-                      id="billingPostalCode"
-                      name="billingPostalCode"
-                      value={formData.billingPostalCode}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="billingCountry">Country *</Label>
-                  <Select
-                    value={formData.billingCountry}
-                    onValueChange={handleSelectChange("billingCountry")}
-                  >
-                    <SelectTrigger id="billingCountry">
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Germany">Germany</SelectItem>
-                      <SelectItem value="Austria">Austria</SelectItem>
-                      <SelectItem value="Switzerland">Switzerland</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2 pt-4">
-                  <Label htmlFor="paymentMethod">Payment Method *</Label>
-                  <Select
-                    value={formData.paymentMethod}
-                    onValueChange={handleSelectChange("paymentMethod")}
-                  >
-                    <SelectTrigger id="paymentMethod">
-                      <SelectValue placeholder="Select payment method" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="invoice">Invoice</SelectItem>
-                      <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                      <SelectItem value="credit_card">Credit Card</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
+            <AddressForm 
+              type="billing"
+              formData={{
+                ...formData,
+                paymentMethod: formData.paymentMethod,
+              }}
+              onChange={handleInputChange}
+              onSelectChange={handleSelectChange}
+              copyShippingToBilling={copyShippingToBilling}
+            />
           </div>
           
-          <div className="glass-card p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Order Notes
-            </h3>
-            
-            <div className="space-y-2">
-              <Label htmlFor="notes">Additional Notes</Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                value={formData.notes}
-                onChange={handleInputChange}
-                placeholder="Special delivery instructions or other notes"
-                rows={3}
-              />
-            </div>
-          </div>
+          <OrderNotes 
+            notes={formData.notes}
+            onChange={handleInputChange}
+          />
           
           <div className="flex justify-end">
             <Button type="submit" size="lg" disabled={isLoading || cartProducts.length === 0}>
