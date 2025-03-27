@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Leaf, Shield, Truck, Award, Clock, FileCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -41,7 +40,6 @@ const Features = () => {
 
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-900/50 relative overflow-hidden">
-      {/* Background design elements */}
       <div className="absolute inset-0 z-0">
         <div className="absolute left-0 bottom-0 w-64 h-64 rounded-full bg-gray-200/40 dark:bg-gray-800/20 blur-3xl"></div>
         <div className="absolute right-1/4 top-0 w-80 h-80 rounded-full bg-gray-200/30 dark:bg-gray-800/10 blur-3xl"></div>
@@ -77,7 +75,6 @@ const Features = () => {
           ))}
         </div>
         
-        {/* Logo Section */}
         <div className="mb-16 text-center mt-16">
           <img 
             src="/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png" 

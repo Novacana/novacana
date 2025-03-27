@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -59,7 +58,7 @@ const Hero = () => {
             <div className="pt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
               <div className="flex items-center space-x-2">
                 <ShieldCheck className="text-gray-700 dark:text-gray-400" size={20} />
-                <span className="text-sm text-gray-700 dark:text-gray-400 font-medium">GMP Zertifiziert</span>
+                <span className="text-sm text-gray-700 dark:text-gray-400 font-medium">WDA, GDP, MedCanG</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Clock className="text-gray-700 dark:text-gray-400" size={20} />
