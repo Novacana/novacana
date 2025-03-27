@@ -29,6 +29,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     // Überprüfen, ob Benutzer bereits authentifiziert ist
     if (isAuthenticated()) {
       setShowContent(true);
+      return;
     }
 
     // DocCheck-Callback-Parameter überprüfen (wenn Benutzer von DocCheck zurückkehrt)
