@@ -81,12 +81,13 @@ const ProtectedRoute = ({
             const pharmacistResult = await checkPharmacistStatus(currentSession.user.id);
             console.log("Status-Prüfung: Admin =", adminResult, "Apotheker =", pharmacistResult);
           }
+          
+          setLoading(false);
         } else {
           setIsAdmin(false);
           setIsPharmacist(false);
+          setLoading(false);
         }
-        
-        setLoading(false);
       }
     );
 
@@ -160,6 +161,12 @@ const ProtectedRoute = ({
 
   // If not authenticated, redirect to login with return path
   if (!session || !user) {
+    toast({
+      title: "Zugriff verweigert",
+      description: "Sie müssen angemeldet sein, um auf diese Seite zuzugreifen.",
+      variant: "destructive"
+    });
+    
     return (
       <Navigate
         to={`/login?returnUrl=${encodeURIComponent(location.pathname)}`}

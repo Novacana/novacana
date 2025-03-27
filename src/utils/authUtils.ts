@@ -7,22 +7,35 @@ import { supabase } from "@/integrations/supabase/client";
  */
 export const checkIsAdmin = async (userId: string): Promise<boolean> => {
   try {
+    if (!userId) {
+      console.error("Benutzer-ID fehlt bei der Admin-Rollenprüfung");
+      return false;
+    }
+    
     // Konsolenausgabe für Debugging
     console.log("Führe Admin-Rollenprüfung durch für Benutzer:", userId);
     
-    // Prüfen, ob der Benutzer die Admin-Rolle hat
-    const { data, error } = await supabase.rpc('has_role', {
-      _user_id: userId,
-      _role: 'admin'
-    });
+    // Direktabfrage der user_roles Tabelle statt RPC-Aufruf für bessere Fehlerdiagnose
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .single();
     
     if (error) {
+      // Wenn der Fehler "No rows found" ist, bedeutet das nur, dass der Benutzer kein Admin ist
+      if (error.code === 'PGRST116') {
+        console.log("Benutzer hat keine Admin-Rolle:", userId);
+        return false;
+      }
+      
       console.error("Fehler beim Überprüfen der Admin-Rolle:", error);
       return false;
     }
     
-    console.log("Admin-Rollenprüfung Ergebnis:", data);
-    return data || false;
+    console.log("Admin-Rollenprüfung Ergebnis:", !!data);
+    return !!data;
   } catch (error) {
     console.error("Fehler beim Überprüfen des Admin-Status:", error);
     return false;
