@@ -31,14 +31,28 @@ const ProtectedRoute = ({
   const { toast } = useToast();
   const location = useLocation();
 
-  // Check if user is an admin
+  // Überprüft, ob der Benutzer ein Administrator ist
   const checkAdminStatus = async (userId: string) => {
     try {
       console.log("Prüfe Admin-Status für Benutzer:", userId);
-      const hasAdminRole = await checkIsAdmin(userId);
-      console.log("Admin-Status für Benutzer:", userId, hasAdminRole);
-      setIsAdmin(hasAdminRole);
-      return hasAdminRole;
+      
+      // Direkte Abfrage der user_roles Tabelle
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Fehler bei der Admin-Prüfung:", error);
+        return false;
+      }
+      
+      const isAdminUser = !!data;
+      console.log("Admin-Status für Benutzer:", userId, isAdminUser);
+      setIsAdmin(isAdminUser);
+      return isAdminUser;
     } catch (error) {
       console.error("Fehler beim Überprüfen des Admin-Status:", error);
       setIsAdmin(false);
@@ -46,14 +60,28 @@ const ProtectedRoute = ({
     }
   };
 
-  // Check if user is a pharmacist
+  // Überprüft, ob der Benutzer ein Apotheker ist
   const checkPharmacistStatus = async (userId: string) => {
     try {
       console.log("Prüfe Apotheker-Status für Benutzer:", userId);
-      const hasPharmacistRole = await checkIsPharmacist(userId);
-      console.log("Apotheker-Status für Benutzer:", userId, hasPharmacistRole);
-      setIsPharmacist(hasPharmacistRole);
-      return hasPharmacistRole;
+      
+      // Direkte Abfrage der user_roles Tabelle
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('role', 'pharmacist')
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Fehler bei der Apotheker-Prüfung:", error);
+        return false;
+      }
+      
+      const isPharmUser = !!data;
+      console.log("Apotheker-Status für Benutzer:", userId, isPharmUser);
+      setIsPharmacist(isPharmUser);
+      return isPharmUser;
     } catch (error) {
       console.error("Fehler beim Überprüfen des Apotheker-Status:", error);
       setIsPharmacist(false);
@@ -80,11 +108,15 @@ const ProtectedRoute = ({
         
         if (currentSession?.user) {
           console.log("Benutzer eingeloggt, prüfe Status...");
-          const adminResult = await checkAdminStatus(currentSession.user.id);
           
+          // Adminrechte prüfen, wenn nötig
+          if (adminOnly) {
+            await checkAdminStatus(currentSession.user.id);
+          }
+          
+          // Apothekerstatus prüfen, wenn nötig
           if (pharmacistOnly || adminOnly) {
-            const pharmacistResult = await checkPharmacistStatus(currentSession.user.id);
-            console.log("Status-Prüfung: Admin =", adminResult, "Apotheker =", pharmacistResult);
+            await checkPharmacistStatus(currentSession.user.id);
           }
           
           if (isMounted) {
@@ -118,11 +150,15 @@ const ProtectedRoute = ({
         
         if (currentSession?.user) {
           console.log("Benutzer hat aktive Session, prüfe Status...");
-          const adminResult = await checkAdminStatus(currentSession.user.id);
           
+          // Adminrechte prüfen, wenn nötig
+          if (adminOnly) {
+            await checkAdminStatus(currentSession.user.id);
+          }
+          
+          // Apothekerstatus prüfen, wenn nötig
           if (pharmacistOnly || adminOnly) {
-            const pharmacistResult = await checkPharmacistStatus(currentSession.user.id);
-            console.log("Status-Prüfung: Admin =", adminResult, "Apotheker =", pharmacistResult);
+            await checkPharmacistStatus(currentSession.user.id);
           }
         } else {
           setIsAdmin(false);
