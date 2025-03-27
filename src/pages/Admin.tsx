@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Package, ShoppingCart, User, Settings } from "lucide-react";
+import { Package, ShoppingCart, User, Settings, FileText, TrendingUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Admin = () => {
@@ -71,8 +71,11 @@ const Admin = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold mb-4">24</div>
-                <Button variant="outline" className="w-full">
-                  View Users
+                <Button 
+                  onClick={() => navigate('/admin/users')} 
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                >
+                  Benutzerverwaltung
                 </Button>
               </CardContent>
             </Card>

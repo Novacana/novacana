@@ -29,6 +29,7 @@ const ProtectedRoute = ({
   const checkAdminStatus = async (userId: string) => {
     try {
       const hasAdminRole = await checkIsAdmin(userId);
+      console.log("Admin-Status für Benutzer:", userId, hasAdminRole);
       setIsAdmin(hasAdminRole);
     } catch (error) {
       console.error("Fehler beim Überprüfen des Admin-Status:", error);
@@ -37,14 +38,19 @@ const ProtectedRoute = ({
   };
 
   useEffect(() => {
+    console.log("ProtectedRoute initialisiert");
+    
     // First set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
+        console.log("Auth-Status geändert:", event, currentSession?.user?.email);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         if (currentSession?.user) {
           checkAdminStatus(currentSession.user.id);
+        } else {
+          setIsAdmin(false);
         }
         
         setLoading(false);
@@ -53,11 +59,14 @@ const ProtectedRoute = ({
 
     // Then check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      console.log("Bestehende Session gefunden:", currentSession?.user?.email);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
       if (currentSession?.user) {
         checkAdminStatus(currentSession.user.id);
+      } else {
+        setIsAdmin(false);
       }
       
       setLoading(false);
@@ -81,6 +90,15 @@ const ProtectedRoute = ({
       </div>
     );
   }
+
+  // Debug output
+  console.log("Auth Status:", { 
+    isAuthenticated: !!session, 
+    user: user?.email, 
+    isAdmin,
+    adminRequired: adminOnly,
+    currentPath: location.pathname
+  });
 
   // If not authenticated, redirect to login with return path
   if (!session || !user) {
