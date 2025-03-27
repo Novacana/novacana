@@ -279,8 +279,8 @@ const ProductDetail = ({ product }: ProductDetailProps) => {
                 <div className="mt-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 space-y-4">
                   <p className="text-sm text-gray-700 dark:text-gray-300">
                     {language === "de" 
-                      ? "Terpene sind aromatische Verbindungen, die Cannabis seinen charakteristischen Duft und Geschmack verleihen. Sie spielen eine wichtige Rolle im therapeutischen Potenzial von Cannabis, bekannt als der „Entourage-Effekt"."
-                      : "Terpenes are aromatic compounds that give cannabis its characteristic scent and flavor. They play an important role in the therapeutic potential of cannabis, known as the 'entourage effect'."}
+                      ? "Terpene sind aromatische Verbindungen, die Cannabis seinen charakteristischen Duft und Geschmack verleihen. Sie spielen eine wichtige Rolle im therapeutischen Potenzial von Cannabis, bekannt als der \"Entourage-Effekt\"."
+                      : "Terpenes are aromatic compounds that give cannabis its characteristic scent and flavor. They play an important role in the therapeutic potential of cannabis, known as the \"entourage effect\"."}
                   </p>
                   
                   <div className="space-y-4">
