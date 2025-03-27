@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 /**
  * Überprüft, ob ein Benutzer Administrator-Rechte hat
@@ -38,6 +39,11 @@ export const checkIsAdmin = async (userId: string): Promise<boolean> => {
  */
 export const checkIsPharmacist = async (userId: string): Promise<boolean> => {
   try {
+    if (!userId) {
+      console.error("Benutzer-ID fehlt bei der Apotheker-Rollenprüfung");
+      return false;
+    }
+    
     console.log("Prüfe Apotheker-Status für Benutzer:", userId);
     
     // Direkte Abfrage mit der has_role Funktion
@@ -63,6 +69,11 @@ export const checkIsPharmacist = async (userId: string): Promise<boolean> => {
  */
 export const getUserRoles = async (userId: string): Promise<string[]> => {
   try {
+    if (!userId) {
+      console.error("Benutzer-ID fehlt bei der Rollenabfrage");
+      return [];
+    }
+    
     console.log("Hole Rollen für Benutzer:", userId);
     
     // Benutzen der get_user_roles Funktion statt direkter Tabellenabfrage
@@ -90,6 +101,11 @@ export const getUserRoles = async (userId: string): Promise<string[]> => {
  */
 export const addUserRole = async (userId: string, role: 'admin' | 'user' | 'pharmacist'): Promise<boolean> => {
   try {
+    if (!userId) {
+      console.error("Keine Benutzer-ID angegeben");
+      return false;
+    }
+    
     console.log(`Füge Rolle ${role} für Benutzer ${userId} hinzu`);
 
     // Edge-Funktion aufrufen, um die Rolle hinzuzufügen
@@ -103,6 +119,11 @@ export const addUserRole = async (userId: string, role: 'admin' | 'user' | 'phar
     
     if (error) {
       console.error("Fehler beim Hinzufügen der Rolle:", error);
+      toast({
+        title: "Fehler",
+        description: `Die Rolle ${role} konnte nicht hinzugefügt werden.`,
+        variant: "destructive"
+      });
       return false;
     }
     
@@ -121,6 +142,11 @@ export const addUserRole = async (userId: string, role: 'admin' | 'user' | 'phar
  */
 export const removeUserRole = async (userId: string, role: 'admin' | 'user' | 'pharmacist'): Promise<boolean> => {
   try {
+    if (!userId) {
+      console.error("Keine Benutzer-ID angegeben");
+      return false;
+    }
+    
     console.log(`Entferne Rolle ${role} von Benutzer ${userId}`);
     
     // Edge-Funktion aufrufen, um die Rolle zu entfernen
@@ -134,6 +160,11 @@ export const removeUserRole = async (userId: string, role: 'admin' | 'user' | 'p
     
     if (error) {
       console.error("Fehler beim Entfernen der Rolle:", error);
+      toast({
+        title: "Fehler",
+        description: `Die Rolle ${role} konnte nicht entfernt werden.`,
+        variant: "destructive"
+      });
       return false;
     }
     

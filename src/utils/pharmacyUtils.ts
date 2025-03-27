@@ -30,6 +30,11 @@ export const verifyPharmacy = async (
   try {
     console.log("Einreichen der Verifizierung für Benutzer:", userId, data);
     
+    if (!userId) {
+      console.error("Fehler: Keine Benutzer-ID angegeben");
+      throw new Error("Keine Benutzer-ID angegeben");
+    }
+    
     // Prüfen, ob der Benutzer bereits eine Verifizierung hat
     const { data: existingVerification, error: checkError } = await supabase
       .from('pharmacy_verification')
@@ -65,15 +70,29 @@ export const verifyPharmacy = async (
           throw new Error("Fehler beim Aktualisieren der Verifizierung: " + updateError.message);
         }
         
+        toast({
+          title: "Verifizierung aktualisiert",
+          description: "Ihre Apothekenverifizierung wurde aktualisiert und wird erneut geprüft.",
+        });
+        
         return true;
       } else {
         // Bei ausstehender oder genehmigter Verifizierung keine Änderung
         console.log("Verifizierung existiert bereits mit Status:", existingVerification.verification_status);
+        
+        toast({
+          title: "Verifizierung bereits eingereicht",
+          description: existingVerification.verification_status === 'pending' 
+            ? "Ihre Verifizierung wird bereits geprüft." 
+            : "Ihre Apotheke ist bereits verifiziert.",
+        });
+        
         return true;
       }
     }
     
     // Neue Verifizierung einreichen
+    console.log("Reiche neue Verifizierung ein für Benutzer:", userId);
     const { error: insertError } = await supabase
       .from('pharmacy_verification')
       .insert({
@@ -90,6 +109,11 @@ export const verifyPharmacy = async (
     }
     
     console.log("Verifizierung erfolgreich eingereicht");
+    toast({
+      title: "Verifizierung eingereicht",
+      description: "Ihre Apothekenverifizierung wurde erfolgreich zur Überprüfung eingereicht.",
+    });
+    
     return true;
   } catch (error: any) {
     console.error("Fehler bei der Apothekenverifizierung:", error);
@@ -109,7 +133,12 @@ export const verifyPharmacy = async (
  */
 export const getPharmacyVerificationStatus = async (userId: string): Promise<string | null> => {
   try {
-    if (!userId) return null;
+    if (!userId) {
+      console.error("Fehler: Keine Benutzer-ID angegeben");
+      return null;
+    }
+    
+    console.log("Prüfe Verifizierungsstatus für Benutzer:", userId);
     
     const { data, error } = await supabase
       .from('pharmacy_verification')
@@ -119,12 +148,18 @@ export const getPharmacyVerificationStatus = async (userId: string): Promise<str
     
     if (error) {
       console.error("Fehler beim Abrufen des Verifizierungsstatus:", error);
-      return null;
+      throw new Error("Fehler beim Abrufen des Verifizierungsstatus: " + error.message);
     }
     
+    console.log("Verifizierungsstatus für Benutzer:", userId, data?.verification_status || "keine Verifizierung");
     return data ? data.verification_status : null;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Fehler beim Abrufen des Verifizierungsstatus:", error);
+    toast({
+      title: "Fehler",
+      description: "Der Verifizierungsstatus konnte nicht abgerufen werden.",
+      variant: "destructive"
+    });
     return null;
   }
 };

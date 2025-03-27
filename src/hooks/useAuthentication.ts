@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
-import { checkIsAdmin, checkIsPharmacist } from "@/utils/authUtils";
+import { checkIsAdmin, checkIsPharmacist } from "@/utils/roleUtils";
 
 interface AuthenticationState {
   session: Session | null;
@@ -25,45 +25,6 @@ export const useAuthentication = (
     isPharmacist: false,
     checkedStatus: false
   });
-
-  const checkAdminStatus = async (userId: string) => {
-    try {
-      console.log("Prüfe Admin-Status für Benutzer:", userId);
-      
-      // VORÜBERGEHEND: Immer true zurückgeben, um Admin-Zugriff zu ermöglichen
-      // Dies sollte entfernt werden, sobald ein Admin-Benutzer erstellt wurde
-      return true;
-    } catch (error) {
-      console.error("Fehler beim Überprüfen des Admin-Status:", error);
-      return false;
-    }
-  };
-
-  const checkPharmacistStatus = async (userId: string) => {
-    try {
-      console.log("Prüfe Apotheker-Status für Benutzer:", userId);
-      
-      // Direkte Abfrage der user_roles Tabelle
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('role', 'pharmacist')
-        .maybeSingle();
-      
-      if (error) {
-        console.error("Fehler bei der Apotheker-Prüfung:", error);
-        return false;
-      }
-      
-      const isPharmUser = !!data;
-      console.log("Apotheker-Status für Benutzer:", userId, isPharmUser);
-      return isPharmUser;
-    } catch (error) {
-      console.error("Fehler beim Überprüfen des Apotheker-Status:", error);
-      return false;
-    }
-  };
 
   useEffect(() => {
     console.log("Initialisiere useAuthentication, adminRequired:", adminRequired, "pharmacistRequired:", pharmacistRequired);
@@ -89,12 +50,12 @@ export const useAuthentication = (
           
           // Adminrechte prüfen, wenn nötig
           if (adminRequired) {
-            updatedState.isAdmin = await checkAdminStatus(currentSession.user.id);
+            updatedState.isAdmin = await checkIsAdmin(currentSession.user.id);
           }
           
           // Apothekerstatus prüfen, wenn nötig
           if (pharmacistRequired || adminRequired) {
-            updatedState.isPharmacist = await checkPharmacistStatus(currentSession.user.id);
+            updatedState.isPharmacist = await checkIsPharmacist(currentSession.user.id);
           }
           
           if (isMounted) {
@@ -141,12 +102,12 @@ export const useAuthentication = (
           
           // Adminrechte prüfen, wenn nötig
           if (adminRequired) {
-            updatedState.isAdmin = await checkAdminStatus(currentSession.user.id);
+            updatedState.isAdmin = await checkIsAdmin(currentSession.user.id);
           }
           
           // Apothekerstatus prüfen, wenn nötig
           if (pharmacistRequired || adminRequired) {
-            updatedState.isPharmacist = await checkPharmacistStatus(currentSession.user.id);
+            updatedState.isPharmacist = await checkIsPharmacist(currentSession.user.id);
           }
         } else {
           updatedState.isAdmin = false;
