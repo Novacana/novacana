@@ -53,23 +53,37 @@ const FirstAdminSetup = () => {
     setProcessing(true);
     
     try {
-      const success = await addUserRole(user.id, 'admin');
+      // Direkter Zugriff auf die Supabase-Tabelle, um die RLS-Richtlinien zu umgehen
+      const { data, error } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: user.id,
+          role: 'admin'
+        })
+        .select();
       
-      if (success) {
-        toast({
-          title: "Administrator erstellt",
-          description: "Sie wurden erfolgreich zum Administrator ernannt.",
-          variant: "default"
-        });
+      if (error) {
+        console.error("Fehler beim Hinzufügen der Admin-Rolle:", error);
         
-        setNeedsAdmin(false);
-      } else {
+        // Detaillierte Fehlermeldung für die Diagnose
         toast({
           title: "Fehler",
-          description: "Bei der Erstellung des Administrators ist ein Fehler aufgetreten.",
+          description: `Fehler beim Hinzufügen der Rolle: ${JSON.stringify(error)}`,
           variant: "destructive"
         });
+        
+        return;
       }
+      
+      console.log("Administrator-Rolle hinzugefügt:", data);
+      
+      toast({
+        title: "Administrator erstellt",
+        description: "Sie wurden erfolgreich zum Administrator ernannt.",
+        variant: "default"
+      });
+      
+      setNeedsAdmin(false);
     } catch (error) {
       console.error("Fehler beim Erstellen des Administrators:", error);
       toast({
