@@ -15,6 +15,8 @@ import Orders from "./pages/Orders";
 import AboutUs from "./pages/AboutUs";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Imprint from "./pages/Imprint";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +53,8 @@ const App = () => {
                   <Orders />
                 </ProtectedRoute>
               } />
+              <Route path="/imprint" element={<Imprint />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="/doccheck-callback" element={<ProtectedRoute showDocCheckCallback={true}><Products /></ProtectedRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
