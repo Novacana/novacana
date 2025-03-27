@@ -58,7 +58,7 @@ const AboutUs = () => {
                   console.error("Image failed to load:", e);
                   const target = e.target as HTMLImageElement;
                   target.src = "https://placehold.co/800x400/gray/white?text=Medizinisches+Cannabis";
-                }} src="/lovable-uploads/6be59494-1548-4c0d-b739-4625ec70c368.png" />
+                }} src="https://media.istockphoto.com/id/1175657274/photo/hospital-indoor-storage-room-health-center-repository.jpg?s=612x612&w=0&k=20&c=st6kLOWp84yP38IRStwApk7bOLuEpSaMIH13AlHCjqY=" />
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                       {t('aboutUs.established') || "Gegründet 2019"}
