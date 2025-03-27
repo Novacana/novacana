@@ -23,6 +23,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminUsers from "./pages/admin/AdminUsers";
 import PharmacyVerifications from "./pages/admin/PharmacyVerifications";
+import Documentation from "./pages/Documentation";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,11 @@ const App = () => {
               <Route path="/orders" element={
                 <ProtectedRoute pharmacistOnly={true}>
                   <Orders />
+                </ProtectedRoute>
+              } />
+              <Route path="/documentation" element={
+                <ProtectedRoute>
+                  <Documentation />
                 </ProtectedRoute>
               } />
               <Route path="/imprint" element={<Imprint />} />

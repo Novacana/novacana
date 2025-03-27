@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -230,10 +229,7 @@ const OrderForm = ({
             
             <AddressForm 
               type="billing"
-              formData={{
-                ...formData,
-                paymentMethod: formData.paymentMethod,
-              }}
+              formData={formData}
               onChange={handleInputChange}
               onSelectChange={handleSelectChange}
               copyShippingToBilling={copyShippingToBilling}
