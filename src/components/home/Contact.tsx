@@ -9,7 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const Contact = () => {
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -170,8 +170,8 @@ const Contact = () => {
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white">{t('contact.info.address') || "Adresse"}</h4>
                     <p className="text-gray-600 dark:text-gray-300">
-                      Rheinstrasse 25<br />
-                      64283 Darmstadt<br />
+                      Guerickeweg 5<br />
+                      64291 Darmstadt<br />
                       Deutschland
                     </p>
                   </div>
@@ -182,8 +182,8 @@ const Contact = () => {
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white">{t('contact.info.phone') || "Telefon"}</h4>
                     <p className="text-gray-600 dark:text-gray-300">
-                      <a href="tel:+496151123456" className="hover:text-nova-600 dark:hover:text-nova-400">
-                        +49 6151 123456
+                      <a href="tel:+4969945159180" className="hover:text-nova-600 dark:hover:text-nova-400">
+                        +49 (0) 69 945159 18
                       </a>
                     </p>
                   </div>

@@ -1,9 +1,11 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
+import { Phone, Mail, MapPin, Linkedin } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
+  const { t, language } = useLanguage();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -14,32 +16,17 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">Novacana GmbH</h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Pharmaceutical wholesaler specializing in medical cannabis products for pharmacies throughout Germany.
+              {language === 'de' 
+                ? "Pharmazeutischer Großhändler spezialisiert auf medizinische Cannabisprodukte für Apotheken in Deutschland."
+                : "Pharmaceutical wholesaler specializing in medical cannabis products for pharmacies throughout Germany."}
             </p>
             <div className="flex space-x-4 pt-2">
               <a
-                href="https://facebook.com"
+                href="https://www.linkedin.com/company/novacanabrand/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-500 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors"
-              >
-                <Facebook size={20} />
-                <span className="sr-only">Facebook</span>
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-500 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors"
-              >
-                <Instagram size={20} />
-                <span className="sr-only">Instagram</span>
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-500 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors"
+                aria-label="LinkedIn"
               >
                 <Linkedin size={20} />
                 <span className="sr-only">LinkedIn</span>
@@ -49,14 +36,16 @@ const Footer = () => {
 
           {/* Navigation */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Navigation</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              {language === 'de' ? 'Navigation' : 'Navigation'}
+            </h3>
             <ul className="space-y-2">
               <li>
                 <Link 
                   to="/" 
                   className="text-gray-600 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors text-sm"
                 >
-                  Home
+                  {language === 'de' ? 'Startseite' : 'Home'}
                 </Link>
               </li>
               <li>
@@ -64,15 +53,15 @@ const Footer = () => {
                   to="/products" 
                   className="text-gray-600 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors text-sm"
                 >
-                  Products
+                  {language === 'de' ? 'Produkte' : 'Products'}
                 </Link>
               </li>
               <li>
                 <Link 
-                  to="/#about" 
+                  to="/about" 
                   className="text-gray-600 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors text-sm"
                 >
-                  About Us
+                  {language === 'de' ? 'Über uns' : 'About Us'}
                 </Link>
               </li>
               <li>
@@ -80,7 +69,7 @@ const Footer = () => {
                   to="/#contact" 
                   className="text-gray-600 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors text-sm"
                 >
-                  Contact
+                  {language === 'de' ? 'Kontakt' : 'Contact'}
                 </Link>
               </li>
             </ul>
@@ -88,14 +77,16 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Legal</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              {language === 'de' ? 'Rechtliches' : 'Legal'}
+            </h3>
             <ul className="space-y-2">
               <li>
                 <Link 
                   to="/imprint" 
                   className="text-gray-600 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors text-sm"
                 >
-                  Imprint
+                  {language === 'de' ? 'Impressum' : 'Imprint'}
                 </Link>
               </li>
               <li>
@@ -103,7 +94,7 @@ const Footer = () => {
                   to="/privacy" 
                   className="text-gray-600 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors text-sm"
                 >
-                  Privacy Policy
+                  {language === 'de' ? 'Datenschutz' : 'Privacy Policy'}
                 </Link>
               </li>
               <li>
@@ -111,7 +102,7 @@ const Footer = () => {
                   to="/terms" 
                   className="text-gray-600 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors text-sm"
                 >
-                  Terms & Conditions
+                  {language === 'de' ? 'AGB' : 'Terms & Conditions'}
                 </Link>
               </li>
             </ul>
@@ -119,21 +110,23 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Contact Us</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              {language === 'de' ? 'Kontaktieren Sie uns' : 'Contact Us'}
+            </h3>
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin size={18} className="mt-0.5 mr-2 text-nova-500 dark:text-nova-400 flex-shrink-0" />
                 <span className="text-gray-600 dark:text-gray-400 text-sm">
-                  Rheinstrasse 25, 64283 Darmstadt, Germany
+                  Guerickeweg 5, 64291 Darmstadt, Germany
                 </span>
               </li>
               <li className="flex items-center">
                 <Phone size={18} className="mr-2 text-nova-500 dark:text-nova-400 flex-shrink-0" />
                 <a 
-                  href="tel:+496151123456" 
+                  href="tel:+4969945159180" 
                   className="text-gray-600 hover:text-nova-500 dark:text-gray-400 dark:hover:text-nova-400 transition-colors text-sm"
                 >
-                  +49 6151 123456
+                  +49 (0) 69 945159 18
                 </a>
               </li>
               <li className="flex items-center">
@@ -153,10 +146,12 @@ const Footer = () => {
         <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              © {currentYear} Novacana GmbH. All rights reserved.
+              © {currentYear} Novacana GmbH. {language === 'de' ? 'Alle Rechte vorbehalten.' : 'All rights reserved.'}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 md:mt-0">
-              Pharmaceutical wholesale license No. DE-HE-01234
+              {language === 'de' 
+                ? "Großhandelserlaubnis Nr. DE-HE-01234" 
+                : "Pharmaceutical wholesale license No. DE-HE-01234"}
             </p>
           </div>
         </div>
