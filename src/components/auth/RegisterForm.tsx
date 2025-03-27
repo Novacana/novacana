@@ -154,12 +154,13 @@ const RegisterForm = () => {
         </p>
       </div>
 
+      {/* Progress indicator */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <div 
-              className={`w-full h-1 rounded-full ${
-                step >= 1 ? "bg-nova-500" : "bg-gray-200 dark:bg-gray-700"
+              className={`w-full h-2 rounded-full ${
+                step >= 1 ? "bg-emerald-500" : "bg-gray-200 dark:bg-gray-700"
               }`}
             ></div>
           </div>
@@ -168,51 +169,52 @@ const RegisterForm = () => {
           </div>
           <div className="flex-1">
             <div 
-              className={`w-full h-1 rounded-full ${
-                step >= 2 ? "bg-nova-500" : "bg-gray-200 dark:bg-gray-700"
+              className={`w-full h-2 rounded-full ${
+                step >= 2 ? "bg-emerald-500" : "bg-gray-200 dark:bg-gray-700"
               }`}
             ></div>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleNextStep} className="space-y-5">
+      <form onSubmit={handleNextStep} className="space-y-6">
         {step === 1 && (
           <>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name *</Label>
+                <Label htmlFor="firstName" className="text-base font-medium">First Name *</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                    <User size={18} />
+                    <User size={20} />
                   </div>
                   <Input
                     id="firstName"
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="pl-10"
+                    className="pl-10 h-12 text-base"
                     required
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name *</Label>
+                <Label htmlFor="lastName" className="text-base font-medium">Last Name *</Label>
                 <Input
                   id="lastName"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
+                  className="h-12 text-base"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email" className="text-base font-medium">Email *</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                  <Mail size={18} />
+                  <Mail size={20} />
                 </div>
                 <Input
                   id="email"
@@ -221,17 +223,17 @@ const RegisterForm = () => {
                   placeholder="pharmacy@example.de"
                   value={formData.email}
                   onChange={handleChange}
-                  className="pl-10"
+                  className="pl-10 h-12 text-base"
                   required
                 />
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Use your professional pharmacy email
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password *</Label>
+              <Label htmlFor="password" className="text-base font-medium">Password *</Label>
               <Input
                 id="password"
                 name="password"
@@ -239,12 +241,13 @@ const RegisterForm = () => {
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
+                className="h-12 text-base"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password *</Label>
+              <Label htmlFor="confirmPassword" className="text-base font-medium">Confirm Password *</Label>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -252,17 +255,18 @@ const RegisterForm = () => {
                 placeholder="••••••••"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                className="h-12 text-base"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="role">Your Role *</Label>
+              <Label htmlFor="role" className="text-base font-medium">Your Role *</Label>
               <Select
                 value={formData.role}
                 onValueChange={handleSelectChange("role")}
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-12 text-base">
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -277,44 +281,45 @@ const RegisterForm = () => {
         {step === 2 && (
           <>
             <div className="space-y-2">
-              <Label htmlFor="pharmacyName">Pharmacy Name *</Label>
+              <Label htmlFor="pharmacyName" className="text-base font-medium">Pharmacy Name *</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                  <Building size={18} />
+                  <Building size={20} />
                 </div>
                 <Input
                   id="pharmacyName"
                   name="pharmacyName"
                   value={formData.pharmacyName}
                   onChange={handleChange}
-                  className="pl-10"
+                  className="pl-10 h-12 text-base"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="pharmacyId">Pharmacy License ID</Label>
+              <Label htmlFor="pharmacyId" className="text-base font-medium">Pharmacy License ID</Label>
               <Input
                 id="pharmacyId"
                 name="pharmacyId"
                 value={formData.pharmacyId}
                 onChange={handleChange}
+                className="h-12 text-base"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Address *</Label>
+              <Label htmlFor="address" className="text-base font-medium">Address *</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                  <MapPin size={18} />
+                  <MapPin size={20} />
                 </div>
                 <Input
                   id="address"
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  className="pl-10"
+                  className="pl-10 h-12 text-base"
                   required
                 />
               </div>
@@ -322,32 +327,34 @@ const RegisterForm = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="postalCode">Postal Code *</Label>
+                <Label htmlFor="postalCode" className="text-base font-medium">Postal Code *</Label>
                 <Input
                   id="postalCode"
                   name="postalCode"
                   value={formData.postalCode}
                   onChange={handleChange}
+                  className="h-12 text-base"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="city">City *</Label>
+                <Label htmlFor="city" className="text-base font-medium">City *</Label>
                 <Input
                   id="city"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
+                  className="h-12 text-base"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone *</Label>
+              <Label htmlFor="phone" className="text-base font-medium">Phone *</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                  <Phone size={18} />
+                  <Phone size={20} />
                 </div>
                 <Input
                   id="phone"
@@ -355,7 +362,7 @@ const RegisterForm = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="pl-10"
+                  className="pl-10 h-12 text-base"
                   required
                 />
               </div>
@@ -406,20 +413,21 @@ const RegisterForm = () => {
           </>
         )}
 
-        <div className="flex justify-between pt-2">
+        <div className="flex justify-between pt-4">
           {step > 1 && (
             <Button
               type="button"
               variant="outline"
               onClick={handlePrevStep}
               disabled={isLoading}
+              className="h-12"
             >
               Previous
             </Button>
           )}
           <Button
             type="submit"
-            className={step === 1 ? "ml-auto" : ""}
+            className={`${step === 1 ? "ml-auto" : ""} h-12 px-8 bg-emerald-600 hover:bg-emerald-700`}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -454,12 +462,12 @@ const RegisterForm = () => {
           </Button>
         </div>
 
-        <div className="text-center pt-2">
+        <div className="text-center pt-4">
           <p className="text-sm text-gray-600 dark:text-gray-300">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="font-medium text-nova-600 dark:text-nova-400 hover:underline"
+              className="font-medium text-emerald-600 hover:underline"
             >
               Sign in
             </Link>
