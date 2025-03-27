@@ -24,14 +24,6 @@ const Login = () => {
               </AlertDescription>
             </Alert>
             
-            <Alert className="mb-6 bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300">
-              <Info className="h-4 w-4" />
-              <AlertDescription>
-                <p>Hinweis zur E-Mail-Bestätigung: Bitte bestätigen Sie Ihre E-Mail-Adresse nach der Registrierung durch Klicken auf den Link in der an Sie gesendeten E-Mail. Überprüfen Sie auch Ihren Spam-Ordner.</p>
-                <p className="mt-1 text-sm">Wenn Sie Probleme beim Anmelden haben, können Sie eine neue Bestätigungs-E-Mail anfordern.</p>
-              </AlertDescription>
-            </Alert>
-            
             <div className="mb-8 text-center">
               <img 
                 src="/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png" 

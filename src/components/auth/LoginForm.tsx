@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,8 @@ const LoginForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [registerMode, setRegisterMode] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showConfirmEmailInfo, setShowConfirmEmailInfo] = useState(false);
+  const [showPasswordResetInfo, setShowPasswordResetInfo] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,21 +44,25 @@ const LoginForm = () => {
   const resetEmailConfirmation = async (userEmail: string) => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: userEmail,
-        options: {
-          emailRedirectTo: `${window.location.origin}/login`
+      setError(null);
+      
+      // Hier nutzen wir die Supabase Edge Function für benutzerdefinierte E-Mails
+      const response = await supabase.functions.invoke("custom-email", {
+        body: {
+          email: userEmail,
+          type: "signup",
+          redirectTo: `${window.location.origin}/login`
         }
       });
       
-      if (error) {
-        console.error("Fehler beim Zurücksetzen der E-Mail-Bestätigung:", error);
-        setError(`Fehler beim Senden der Bestätigungs-E-Mail: ${error.message}`);
+      if (response.error) {
+        console.error("Fehler beim Zurücksetzen der E-Mail-Bestätigung:", response.error);
+        setError(`Fehler beim Senden der Bestätigungs-E-Mail: ${response.error.message}`);
         return false;
       }
       
       setSuccessMessage("Eine neue Bestätigungs-E-Mail wurde an Sie gesendet. Bitte überprüfen Sie Ihren Posteingang und Spam-Ordner.");
+      setShowConfirmEmailInfo(true);
       return true;
     } catch (err) {
       console.error("Allgemeiner Fehler:", err);
@@ -66,10 +73,46 @@ const LoginForm = () => {
     }
   };
 
+  const handlePasswordReset = async (userEmail: string) => {
+    try {
+      if (!userEmail) {
+        setError("Bitte geben Sie Ihre E-Mail-Adresse ein, um ein Passwort-Reset anzufordern.");
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      
+      // Hier nutzen wir die Supabase Edge Function für benutzerdefinierte E-Mails
+      const response = await supabase.functions.invoke("custom-email", {
+        body: {
+          email: userEmail,
+          type: "recovery",
+          redirectTo: `${window.location.origin}/login`
+        }
+      });
+      
+      if (response.error) {
+        setError(`Fehler beim Passwort-Reset: ${response.error.message}`);
+        return;
+      }
+      
+      setSuccessMessage("Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet. Bitte überprüfen Sie Ihren Posteingang.");
+      setShowPasswordResetInfo(true);
+    } catch (err) {
+      console.error("Fehler beim Passwort-Reset:", err);
+      setError("Bei der Anforderung eines Passwort-Resets ist ein Fehler aufgetreten.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccessMessage(null);
+    setShowConfirmEmailInfo(false);
+    setShowPasswordResetInfo(false);
     setLoading(true);
 
     try {
@@ -98,6 +141,7 @@ const LoginForm = () => {
         if (data?.user) {
           console.log("Registrierung erfolgreich:", data.user);
           setSuccessMessage("Ihr Konto wurde erstellt. Bitte bestätigen Sie Ihre E-Mail-Adresse, indem Sie auf den Link in der an Sie gesendeten E-Mail klicken. Überprüfen Sie auch Ihren Spam-Ordner.");
+          setShowConfirmEmailInfo(true);
           toast({
             title: "Registrierung erfolgreich",
             description: "Bitte bestätigen Sie Ihre E-Mail-Adresse.",
@@ -116,6 +160,7 @@ const LoginForm = () => {
           // Spezifische Fehlerbehandlung für E-Mail-Bestätigung
           if (error.message.includes("Email not confirmed")) {
             setError("Ihre E-Mail-Adresse wurde noch nicht bestätigt. Bitte klicken Sie auf den Bestätigungslink in der an Sie gesendeten E-Mail oder fordern Sie eine neue Bestätigungs-E-Mail an.");
+            setShowConfirmEmailInfo(true);
             return;
           }
           
@@ -155,6 +200,8 @@ const LoginForm = () => {
   const toggleMode = () => {
     setError(null);
     setSuccessMessage(null);
+    setShowConfirmEmailInfo(false);
+    setShowPasswordResetInfo(false);
     setRegisterMode(!registerMode);
   };
 
@@ -165,7 +212,7 @@ const LoginForm = () => {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             {error}
-            {error.includes("E-Mail-Adresse wurde noch nicht bestätigt") && (
+            {error.includes("E-Mail-Adresse wurde noch nicht bestätigt") && !showConfirmEmailInfo && (
               <div className="mt-2">
                 <Button 
                   type="button" 
@@ -190,6 +237,40 @@ const LoginForm = () => {
         </Alert>
       )}
       
+      {showConfirmEmailInfo && (
+        <Alert className="bg-blue-50 border-blue-200 text-blue-800">
+          <AlertCircle className="h-4 w-4 text-blue-600" />
+          <AlertDescription>
+            <h4 className="font-medium mb-1">Bitte bestätigen Sie Ihre E-Mail-Adresse</h4>
+            <p>Wir haben Ihnen eine E-Mail mit einem Bestätigungslink geschickt. Um Ihr Konto zu aktivieren, klicken Sie bitte auf diesen Link.</p>
+            <p className="mt-2 text-sm">Falls Sie keine E-Mail erhalten haben, prüfen Sie bitte Ihren Spam-Ordner oder fordern Sie eine neue Bestätigungs-E-Mail an.</p>
+            <div className="mt-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm"
+                onClick={() => resetEmailConfirmation(email)}
+                disabled={loading}
+              >
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Neue Bestätigungs-E-Mail senden
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {showPasswordResetInfo && (
+        <Alert className="bg-blue-50 border-blue-200 text-blue-800">
+          <AlertCircle className="h-4 w-4 text-blue-600" />
+          <AlertDescription>
+            <h4 className="font-medium mb-1">Passwort zurücksetzen</h4>
+            <p>Wir haben Ihnen eine E-Mail mit einem Link zum Zurücksetzen Ihres Passworts geschickt. Bitte klicken Sie auf diesen Link, um ein neues Passwort festzulegen.</p>
+            <p className="mt-2 text-sm">Falls Sie keine E-Mail erhalten haben, prüfen Sie bitte Ihren Spam-Ordner oder fordern Sie erneut ein Passwort-Reset an.</p>
+          </AlertDescription>
+        </Alert>
+      )}
+      
       <div className="space-y-2">
         <Label htmlFor="email">E-Mail</Label>
         <Input
@@ -211,19 +292,7 @@ const LoginForm = () => {
               className="text-xs text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
               onClick={(e) => {
                 e.preventDefault();
-                if (email) {
-                  supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: `${window.location.origin}/login`
-                  }).then(({ error }) => {
-                    if (error) {
-                      setError(`Fehler beim Passwort-Reset: ${error.message}`);
-                    } else {
-                      setSuccessMessage("Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet.");
-                    }
-                  });
-                } else {
-                  setError("Bitte geben Sie Ihre E-Mail-Adresse ein, um ein Passwort-Reset anzufordern.");
-                }
+                handlePasswordReset(email);
               }}
             >
               Passwort vergessen?
