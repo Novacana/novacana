@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,13 @@ const LoginForm = () => {
     password: "",
     remember: false,
   });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Funktion zum Initialisieren des DocCheck iFrames
+  useEffect(() => {
+    // In diesem Fall benötigen wir keine besondere Initialisierung,
+    // aber hier könnten Event-Listener für Nachrichten aus dem iFrame hinzugefügt werden
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -197,24 +204,49 @@ const LoginForm = () => {
         <span className="absolute px-4 text-sm text-gray-500 bg-white dark:bg-gray-800">oder</span>
       </div>
       
-      <Button 
-        onClick={handleDocCheckAuth} 
-        type="button" 
-        variant="outline" 
-        className="w-full flex items-center justify-center gap-2"
-      >
-        <img 
-          src="/lovable-uploads/861c27b1-43a8-4b19-85cd-06e27ba7e28a.png" 
-          alt="DocCheck" 
-          className="h-5"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.onerror = null;
-            target.src = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='20'%3E%3Crect width='100' height='20' fill='%23005EB8'/%3E%3Ctext x='50' y='13' font-family='Arial' font-size='10' fill='white' text-anchor='middle'%3EDocCheck%3C/text%3E%3C/svg%3E";
-          }}
-        />
-        Mit DocCheck anmelden
-      </Button>
+      {/* DocCheck Login Optionen */}
+      <div className="space-y-4">
+        {/* DocCheck Button Link (bestehender Code) */}
+        <Button 
+          onClick={handleDocCheckAuth} 
+          type="button" 
+          variant="outline" 
+          className="w-full flex items-center justify-center gap-2"
+        >
+          <img 
+            src="/lovable-uploads/861c27b1-43a8-4b19-85cd-06e27ba7e28a.png" 
+            alt="DocCheck" 
+            className="h-5"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='20'%3E%3Crect width='100' height='20' fill='%23005EB8'/%3E%3Ctext x='50' y='13' font-family='Arial' font-size='10' fill='white' text-anchor='middle'%3EDocCheck%3C/text%3E%3C/svg%3E";
+            }}
+          />
+          Mit DocCheck anmelden
+        </Button>
+        
+        {/* DocCheck iFrame */}
+        <div className="mt-4 flex justify-center">
+          <div className="border border-gray-200 rounded-md p-2 bg-white">
+            <iframe 
+              ref={iframeRef}
+              align="left" 
+              frameBorder="0" 
+              scrolling="no" 
+              width="424" 
+              height="215" 
+              name="dc_login_iframe" 
+              id="dc_login_iframe" 
+              src="https://login.doccheck.com/code/de/2000000022188/login_l/" 
+              title="DocCheck Login"
+              className="mx-auto"
+            >
+              <a href="https://login.doccheck.com/code/de/2000000022188/login_l/" target="_blank" rel="noreferrer">LOGIN</a>
+            </iframe>
+          </div>
+        </div>
+      </div>
 
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600 dark:text-gray-300">

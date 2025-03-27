@@ -43,6 +43,28 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, showDo
     if (dc_uid && dc_pwh) {
       handleDocCheckCallback(dc_uid, dc_pwh, returnTo);
     }
+    
+    // Hören auf Nachrichten vom DocCheck iFrame
+    const handleIframeMessage = (event: MessageEvent) => {
+      // Prüfen, ob die Nachricht von DocCheck stammt (Sie müssen die genaue Ursprungs-URL kennen)
+      if (event.origin.includes("doccheck.com")) {
+        try {
+          const data = event.data;
+          if (data && data.dc_uid && data.dc_pwh) {
+            // Erfolgreiche Anmeldung über iFrame
+            handleDocCheckCallback(data.dc_uid, data.dc_pwh, null);
+          }
+        } catch (error) {
+          console.error("Fehler beim Verarbeiten der DocCheck-Nachricht:", error);
+        }
+      }
+    };
+
+    window.addEventListener("message", handleIframeMessage);
+    
+    return () => {
+      window.removeEventListener("message", handleIframeMessage);
+    };
   }, [location, navigate]);
 
   // Funktion zum Verarbeiten des DocCheck-Callbacks
