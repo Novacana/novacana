@@ -191,6 +191,24 @@ export type Database = {
         }
         Returns: boolean
       }
+      create_user: {
+        Args: {
+          email: string
+          password: string
+          user_role?: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: string
+      }
+      get_all_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          email: string
+          created_at: string
+          updated_at: string
+          roles: Database["public"]["Enums"]["app_role"][]
+        }[]
+      }
       get_user_roles: {
         Args: {
           _user_id: string

@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { addUserRole, removeUserRole } from "@/utils/authUtils";
-import { User, Shield, UserCheck, UserX } from "lucide-react";
+import { User, Shield, UserCheck, UserX, UserPlus, AlertCircle } from "lucide-react";
 
 interface UserWithRoles {
   id: string;
@@ -18,6 +21,11 @@ interface UserWithRoles {
 const UserRoleManager: React.FC = () => {
   const [users, setUsers] = useState<UserWithRoles[]>([]);
   const [loading, setLoading] = useState(true);
+  const [newUserEmail, setNewUserEmail] = useState("");
+  const [newUserPassword, setNewUserPassword] = useState("");
+  const [newUserRole, setNewUserRole] = useState<'user' | 'admin' | 'pharmacist'>('user');
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const { toast } = useToast();
 
   // Benutzer und deren Rollen laden
@@ -25,38 +33,20 @@ const UserRoleManager: React.FC = () => {
     try {
       setLoading(true);
       
-      // Benutzer von Supabase Auth holen
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+      // Benutzer über die get_all_users Funktion holen
+      const { data, error } = await supabase.rpc('get_all_users');
       
-      if (authError) {
-        throw new Error(`Fehler beim Laden der Benutzer: ${authError.message}`);
+      if (error) {
+        throw new Error(`Fehler beim Laden der Benutzer: ${error.message}`);
       }
       
-      if (!authUsers?.users?.length) {
-        setUsers([]);
-        return;
-      }
+      const formattedUsers = data?.map(user => ({
+        id: user.id,
+        email: user.email,
+        roles: user.roles || []
+      })) || [];
       
-      // Rollen für jeden Benutzer holen
-      const usersWithRoles: UserWithRoles[] = [];
-      
-      for (const user of authUsers.users) {
-        const { data: roles, error: rolesError } = await supabase.rpc('get_user_roles', {
-          _user_id: user.id
-        });
-        
-        if (rolesError) {
-          console.error(`Fehler beim Laden der Rollen für Benutzer ${user.id}:`, rolesError);
-        }
-        
-        usersWithRoles.push({
-          id: user.id,
-          email: user.email || 'Keine E-Mail',
-          roles: roles || []
-        });
-      }
-      
-      setUsers(usersWithRoles);
+      setUsers(formattedUsers);
     } catch (error) {
       console.error("Fehler beim Laden der Benutzer und Rollen:", error);
       toast({
@@ -72,6 +62,56 @@ const UserRoleManager: React.FC = () => {
   useEffect(() => {
     loadUsers();
   }, []);
+
+  // Neuen Benutzer erstellen
+  const handleCreateUser = async () => {
+    if (!newUserEmail || !newUserPassword) {
+      toast({
+        title: "Eingaben prüfen",
+        description: "Bitte geben Sie eine E-Mail-Adresse und ein Passwort ein.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsCreatingUser(true);
+      
+      // Den create_user RPC-Endpunkt aufrufen
+      const { data, error } = await supabase.rpc('create_user', {
+        email: newUserEmail,
+        password: newUserPassword,
+        user_role: newUserRole
+      });
+      
+      if (error) {
+        throw new Error(`Fehler beim Erstellen des Benutzers: ${error.message}`);
+      }
+      
+      toast({
+        title: "Benutzer erstellt",
+        description: `Neuer Benutzer mit der E-Mail ${newUserEmail} wurde erfolgreich erstellt.`
+      });
+      
+      // Dialog schließen und Formular zurücksetzen
+      setIsUserDialogOpen(false);
+      setNewUserEmail("");
+      setNewUserPassword("");
+      setNewUserRole('user');
+      
+      // Benutzerliste aktualisieren
+      loadUsers();
+    } catch (error) {
+      console.error("Fehler beim Erstellen des Benutzers:", error);
+      toast({
+        title: "Fehler",
+        description: `Der Benutzer konnte nicht erstellt werden: ${error.message}`,
+        variant: "destructive"
+      });
+    } finally {
+      setIsCreatingUser(false);
+    }
+  };
 
   // Rolle für einen Benutzer hinzufügen
   const handleAddRole = async (userId: string, role: 'admin' | 'user' | 'pharmacist') => {
@@ -142,7 +182,98 @@ const UserRoleManager: React.FC = () => {
           </div>
         ) : (
           <>
-            <div className="mb-4 flex justify-end">
+            <div className="mb-4 flex justify-between">
+              <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-green-600 hover:bg-green-700">
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Neuen Benutzer anlegen
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Neuen Benutzer anlegen</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="email">E-Mail-Adresse</Label>
+                      <Input 
+                        id="email"
+                        type="email"
+                        placeholder="benutzer@beispiel.de"
+                        value={newUserEmail}
+                        onChange={(e) => setNewUserEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="password">Passwort</Label>
+                      <Input 
+                        id="password"
+                        type="password"
+                        value={newUserPassword}
+                        onChange={(e) => setNewUserPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="role">Rolle</Label>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant={newUserRole === 'user' ? "default" : "outline"}
+                          onClick={() => setNewUserRole('user')}
+                        >
+                          <UserX className="mr-2 h-4 w-4" />
+                          Benutzer
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={newUserRole === 'pharmacist' ? "default" : "outline"}
+                          onClick={() => setNewUserRole('pharmacist')}
+                        >
+                          <UserCheck className="mr-2 h-4 w-4" />
+                          Apotheker
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={newUserRole === 'admin' ? "default" : "outline"}
+                          onClick={() => setNewUserRole('admin')}
+                        >
+                          <Shield className="mr-2 h-4 w-4" />
+                          Admin
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="text-sm text-yellow-600 flex items-start mt-2">
+                      <AlertCircle className="h-4 w-4 mr-2 mt-0.5" />
+                      <p>
+                        Achtung: Bitte merken Sie sich das Passwort. Es kann später nicht eingesehen werden.
+                      </p>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsUserDialogOpen(false)}
+                    >
+                      Abbrechen
+                    </Button>
+                    <Button 
+                      onClick={handleCreateUser}
+                      disabled={isCreatingUser}
+                    >
+                      {isCreatingUser ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Wird erstellt...
+                        </>
+                      ) : (
+                        <>Benutzer erstellen</>
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              
               <Button onClick={() => loadUsers()} variant="outline" size="sm">
                 Aktualisieren
               </Button>
