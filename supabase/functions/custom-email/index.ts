@@ -13,6 +13,178 @@ const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// HTML-Template für die Bestätigungs-E-Mail
+const getConfirmationEmailTemplate = (confirmationURL: string) => `
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bestätigen Sie Ihre Registrierung bei Novacana</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+    .container {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 30px;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #777;
+      text-align: center;
+    }
+    .button {
+      display: inline-block;
+      background-color: #4a7b57;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    .info {
+      font-size: 14px;
+      background-color: #f0f7f2;
+      border-left: 4px solid #4a7b57;
+      padding: 10px 15px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://jrvhqkilzxopesfmpjbz.supabase.co/storage/v1/object/public/public/novacana-logo.png" alt="Novacana Logo" class="logo">
+  </div>
+  
+  <div class="container">
+    <h2>Bestätigen Sie Ihre Registrierung</h2>
+    
+    <p>Vielen Dank für Ihre Registrierung bei Novacana. Als Teil des medizinischen Fachkreises bieten wir Ihnen Zugang zu exklusiven Informationen und Produkten.</p>
+    
+    <p>Bitte bestätigen Sie Ihre E-Mail-Adresse, indem Sie auf die folgende Schaltfläche klicken:</p>
+    
+    <div style="text-align: center;">
+      <a href="${confirmationURL}" class="button">E-Mail bestätigen</a>
+    </div>
+    
+    <div class="info">
+      <p><strong>Hinweis:</strong> Diese E-Mail wurde für medizinisches Fachpersonal und Apotheken generiert. Falls Sie diese E-Mail irrtümlicherweise erhalten haben, ignorieren Sie diese bitte.</p>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>© ${new Date().getFullYear()} Novacana. Alle Rechte vorbehalten.</p>
+    <p>Diese E-Mail wurde automatisch generiert. Bitte antworten Sie nicht auf diese E-Mail.</p>
+  </div>
+</body>
+</html>
+`;
+
+// HTML-Template für die Passwort-Reset-E-Mail
+const getResetPasswordEmailTemplate = (resetURL: string) => `
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passwort zurücksetzen - Novacana</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+    .container {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 30px;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #777;
+      text-align: center;
+    }
+    .button {
+      display: inline-block;
+      background-color: #4a7b57;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    .warning {
+      font-size: 14px;
+      background-color: #fff6f6;
+      border-left: 4px solid #e74c3c;
+      padding: 10px 15px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://jrvhqkilzxopesfmpjbz.supabase.co/storage/v1/object/public/public/novacana-logo.png" alt="Novacana Logo" class="logo">
+  </div>
+  
+  <div class="container">
+    <h2>Passwort zurücksetzen</h2>
+    
+    <p>Sie haben eine Anfrage zum Zurücksetzen Ihres Passworts für Ihren Novacana-Zugang gestellt.</p>
+    
+    <p>Bitte klicken Sie auf die folgende Schaltfläche, um Ihr Passwort zurückzusetzen:</p>
+    
+    <div style="text-align: center;">
+      <a href="${resetURL}" class="button">Passwort zurücksetzen</a>
+    </div>
+    
+    <div class="warning">
+      <p><strong>Sicherheitshinweis:</strong> Falls Sie diese Anfrage nicht gestellt haben, ignorieren Sie bitte diese E-Mail und stellen Sie sicher, dass Sie weiterhin Zugriff auf Ihr Konto haben.</p>
+    </div>
+    
+    <p>Dieser Link ist aus Sicherheitsgründen nur für eine begrenzte Zeit gültig.</p>
+  </div>
+  
+  <div class="footer">
+    <p>© ${new Date().getFullYear()} Novacana. Alle Rechte vorbehalten.</p>
+    <p>Diese E-Mail wurde automatisch generiert. Bitte antworten Sie nicht auf diese E-Mail.</p>
+  </div>
+</body>
+</html>
+`;
+
 serve(async (req) => {
   // CORS-Preflight-Anforderungen behandeln
   if (req.method === "OPTIONS") {
@@ -62,9 +234,31 @@ serve(async (req) => {
       throw result.error;
     }
 
-    // Hier würden wir normalerweise eine eigene E-Mail senden
-    // Dies ist ein Platzhalter für die eigentliche E-Mail-Logik
-    console.log(`Link für ${email} generiert:`, result.data);
+    // Link aus der Antwort extrahieren
+    const link = type === "signup" 
+      ? result.data.properties.action_link 
+      : result.data.properties.action_link;
+
+    // Hier könnte eine eigene E-Mail-Versandlogik implementiert werden
+    // Dies ist ein Platzhalter, da wir aktuell Supabase's eigenen E-Mail-Service verwenden
+    console.log(`Link für ${email} generiert:`, link);
+    
+    // Beispiel für eine Antwort, die angibt, dass der Link generiert wurde
+    // In einer realen Anwendung würden Sie hier eine E-Mail mit dem Link senden
+    console.log(`E-Mail vom Typ ${type} mit Link ${link} an ${email} würde hier gesendet werden.`);
+    
+    // Hier implementieren wir einen einfachen E-Mail-Versand mit den benutzerdefinierten Templates
+    // In einer Produktionsumgebung würde hier ein richtiger E-Mail-Dienst angebunden werden
+    let emailTemplate = "";
+    if (type === "signup") {
+      emailTemplate = getConfirmationEmailTemplate(link);
+    } else if (type === "recovery") {
+      emailTemplate = getResetPasswordEmailTemplate(link);
+    }
+    
+    // Hier könnte der tatsächliche E-Mail-Versand erfolgen
+    // In diesem Beispiel geben wir nur die Vorlage als Erfolg zurück
+    console.log("E-Mail-Template generiert:", emailTemplate.substring(0, 100) + "...");
 
     return new Response(
       JSON.stringify({ 
