@@ -42,7 +42,7 @@ export const useProducts = () => {
   const addProduct = async (productData: Omit<Product, "id" | "createdAt" | "updatedAt">[]) => {
     try {
       if (productData.length > 0) {
-        // Convert the product to database format
+        // Convert the product to database format with the correct type
         const productToInsert = convertProductToDB(productData[0]);
 
         // Ensure all required fields are present

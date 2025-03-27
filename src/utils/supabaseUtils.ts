@@ -2,6 +2,7 @@
 import { Product, Order, OrderItem, Address } from "@/types";
 import { Json } from "@/integrations/supabase/types";
 import { toSnakeCase, toCamelCase } from "@/types/supabase";
+import { Database } from "@/integrations/supabase/types";
 
 /**
  * Converts a product from Supabase database format to application format
@@ -29,29 +30,25 @@ export const convertProductFromDB = (item: any): Product => ({
 /**
  * Converts a product to Supabase database format for insertion
  */
-export const convertProductToDB = (product: Omit<Product, "id" | "createdAt" | "updatedAt">): Record<string, any> => {
-  // Extract fields that need special handling
-  const {
-    shortDescription,
-    imageUrl,
-    thcContent,
-    cbdContent,
-    dosage,
-    recommendedDosage,
-    manufacturer,
-    countryOfOrigin,
-    ...rest
-  } = product;
-
-  // Create the database-ready object
+export const convertProductToDB = (
+  product: Omit<Product, "id" | "createdAt" | "updatedAt">
+): Database['public']['Tables']['products']['Insert'] => {
+  // Create the database-ready object with the correct type
   return {
-    ...rest,
-    short_description: shortDescription,
-    image_url: imageUrl,
-    thc_content: thcContent,
-    cbd_content: cbdContent,
-    dosage: recommendedDosage || dosage,
-    // Ignore manufacturer and countryOfOrigin as they don't map to DB fields
+    name: product.name,
+    description: product.description,
+    short_description: product.shortDescription,
+    image_url: product.imageUrl,
+    category: product.category,
+    price: product.price,
+    stock: product.stock || 0,
+    thc_content: product.thcContent,
+    cbd_content: product.cbdContent,
+    terpenes: product.terpenes,
+    weight: product.weight,
+    dosage: product.dosage || product.recommendedDosage,
+    effects: product.effects,
+    origin: product.origin
   };
 };
 
