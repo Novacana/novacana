@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import LoginForm from "@/components/auth/LoginForm";
@@ -9,6 +9,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const Login = () => {
   const { t } = useLanguage();
+  const [formStatus, setFormStatus] = useState({
+    loading: false,
+    error: null,
+    success: false
+  });
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -46,7 +51,7 @@ const Login = () => {
                   <HeartPulse className="h-4 w-4 text-gray-700 dark:text-gray-300" />
                 </div>
               </div>
-              <LoginForm />
+              <LoginForm setFormStatus={setFormStatus} />
             </div>
           </div>
         </div>

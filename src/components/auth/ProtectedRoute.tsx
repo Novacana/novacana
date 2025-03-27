@@ -29,6 +29,7 @@ const ProtectedRoute = ({
   // Check if user is an admin
   const checkAdminStatus = async (userId: string) => {
     try {
+      console.log("Prüfe Admin-Status für Benutzer:", userId);
       const hasAdminRole = await checkIsAdmin(userId);
       console.log("Admin-Status für Benutzer:", userId, hasAdminRole);
       setIsAdmin(hasAdminRole);

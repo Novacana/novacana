@@ -9,8 +9,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Check, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getUserRoles } from "@/utils/authUtils";
 
-const LoginForm = () => {
+interface LoginFormProps {
+  setFormStatus?: (status: {
+    loading: boolean;
+    error: any;
+    success: boolean;
+  }) => void;
+}
+
+const LoginForm = ({ setFormStatus }: LoginFormProps) => {
   const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,17 +37,48 @@ const LoginForm = () => {
   const searchParams = new URLSearchParams(location.search);
   const returnUrl = searchParams.get("returnUrl") || "/dashboard";
 
+  // Aktualisiere den übergeordneten Status, wenn vorhanden
+  useEffect(() => {
+    if (setFormStatus) {
+      setFormStatus({
+        loading,
+        error,
+        success: !!successMessage
+      });
+    }
+  }, [loading, error, successMessage, setFormStatus]);
+
   // Überprüfen des Bestätigungsstatus
   useEffect(() => {
     const checkConfirmationStatus = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user?.id) {
         console.log("Benutzer ist bereits angemeldet:", session.user.email);
+        
+        // Überprüfe Rollen, um zu sehen, ob Admin-Berechtigung vorhanden ist
+        try {
+          const roles = await getUserRoles(session.user.id);
+          console.log("Benutzerrollen:", roles);
+          
+          // Prüfe, ob Benutzer Admin-Rolle hat
+          if (returnUrl.includes("/admin") && !roles.includes("admin")) {
+            toast({
+              title: "Zugriff verweigert",
+              description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
+              variant: "destructive"
+            });
+            navigate("/dashboard");
+            return;
+          }
+        } catch (error) {
+          console.error("Fehler beim Abrufen der Rollen:", error);
+        }
+        
         navigate(returnUrl);
       }
     };
     checkConfirmationStatus();
-  }, [navigate, returnUrl]);
+  }, [navigate, returnUrl, toast]);
 
   // E-Mail-Bestätigungsstatus zurücksetzen
   const resetEmailConfirmation = async (userEmail: string) => {
@@ -175,6 +215,26 @@ const LoginForm = () => {
 
         if (data?.user) {
           console.log("Login erfolgreich:", data.user);
+          
+          // Überprüfe Benutzerrollen
+          try {
+            const roles = await getUserRoles(data.user.id);
+            console.log("Benutzerrollen nach Login:", roles);
+            
+            // Prüfe, ob Benutzer Admin-Rolle hat
+            if (returnUrl.includes("/admin") && !roles.includes("admin")) {
+              toast({
+                title: "Zugriff verweigert",
+                description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
+                variant: "destructive"
+              });
+              setLoading(false);
+              navigate("/dashboard");
+              return;
+            }
+          } catch (error) {
+            console.error("Fehler beim Abrufen der Rollen nach Login:", error);
+          }
           
           toast({
             title: "Erfolgreich angemeldet",
