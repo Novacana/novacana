@@ -16,6 +16,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [registerMode, setRegisterMode] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,77 +25,84 @@ const LoginForm = () => {
   const searchParams = new URLSearchParams(location.search);
   const returnUrl = searchParams.get("returnUrl") || "/dashboard";
 
-  // Hilfsfunktion zum Debuggen
-  const debugLogin = async () => {
-    try {
-      // Prüfen, ob der Benutzer in der Auth-Datenbank existiert
-      const { data: authData, error: authError } = await supabase.auth.getUser();
-      console.log("Auth User Data:", authData);
-      if (authError) console.error("Auth Error:", authError);
-
-      // Admin-Status prüfen (falls Benutzer existiert)
-      if (authData?.user) {
-        const { data: roleData, error: roleError } = await supabase.rpc('has_role', {
-          _user_id: authData.user.id,
-          _role: 'admin'
-        });
-        console.log("Admin Role Check:", roleData);
-        if (roleError) console.error("Role Check Error:", roleError);
-      }
-    } catch (err) {
-      console.error("Debug Error:", err);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      console.log("Versuche Anmeldung mit:", email);
+      console.log(`Versuche ${registerMode ? 'Registrierung' : 'Anmeldung'} mit:`, email);
       
-      // Anmeldung versuchen
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        console.error("Login error:", error);
-        // Detailliertere Fehlermeldung
-        if (error.message.includes("Invalid login credentials")) {
-          setError("Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail und Ihr Passwort.");
-        } else {
-          setError(`Fehler bei der Anmeldung: ${error.message}`);
-        }
-        return;
-      }
-
-      if (data?.user) {
-        console.log("Login erfolgreich:", data.user);
-        
-        // Debug-Informationen nach der Anmeldung
-        await debugLogin();
-        
-        toast({
-          title: "Erfolgreich angemeldet",
-          description: `Willkommen zurück, ${data.user.email}!`,
+      // Benutzer registrieren oder anmelden
+      if (registerMode) {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
         });
-        
-        // Kurze Verzögerung, um sicherzustellen, dass die Session aktualisiert wird
-        setTimeout(() => {
-          navigate(returnUrl);
-        }, 500);
+
+        if (error) {
+          console.error("Registrierungsfehler:", error);
+          if (error.message.includes("User already registered")) {
+            setError("E-Mail-Adresse bereits registriert. Bitte melden Sie sich an.");
+          } else {
+            setError(`Fehler bei der Registrierung: ${error.message}`);
+          }
+          return;
+        }
+
+        if (data?.user) {
+          console.log("Registrierung erfolgreich:", data.user);
+          toast({
+            title: "Registrierung erfolgreich",
+            description: "Ihr Konto wurde erstellt. Sie können sich jetzt anmelden.",
+          });
+          setRegisterMode(false);
+        }
+      } else {
+        // Anmeldung versuchen
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          console.error("Login-Fehler:", error);
+          // Detailliertere Fehlermeldung
+          if (error.message.includes("Invalid login credentials")) {
+            setError("Ungültige Anmeldedaten. Möglicherweise existiert dieses Konto noch nicht. Klicken Sie auf 'Registrieren', um ein neues Konto zu erstellen.");
+          } else {
+            setError(`Fehler bei der Anmeldung: ${error.message}`);
+          }
+          return;
+        }
+
+        if (data?.user) {
+          console.log("Login erfolgreich:", data.user);
+          
+          toast({
+            title: "Erfolgreich angemeldet",
+            description: `Willkommen zurück, ${data.user.email}!`,
+          });
+          
+          // Kurze Verzögerung, um sicherzustellen, dass die Session aktualisiert wird
+          setTimeout(() => {
+            navigate(returnUrl);
+          }, 500);
+        }
       }
     } catch (err: any) {
-      console.error("Login error:", err);
+      console.error("Allgemeiner Fehler:", err);
       setError(
         err.message || "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
       );
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleMode = () => {
+    setError(null);
+    setRegisterMode(!registerMode);
   };
 
   return (
@@ -121,19 +129,21 @@ const LoginForm = () => {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label htmlFor="password">Passwort</Label>
-          <a 
-            href="#" 
-            className="text-xs text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
-            onClick={(e) => {
-              e.preventDefault();
-              toast({
-                title: "Passwort vergessen",
-                description: "Die Funktion zur Passwortwiederherstellung ist noch in Arbeit.",
-              });
-            }}
-          >
-            Passwort vergessen?
-          </a>
+          {!registerMode && (
+            <a 
+              href="#" 
+              className="text-xs text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
+              onClick={(e) => {
+                e.preventDefault();
+                toast({
+                  title: "Passwort vergessen",
+                  description: "Die Funktion zur Passwortwiederherstellung ist noch in Arbeit.",
+                });
+              }}
+            >
+              Passwort vergessen?
+            </a>
+          )}
         </div>
         <Input
           id="password"
@@ -147,10 +157,11 @@ const LoginForm = () => {
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Anmeldung...
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+            {registerMode ? "Registrierung..." : "Anmeldung..."}
           </>
         ) : (
-          <>Anmelden</>
+          <>{registerMode ? "Registrieren" : "Anmelden"}</>
         )}
       </Button>
       
@@ -178,7 +189,14 @@ const LoginForm = () => {
       </Button>
       
       <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-        Noch kein Konto? <a href="/register" className="font-medium text-black dark:text-white hover:underline">Registrieren</a>
+        {registerMode ? "Bereits ein Konto?" : "Noch kein Konto?"} 
+        <button 
+          type="button"
+          onClick={toggleMode} 
+          className="font-medium text-black dark:text-white hover:underline ml-1"
+        >
+          {registerMode ? "Anmelden" : "Registrieren"}
+        </button>
       </p>
     </form>
   );

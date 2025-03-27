@@ -20,7 +20,7 @@ const Login = () => {
             <Alert className="mb-6 bg-gray-100 border-gray-300 dark:bg-gray-800 dark:border-gray-700">
               <AlertCircle className="h-4 w-4 text-gray-700 dark:text-gray-300" />
               <AlertDescription>
-                Nur für medizinisches Fachpersonal und Apotheken zugänglich. Sie können sich mit Ihren Apothekendaten oder über DocCheck anmelden.
+                Nur für medizinisches Fachpersonal und Apotheken zugänglich. Sie können sich mit Ihren Daten anmelden oder bei erstmaliger Nutzung registrieren.
               </AlertDescription>
             </Alert>
             
