@@ -27,8 +27,39 @@ export interface Database extends Omit<OriginalDatabase, 'public'> {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'manufacturer' | 'countryOfOrigin' | 'recommendedDosage'>;
-        Update: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'manufacturer' | 'countryOfOrigin' | 'recommendedDosage'>>;
+        Insert: {
+          category: string;
+          cbd_content?: string | null;
+          description: string;
+          dosage?: string | null;
+          effects?: string[] | null;
+          id?: string;
+          image_url: string;
+          name: string;
+          origin?: string | null;
+          price: number;
+          short_description: string;
+          stock?: number;
+          terpenes?: string[] | null;
+          thc_content?: string | null;
+          weight?: string | null;
+        };
+        Update: Partial<{
+          category: string;
+          cbd_content?: string | null;
+          description: string;
+          dosage?: string | null;
+          effects?: string[] | null;
+          image_url: string;
+          name: string;
+          origin?: string | null;
+          price: number;
+          short_description: string;
+          stock: number;
+          terpenes?: string[] | null;
+          thc_content?: string | null;
+          weight?: string | null;
+        }>;
         Relationships: [];
       };
       orders: {

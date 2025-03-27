@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -85,11 +86,27 @@ const AdminProducts = () => {
           ...dbProduct
         } = productData[0];
         
-        const supabaseData = toSnakeCase(dbProduct);
+        // Convert to the expected format for Supabase
+        const productToInsert = {
+          name: dbProduct.name,
+          description: dbProduct.description,
+          short_description: dbProduct.shortDescription,
+          price: dbProduct.price,
+          image_url: dbProduct.imageUrl,
+          category: dbProduct.category,
+          stock: dbProduct.stock,
+          thc_content: dbProduct.thcContent,
+          cbd_content: dbProduct.cbdContent,
+          terpenes: dbProduct.terpenes,
+          weight: dbProduct.weight,
+          dosage: dbProduct.dosage,
+          effects: dbProduct.effects,
+          origin: dbProduct.origin
+        };
 
         const { error } = await supabase
           .from('products')
-          .insert(supabaseData);
+          .insert(productToInsert);
 
         if (error) throw error;
       }
@@ -120,11 +137,27 @@ const AdminProducts = () => {
         ...dbUpdates
       } = updates;
       
-      const snakeCaseUpdates = toSnakeCase(dbUpdates);
+      // Convert to the expected format for Supabase
+      const updatesToApply: Record<string, any> = {};
+      
+      if (dbUpdates.name !== undefined) updatesToApply.name = dbUpdates.name;
+      if (dbUpdates.description !== undefined) updatesToApply.description = dbUpdates.description;
+      if (dbUpdates.shortDescription !== undefined) updatesToApply.short_description = dbUpdates.shortDescription;
+      if (dbUpdates.price !== undefined) updatesToApply.price = dbUpdates.price;
+      if (dbUpdates.imageUrl !== undefined) updatesToApply.image_url = dbUpdates.imageUrl;
+      if (dbUpdates.category !== undefined) updatesToApply.category = dbUpdates.category;
+      if (dbUpdates.stock !== undefined) updatesToApply.stock = dbUpdates.stock;
+      if (dbUpdates.thcContent !== undefined) updatesToApply.thc_content = dbUpdates.thcContent;
+      if (dbUpdates.cbdContent !== undefined) updatesToApply.cbd_content = dbUpdates.cbdContent;
+      if (dbUpdates.terpenes !== undefined) updatesToApply.terpenes = dbUpdates.terpenes;
+      if (dbUpdates.weight !== undefined) updatesToApply.weight = dbUpdates.weight;
+      if (dbUpdates.dosage !== undefined) updatesToApply.dosage = dbUpdates.dosage;
+      if (dbUpdates.effects !== undefined) updatesToApply.effects = dbUpdates.effects;
+      if (dbUpdates.origin !== undefined) updatesToApply.origin = dbUpdates.origin;
       
       const { error } = await supabase
         .from('products')
-        .update(snakeCaseUpdates)
+        .update(updatesToApply)
         .eq('id', id);
 
       if (error) throw error;
