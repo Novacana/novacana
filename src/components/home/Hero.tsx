@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Clock, TruckDelivery } from "lucide-react";
+import { ArrowRight, ShieldCheck, Clock, Truck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Hero = () => {
@@ -56,7 +56,7 @@ const Hero = () => {
                 <span className="text-sm text-gray-700 dark:text-gray-400 font-medium">24h Lieferung</span>
               </div>
               <div className="flex items-center space-x-2">
-                <TruckDelivery className="text-gray-700 dark:text-gray-400" size={20} />
+                <Truck className="text-gray-700 dark:text-gray-400" size={20} />
                 <span className="text-sm text-gray-700 dark:text-gray-400 font-medium">Deutschlandweit</span>
               </div>
             </div>
