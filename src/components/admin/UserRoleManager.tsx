@@ -11,6 +11,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { addUserRole, removeUserRole } from "@/utils/authUtils";
 import { User, Shield, UserCheck, UserX, UserPlus, AlertCircle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface UserWithRoles {
   id: string;
@@ -18,27 +22,43 @@ interface UserWithRoles {
   roles: string[];
 }
 
+const formSchema = z.object({
+  email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein"),
+  password: z.string().min(6, "Das Passwort muss mindestens 6 Zeichen lang sein"),
+  role: z.enum(["user", "admin", "pharmacist"])
+});
+
 const UserRoleManager: React.FC = () => {
   const [users, setUsers] = useState<UserWithRoles[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newUserEmail, setNewUserEmail] = useState("");
-  const [newUserPassword, setNewUserPassword] = useState("");
-  const [newUserRole, setNewUserRole] = useState<'user' | 'admin' | 'pharmacist'>('user');
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const { toast } = useToast();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      role: "user" as const
+    },
+  });
 
   // Benutzer und deren Rollen laden
   const loadUsers = async () => {
     try {
       setLoading(true);
+      console.log("Lade Benutzer und Rollen...");
       
       // Benutzer über die get_all_users Funktion holen
       const { data, error } = await supabase.rpc('get_all_users');
       
       if (error) {
+        console.error("Error beim Laden der Benutzer:", error);
         throw new Error(`Fehler beim Laden der Benutzer: ${error.message}`);
       }
+      
+      console.log("Geladene Benutzer:", data);
       
       const formattedUsers = data?.map(user => ({
         id: user.id,
@@ -64,44 +84,38 @@ const UserRoleManager: React.FC = () => {
   }, []);
 
   // Neuen Benutzer erstellen
-  const handleCreateUser = async () => {
-    if (!newUserEmail || !newUserPassword) {
-      toast({
-        title: "Eingaben prüfen",
-        description: "Bitte geben Sie eine E-Mail-Adresse und ein Passwort ein.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+  const handleCreateUser = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsCreatingUser(true);
       
-      // Den create_user RPC-Endpunkt aufrufen
+      console.log("Erstelle neuen Benutzer:", values.email, "mit Rolle:", values.role);
+      
+      // Direct call of the create_user function
       const { data, error } = await supabase.rpc('create_user', {
-        email: newUserEmail,
-        password: newUserPassword,
-        user_role: newUserRole
+        email: values.email,
+        password: values.password,
+        user_role: values.role
       });
       
       if (error) {
+        console.error("Fehler vom Server:", error);
         throw new Error(`Fehler beim Erstellen des Benutzers: ${error.message}`);
       }
       
+      console.log("Benutzer erstellt:", data);
+      
       toast({
         title: "Benutzer erstellt",
-        description: `Neuer Benutzer mit der E-Mail ${newUserEmail} wurde erfolgreich erstellt.`
+        description: `Neuer Benutzer mit der E-Mail ${values.email} wurde erfolgreich erstellt.`
       });
       
       // Dialog schließen und Formular zurücksetzen
       setIsUserDialogOpen(false);
-      setNewUserEmail("");
-      setNewUserPassword("");
-      setNewUserRole('user');
+      form.reset();
       
       // Benutzerliste aktualisieren
       loadUsers();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Fehler beim Erstellen des Benutzers:", error);
       toast({
         title: "Fehler",
@@ -115,18 +129,28 @@ const UserRoleManager: React.FC = () => {
 
   // Rolle für einen Benutzer hinzufügen
   const handleAddRole = async (userId: string, role: 'admin' | 'user' | 'pharmacist') => {
-    const success = await addUserRole(userId, role);
-    
-    if (success) {
-      toast({
-        title: "Rolle hinzugefügt",
-        description: `Die Rolle "${role}" wurde dem Benutzer erfolgreich hinzugefügt.`
-      });
-      loadUsers();
-    } else {
+    try {
+      console.log(`Füge Rolle ${role} für Benutzer ${userId} hinzu...`);
+      const success = await addUserRole(userId, role);
+      
+      if (success) {
+        toast({
+          title: "Rolle hinzugefügt",
+          description: `Die Rolle "${role}" wurde dem Benutzer erfolgreich hinzugefügt.`
+        });
+        loadUsers();
+      } else {
+        toast({
+          title: "Fehler",
+          description: `Die Rolle "${role}" konnte nicht hinzugefügt werden.`,
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Fehler beim Hinzufügen der Rolle:", error);
       toast({
         title: "Fehler",
-        description: `Die Rolle "${role}" konnte nicht hinzugefügt werden.`,
+        description: `Die Rolle konnte nicht hinzugefügt werden: ${error}`,
         variant: "destructive"
       });
     }
@@ -134,18 +158,28 @@ const UserRoleManager: React.FC = () => {
 
   // Rolle von einem Benutzer entfernen
   const handleRemoveRole = async (userId: string, role: 'admin' | 'user' | 'pharmacist') => {
-    const success = await removeUserRole(userId, role);
-    
-    if (success) {
-      toast({
-        title: "Rolle entfernt",
-        description: `Die Rolle "${role}" wurde vom Benutzer erfolgreich entfernt.`
-      });
-      loadUsers();
-    } else {
+    try {
+      console.log(`Entferne Rolle ${role} von Benutzer ${userId}...`);
+      const success = await removeUserRole(userId, role);
+      
+      if (success) {
+        toast({
+          title: "Rolle entfernt",
+          description: `Die Rolle "${role}" wurde vom Benutzer erfolgreich entfernt.`
+        });
+        loadUsers();
+      } else {
+        toast({
+          title: "Fehler",
+          description: `Die Rolle "${role}" konnte nicht entfernt werden.`,
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Fehler beim Entfernen der Rolle:", error);
       toast({
         title: "Fehler",
-        description: `Die Rolle "${role}" konnte nicht entfernt werden.`,
+        description: `Die Rolle konnte nicht entfernt werden: ${error}`,
         variant: "destructive"
       });
     }
@@ -194,83 +228,105 @@ const UserRoleManager: React.FC = () => {
                   <DialogHeader>
                     <DialogTitle>Neuen Benutzer anlegen</DialogTitle>
                   </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="email">E-Mail-Adresse</Label>
-                      <Input 
-                        id="email"
-                        type="email"
-                        placeholder="benutzer@beispiel.de"
-                        value={newUserEmail}
-                        onChange={(e) => setNewUserEmail(e.target.value)}
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(handleCreateUser)} className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>E-Mail-Adresse</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="benutzer@beispiel.de" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="password">Passwort</Label>
-                      <Input 
-                        id="password"
-                        type="password"
-                        value={newUserPassword}
-                        onChange={(e) => setNewUserPassword(e.target.value)}
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Passwort</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="password" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="role">Rolle</Label>
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          variant={newUserRole === 'user' ? "default" : "outline"}
-                          onClick={() => setNewUserRole('user')}
-                        >
-                          <UserX className="mr-2 h-4 w-4" />
-                          Benutzer
-                        </Button>
-                        <Button
-                          type="button"
-                          variant={newUserRole === 'pharmacist' ? "default" : "outline"}
-                          onClick={() => setNewUserRole('pharmacist')}
-                        >
-                          <UserCheck className="mr-2 h-4 w-4" />
-                          Apotheker
-                        </Button>
-                        <Button
-                          type="button"
-                          variant={newUserRole === 'admin' ? "default" : "outline"}
-                          onClick={() => setNewUserRole('admin')}
-                        >
-                          <Shield className="mr-2 h-4 w-4" />
-                          Admin
-                        </Button>
+                      <FormField
+                        control={form.control}
+                        name="role"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Rolle</FormLabel>
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                variant={field.value === 'user' ? "default" : "outline"}
+                                onClick={() => form.setValue('role', 'user')}
+                              >
+                                <UserX className="mr-2 h-4 w-4" />
+                                Benutzer
+                              </Button>
+                              <Button
+                                type="button"
+                                variant={field.value === 'pharmacist' ? "default" : "outline"}
+                                onClick={() => form.setValue('role', 'pharmacist')}
+                              >
+                                <UserCheck className="mr-2 h-4 w-4" />
+                                Apotheker
+                              </Button>
+                              <Button
+                                type="button"
+                                variant={field.value === 'admin' ? "default" : "outline"}
+                                onClick={() => form.setValue('role', 'admin')}
+                              >
+                                <Shield className="mr-2 h-4 w-4" />
+                                Admin
+                              </Button>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <div className="text-sm text-yellow-600 flex items-start mt-2">
+                        <AlertCircle className="h-4 w-4 mr-2 mt-0.5" />
+                        <p>
+                          Achtung: Bitte merken Sie sich das Passwort. Es kann später nicht eingesehen werden.
+                        </p>
                       </div>
-                    </div>
-                    <div className="text-sm text-yellow-600 flex items-start mt-2">
-                      <AlertCircle className="h-4 w-4 mr-2 mt-0.5" />
-                      <p>
-                        Achtung: Bitte merken Sie sich das Passwort. Es kann später nicht eingesehen werden.
-                      </p>
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setIsUserDialogOpen(false)}
-                    >
-                      Abbrechen
-                    </Button>
-                    <Button 
-                      onClick={handleCreateUser}
-                      disabled={isCreatingUser}
-                    >
-                      {isCreatingUser ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Wird erstellt...
-                        </>
-                      ) : (
-                        <>Benutzer erstellen</>
-                      )}
-                    </Button>
-                  </DialogFooter>
+                      <DialogFooter className="mt-6">
+                        <Button 
+                          variant="outline" 
+                          type="button"
+                          onClick={() => setIsUserDialogOpen(false)}
+                        >
+                          Abbrechen
+                        </Button>
+                        <Button 
+                          type="submit"
+                          disabled={isCreatingUser}
+                        >
+                          {isCreatingUser ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                              Wird erstellt...
+                            </>
+                          ) : (
+                            <>Benutzer erstellen</>
+                          )}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
                 </DialogContent>
               </Dialog>
               

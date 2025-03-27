@@ -50,18 +50,27 @@ export const checkIsPharmacist = async (userId: string): Promise<boolean> => {
   try {
     console.log("Prüfe Apotheker-Status für Benutzer:", userId);
     
-    const { data, error } = await supabase.rpc('has_role', {
-      _user_id: userId,
-      _role: 'pharmacist'
-    });
+    // Direktabfrage der user_roles Tabelle für bessere Fehlerdiagnose
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'pharmacist')
+      .single();
     
     if (error) {
+      // Wenn der Fehler "No rows found" ist, bedeutet das nur, dass der Benutzer kein Apotheker ist
+      if (error.code === 'PGRST116') {
+        console.log("Benutzer hat keine Apotheker-Rolle:", userId);
+        return false;
+      }
+      
       console.error("Fehler beim Überprüfen der Apotheker-Rolle:", error);
       return false;
     }
     
-    console.log("Apotheker-Rollenprüfung Ergebnis:", data);
-    return data || false;
+    console.log("Apotheker-Rollenprüfung Ergebnis:", !!data);
+    return !!data;
   } catch (error) {
     console.error("Fehler beim Überprüfen des Apotheker-Status:", error);
     return false;
@@ -76,17 +85,20 @@ export const getUserRoles = async (userId: string): Promise<string[]> => {
   try {
     console.log("Hole Rollen für Benutzer:", userId);
     
-    const { data, error } = await supabase.rpc('get_user_roles', {
-      _user_id: userId
-    });
+    // Direktabfrage der user_roles Tabelle
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId);
     
     if (error) {
       console.error("Fehler beim Abrufen der Benutzerrollen:", error);
       return [];
     }
     
-    console.log("Benutzerrollen abgerufen:", data);
-    return data || [];
+    const roles = data?.map(row => row.role) || [];
+    console.log("Benutzerrollen abgerufen:", roles);
+    return roles;
   } catch (error) {
     console.error("Fehler beim Abrufen der Benutzerrollen:", error);
     return [];
@@ -102,6 +114,25 @@ export const addUserRole = async (userId: string, role: 'admin' | 'user' | 'phar
   try {
     console.log(`Füge Rolle ${role} für Benutzer ${userId} hinzu`);
     
+    // Prüfen, ob die Rolle bereits existiert
+    const { data: existingRole, error: checkError } = await supabase
+      .from('user_roles')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('role', role)
+      .maybeSingle();
+    
+    if (checkError) {
+      console.error("Fehler beim Prüfen auf existierende Rolle:", checkError);
+    }
+    
+    // Wenn die Rolle bereits existiert, keine Änderung notwendig
+    if (existingRole) {
+      console.log(`Rolle ${role} existiert bereits für diesen Benutzer`);
+      return true;
+    }
+    
+    // Rolle hinzufügen
     const { error } = await supabase
       .from('user_roles')
       .insert({
@@ -134,10 +165,8 @@ export const removeUserRole = async (userId: string, role: 'admin' | 'user' | 'p
     const { error } = await supabase
       .from('user_roles')
       .delete()
-      .match({
-        user_id: userId,
-        role: role
-      });
+      .eq('user_id', userId)
+      .eq('role', role);
     
     if (error) {
       console.error("Fehler beim Entfernen der Rolle:", error);
