@@ -57,7 +57,7 @@ const Features = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div 
               key={feature.title} 
@@ -78,11 +78,11 @@ const Features = () => {
         </div>
         
         {/* Logo Section */}
-        <div className="mb-16 text-center">
+        <div className="mb-16 text-center mt-16">
           <img 
             src="/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png" 
             alt="Novacana" 
-            className="h-20 mx-auto mb-8"
+            className="h-20 mx-auto"
             onError={(e) => {
               console.error("Logo konnte nicht geladen werden:", e);
               const target = e.target as HTMLImageElement;
@@ -90,43 +90,6 @@ const Features = () => {
               target.src = "/placeholder.svg";
             }}
           />
-        </div>
-        
-        {/* Imagery Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          <div className="rounded-xl overflow-hidden shadow-md relative">
-            <img 
-              src="/images/cannabis-pharmacy.jpg" 
-              alt="Cannabis in der Pharmazie" 
-              className="w-full h-80 object-cover"
-              onError={(e) => {
-                console.error("Image failed to load:", e);
-                const target = e.target as HTMLImageElement;
-                target.src = "https://placehold.co/1170x780/gray/white?text=Pharmazie";
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
-              <h3 className="text-xl font-bold mb-2">Innovative Versorgung</h3>
-              <p className="text-sm text-gray-200">Wir beliefern Apotheken mit den neuesten Produkten</p>
-            </div>
-          </div>
-          
-          <div className="rounded-xl overflow-hidden shadow-md relative">
-            <img 
-              src="/images/laboratory.jpg" 
-              alt="Laboranalyse" 
-              className="w-full h-80 object-cover"
-              onError={(e) => {
-                console.error("Image failed to load:", e);
-                const target = e.target as HTMLImageElement;
-                target.src = "https://placehold.co/1170x780/gray/white?text=Labor";
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
-              <h3 className="text-xl font-bold mb-2">Strenge Qualitätskontrollen</h3>
-              <p className="text-sm text-gray-200">Alle unsere Produkte werden strengen Tests unterzogen</p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
