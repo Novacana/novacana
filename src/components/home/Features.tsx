@@ -77,11 +77,26 @@ const Features = () => {
           ))}
         </div>
         
+        {/* Logo Section */}
+        <div className="mb-16 text-center">
+          <img 
+            src="/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png" 
+            alt="Novacana" 
+            className="h-20 mx-auto mb-8"
+            onError={(e) => {
+              console.error("Logo konnte nicht geladen werden:", e);
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src = "/placeholder.svg";
+            }}
+          />
+        </div>
+        
         {/* Imagery Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
           <div className="rounded-xl overflow-hidden shadow-md relative">
             <img 
-              src="https://images.unsplash.com/photo-1567611800856-251682319f5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+              src="/images/cannabis-pharmacy.jpg" 
               alt="Cannabis in der Pharmazie" 
               className="w-full h-80 object-cover"
               onError={(e) => {
@@ -98,7 +113,7 @@ const Features = () => {
           
           <div className="rounded-xl overflow-hidden shadow-md relative">
             <img 
-              src="https://images.unsplash.com/photo-1579154341098-e4e158cc7f55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+              src="/images/laboratory.jpg" 
               alt="Laboranalyse" 
               className="w-full h-80 object-cover"
               onError={(e) => {

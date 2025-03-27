@@ -21,9 +21,9 @@ const Hero = () => {
           <div className="w-full lg:w-1/2 space-y-8 text-center lg:text-left">
             <div className="inline-block mb-6 animate-fade-in">
               <img 
-                src="/lovable-uploads/ebe7e5a0-0f6a-4fad-9a30-2a81b6b7ed76.png" 
+                src="/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png" 
                 alt="Novacana" 
-                className="h-16 md:h-20 mx-auto lg:mx-0" 
+                className="h-28 md:h-32 mx-auto lg:mx-0" 
                 onError={(e) => {
                   console.error("Logo konnte nicht geladen werden:", e);
                   const target = e.target as HTMLImageElement;

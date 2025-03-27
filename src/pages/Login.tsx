@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import LoginForm from "@/components/auth/LoginForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Pill, HeartPulse } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Login = () => {
@@ -24,7 +24,28 @@ const Login = () => {
               </AlertDescription>
             </Alert>
             
+            <div className="mb-8 text-center">
+              <img 
+                src="/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png" 
+                alt="Novacana" 
+                className="max-h-24 mx-auto"
+                onError={(e) => {
+                  console.error("Logo konnte nicht geladen werden:", e);
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = "/placeholder.svg";
+                }}
+              />
+            </div>
+            
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8">
+              <div className="flex items-center justify-center mb-6">
+                <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-full">
+                  <Pill className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Fachkreis Login</span>
+                  <HeartPulse className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+                </div>
+              </div>
               <LoginForm />
             </div>
           </div>

@@ -84,7 +84,7 @@ const Navbar = () => {
         <div className="flex-shrink-0 flex items-center">
           <Link to="/" className="flex items-center">
             <img 
-              src="/lovable-uploads/ebe7e5a0-0f6a-4fad-9a30-2a81b6b7ed76.png" 
+              src="/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png" 
               alt="Novacana" 
               className="h-8 md:h-10"
               onError={(e) => {
