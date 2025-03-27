@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -64,7 +63,10 @@ const PharmacyVerification: React.FC<PharmacyVerificationProps> = ({ userId, onC
       // Datei zu Supabase Storage hochladen
       const { error: uploadError, data } = await supabase.storage
         .from('pharmacy-documents')
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, file, { 
+          upsert: true,
+          contentType: file.type 
+        });
 
       if (uploadError) {
         throw new Error(`Fehler beim Hochladen: ${uploadError.message}`);
@@ -186,7 +188,7 @@ const PharmacyVerification: React.FC<PharmacyVerificationProps> = ({ userId, onC
         setVerificationStatus('pending');
         toast({
           title: "Verifizierung eingereicht",
-          description: "Ihre Apothekendaten wurden erfolgreich zur Überprüfung eingereicht.",
+          description: "Ihre Apothekenverifizierung wurde erfolgreich zur Überprüfung eingereicht.",
         });
         if (onComplete) onComplete();
       } else {
