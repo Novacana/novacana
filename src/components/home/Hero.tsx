@@ -20,7 +20,11 @@ const Hero = () => {
         <div className="flex flex-col lg:flex-row items-center">
           <div className="w-full lg:w-1/2 space-y-8 text-center lg:text-left">
             <div className="inline-block mb-6 animate-fade-in">
-              <img src="/logo.png" alt="Novacana" className="h-16 md:h-20 mx-auto lg:mx-0" />
+              <img 
+                src="/lovable-uploads/3b719661-6325-4bc7-a6fe-86a1b375b392.png" 
+                alt="Novacana" 
+                className="h-16 md:h-20 mx-auto lg:mx-0" 
+              />
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight animate-fade-in" style={{ animationDelay: "0.1s" }}>
@@ -70,6 +74,11 @@ const Hero = () => {
                   src="/images/medical-research.jpg" 
                   alt="Medizinische Cannabisforschung" 
                   className="w-full h-auto rounded-2xl object-cover"
+                  onError={(e) => {
+                    console.error("Image failed to load:", e);
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://images.unsplash.com/photo-1581093458791-9efa5922232e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80";
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
                   <h3 className="text-xl font-bold mb-2">Qualitätskontrolle</h3>

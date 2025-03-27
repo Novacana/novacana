@@ -81,9 +81,14 @@ const Features = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
           <div className="rounded-xl overflow-hidden shadow-md relative">
             <img 
-              src="/images/cannabis-pharmacy.jpg" 
+              src="https://images.unsplash.com/photo-1567611800856-251682319f5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
               alt="Cannabis in der Pharmazie" 
               className="w-full h-80 object-cover"
+              onError={(e) => {
+                console.error("Image failed to load:", e);
+                const target = e.target as HTMLImageElement;
+                target.src = "https://placehold.co/1170x780/gray/white?text=Pharmazie";
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
               <h3 className="text-xl font-bold mb-2">Innovative Versorgung</h3>
@@ -93,9 +98,14 @@ const Features = () => {
           
           <div className="rounded-xl overflow-hidden shadow-md relative">
             <img 
-              src="/images/laboratory.jpg" 
+              src="https://images.unsplash.com/photo-1579154341098-e4e158cc7f55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
               alt="Laboranalyse" 
               className="w-full h-80 object-cover"
+              onError={(e) => {
+                console.error("Image failed to load:", e);
+                const target = e.target as HTMLImageElement;
+                target.src = "https://placehold.co/1170x780/gray/white?text=Labor";
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
               <h3 className="text-xl font-bold mb-2">Strenge Qualitätskontrollen</h3>
