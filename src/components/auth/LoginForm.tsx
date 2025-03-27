@@ -7,8 +7,26 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Lock, Mail } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+// Funktion zum Überprüfen der DocCheck-Authentifizierung
+const handleDocCheckAuth = () => {
+  // DocCheck Redirect URL-Konfiguration
+  const DOCCHECK_LOGIN_ID = "d279f3d6ef165e8ccd90bb8a52a149"; // Beispiel Login-ID - durch echte ersetzen
+  const DOCCHECK_LOGIN_URL = `https://login.doccheck.com/code/${DOCCHECK_LOGIN_ID}/`;
+  const REDIRECT_URL = window.location.origin + "/doccheck-callback";
+
+  // Zu DocCheck weiterleiten mit Rückleitung zur aktuellen URL
+  const currentPath = encodeURIComponent(window.location.pathname);
+  const loginUrl = `${DOCCHECK_LOGIN_URL}?dc_referer=${REDIRECT_URL}?returnTo=${currentPath}`;
+  
+  // In einer realen Anwendung würden Sie hier direkt zu DocCheck weiterleiten
+  window.location.href = loginUrl;
+};
 
 const LoginForm = () => {
+  const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -43,22 +61,24 @@ const LoginForm = () => {
 
       // For demo purposes, log in with any email that ends with @pharmacy.de
       if (formData.email.endsWith("@pharmacy.de")) {
+        localStorage.setItem("authToken", "dummy-token");
+        
         toast({
-          title: "Login successful",
-          description: "Welcome back to Novacana!",
+          title: "Login erfolgreich",
+          description: "Willkommen zurück bei Novacana!",
         });
         navigate("/dashboard");
       } else {
         toast({
-          title: "Login failed",
-          description: "Invalid credentials or unauthorized access. Please ensure you're using your pharmacy email.",
+          title: "Login fehlgeschlagen",
+          description: "Ungültige Anmeldedaten oder nicht autorisierter Zugriff. Bitte stellen Sie sicher, dass Sie Ihre Apotheken-E-Mail verwenden.",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Login failed",
-        description: "An error occurred during login. Please try again.",
+        title: "Login fehlgeschlagen",
+        description: "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
         variant: "destructive",
       });
     } finally {
@@ -70,16 +90,16 @@ const LoginForm = () => {
     <div className="max-w-md w-full mx-auto">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Welcome Back
+          Willkommen zurück
         </h2>
         <p className="text-gray-600 dark:text-gray-300 mt-2">
-          Sign in to your pharmacy account
+          Melden Sie sich bei Ihrem Apothekenkonto an
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">E-Mail</Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
               <Mail size={18} />
@@ -96,18 +116,18 @@ const LoginForm = () => {
             />
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Use your registered pharmacy email
+            Verwenden Sie Ihre registrierte Apotheken-E-Mail
           </p>
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Passwort</Label>
             <Link
               to="/forgot-password"
               className="text-sm font-medium text-nova-600 dark:text-nova-400 hover:underline"
             >
-              Forgot password?
+              Passwort vergessen?
             </Link>
           </div>
           <div className="relative">
@@ -137,11 +157,11 @@ const LoginForm = () => {
             htmlFor="remember"
             className="text-sm font-medium leading-none cursor-pointer"
           >
-            Remember me
+            Angemeldet bleiben
           </Label>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
           {isLoading ? (
             <span className="flex items-center">
               <svg
@@ -164,25 +184,49 @@ const LoginForm = () => {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              Signing in...
+              Anmelden...
             </span>
           ) : (
-            "Sign in"
+            "Anmelden"
           )}
         </Button>
-
-        <div className="text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Don't have an account?{" "}
-            <Link
-              to="/register"
-              className="font-medium text-nova-600 dark:text-nova-400 hover:underline"
-            >
-              Register
-            </Link>
-          </p>
-        </div>
       </form>
+
+      <div className="relative flex items-center justify-center mt-8 mb-6">
+        <Separator className="w-full" />
+        <span className="absolute px-4 text-sm text-gray-500 bg-white dark:bg-gray-800">oder</span>
+      </div>
+      
+      <Button 
+        onClick={handleDocCheckAuth} 
+        type="button" 
+        variant="outline" 
+        className="w-full flex items-center justify-center gap-2"
+      >
+        <img 
+          src="/lovable-uploads/861c27b1-43a8-4b19-85cd-06e27ba7e28a.png" 
+          alt="DocCheck" 
+          className="h-5"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.onerror = null;
+            target.src = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='20'%3E%3Crect width='100' height='20' fill='%23005EB8'/%3E%3Ctext x='50' y='13' font-family='Arial' font-size='10' fill='white' text-anchor='middle'%3EDocCheck%3C/text%3E%3C/svg%3E";
+          }}
+        />
+        Mit DocCheck anmelden
+      </Button>
+
+      <div className="text-center mt-6">
+        <p className="text-sm text-gray-600 dark:text-gray-300">
+          Noch kein Konto?{" "}
+          <Link
+            to="/register"
+            className="font-medium text-nova-600 dark:text-nova-400 hover:underline"
+          >
+            Registrieren
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };

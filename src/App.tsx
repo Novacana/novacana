@@ -49,7 +49,7 @@ const App = () => {
                   <Orders />
                 </ProtectedRoute>
               } />
-              <Route path="/doccheck-callback" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+              <Route path="/doccheck-callback" element={<ProtectedRoute showDocCheckCallback={true}><Products /></ProtectedRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
