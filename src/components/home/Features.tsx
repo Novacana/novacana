@@ -1,41 +1,44 @@
 
 import React from "react";
 import { Leaf, Shield, Truck, Award, Clock, FileCheck } from "lucide-react";
-
-const features = [
-  {
-    title: "Pharmaceutical Grade",
-    description: "All our products meet the highest pharmaceutical standards and comply with German regulations.",
-    icon: Shield,
-  },
-  {
-    title: "Rapid Delivery",
-    description: "We ensure fast and reliable delivery to pharmacies throughout Germany.",
-    icon: Truck,
-  },
-  {
-    title: "Quality Guaranteed",
-    description: "Every product undergoes strict quality control before being added to our assortment.",
-    icon: Award,
-  },
-  {
-    title: "Wide Selection",
-    description: "We offer a comprehensive range of medical cannabis products to meet patient needs.",
-    icon: Leaf,
-  },
-  {
-    title: "24/7 Support",
-    description: "Our dedicated customer service team is available to assist you whenever needed.",
-    icon: Clock,
-  },
-  {
-    title: "Simplified Documentation",
-    description: "We handle all necessary documentation, making the ordering process easier for pharmacies.",
-    icon: FileCheck,
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Features = () => {
+  const { t } = useLanguage();
+
+  const features = [
+    {
+      title: t('features.pharmaceutical'),
+      description: t('features.pharmaceutical.desc'),
+      icon: Shield,
+    },
+    {
+      title: t('features.delivery'),
+      description: t('features.delivery.desc'),
+      icon: Truck,
+    },
+    {
+      title: t('features.quality'),
+      description: t('features.quality.desc'),
+      icon: Award,
+    },
+    {
+      title: t('features.selection'),
+      description: t('features.selection.desc'),
+      icon: Leaf,
+    },
+    {
+      title: t('features.support'),
+      description: t('features.support.desc'),
+      icon: Clock,
+    },
+    {
+      title: t('features.documentation'),
+      description: t('features.documentation.desc'),
+      icon: FileCheck,
+    },
+  ];
+
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-900/50 relative overflow-hidden">
       {/* Background design elements */}
@@ -47,10 +50,10 @@ const Features = () => {
       <div className="container-content relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Why Choose Novacana
+            {t('features.title')}
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            As a licensed pharmaceutical wholesaler, we provide reliable access to high-quality medical cannabis products for pharmacies.
+            {t('features.description')}
           </p>
         </div>
 

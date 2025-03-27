@@ -3,8 +3,11 @@ import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import LoginForm from "@/components/auth/LoginForm";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Login = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />

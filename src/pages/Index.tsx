@@ -6,8 +6,11 @@ import Hero from "@/components/home/Hero";
 import Features from "@/components/home/Features";
 import About from "@/components/home/About";
 import Contact from "@/components/home/Contact";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />

@@ -3,8 +3,11 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Hero = () => {
+  const { t } = useLanguage();
+
   return (
     <section className="relative py-20 md:py-32 overflow-hidden">
       {/* Background design elements */}
@@ -18,28 +21,28 @@ const Hero = () => {
           <div className="w-full lg:w-1/2 space-y-6 text-center lg:text-left">
             <div className="inline-block animate-fade-in">
               <span className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium bg-nova-100 text-nova-800 dark:bg-nova-900/50 dark:text-nova-200">
-                Pharmaceutical Wholesaler
+                {t('hero.badge')}
               </span>
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight animate-fade-in" style={{ animationDelay: "0.1s" }}>
-              Medical Cannabis<br />
-              <span className="text-nova-600 dark:text-nova-400">For Pharmacies</span>
+              {t('hero.title')}<br />
+              <span className="text-nova-600 dark:text-nova-400">{t('hero.subtitle')}</span>
             </h1>
             
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-xl mx-auto lg:mx-0 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-              Novacana is a licensed pharmaceutical wholesaler specializing in medical cannabis products for pharmacies throughout Germany.
+              {t('hero.description')}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
               <a href="#contact">
                 <Button size="lg" className="w-full sm:w-auto">
-                  Contact Us
+                  {t('hero.cta.contact')}
                 </Button>
               </a>
               <Link to="/products">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto group">
-                  <span>View Products</span>
+                  <span>{t('hero.cta.products')}</span>
                   <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -47,7 +50,7 @@ const Hero = () => {
             
             <div className="pt-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Licensed pharmaceutical wholesaler with partial assortment cannabis
+                {t('hero.license')}
               </p>
             </div>
           </div>
@@ -60,17 +63,17 @@ const Hero = () => {
                   <div className="text-nova-700 dark:text-nova-300 text-6xl font-light">Novacana</div>
                 </div>
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Quality Medical Cannabis</h3>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('hero.card.title')}</h3>
                   <p className="text-gray-600 dark:text-gray-300 text-sm">
-                    We provide pharmacies with high-quality cannabis products, ensuring reliable supply chains and stringent quality control.
+                    {t('hero.card.description')}
                   </p>
                   <div className="pt-4 flex justify-between items-center">
                     <div className="flex space-x-2">
                       <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">Licensed Wholesaler</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">{t('hero.card.status')}</span>
                     </div>
                     <Link to="/register" className="text-sm font-medium text-nova-600 dark:text-nova-400 hover:underline">
-                      Register Now
+                      {t('hero.card.action')}
                     </Link>
                   </div>
                 </div>

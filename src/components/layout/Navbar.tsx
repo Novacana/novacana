@@ -2,22 +2,31 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ShoppingCart } from "lucide-react";
+import { Menu, X, User, ShoppingCart, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const navigation = [
-  { name: "Home", href: "/", current: true },
-  { name: "Products", href: "/products", current: false },
-  { name: "About Us", href: "/#about", current: false },
-  { name: "Contact", href: "/#contact", current: false },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
+  const { t, language, setLanguage } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // This will be replaced with actual auth state
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Dies wird durch den tatsächlichen Auth-Status ersetzt
 
-  // Check if user is scrolled down
+  // Navigation mit übersetzten Texten
+  const navigation = [
+    { name: t('nav.home'), href: "/", current: true },
+    { name: t('nav.products'), href: "/products", current: false },
+    { name: t('nav.about'), href: "/#about", current: false },
+    { name: t('nav.contact'), href: "/#contact", current: false },
+  ];
+
+  // Prüfen, ob der Benutzer nach unten gescrollt hat
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -26,9 +35,14 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Toggle mobile menu
+  // Mobiles Menü umschalten
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Sprache wechseln
+  const toggleLanguage = (lang: 'de' | 'en') => {
+    setLanguage(lang);
   };
 
   return (
@@ -70,20 +84,38 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Auth and Cart Buttons */}
+        {/* Auth, Cart und Language Buttons */}
         <div className="hidden md:flex items-center space-x-4">
+          {/* Sprachumschalter */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="flex items-center gap-1">
+                <Globe size={16} />
+                <span>{t('language')}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => toggleLanguage('de')} className={language === 'de' ? 'bg-muted' : ''}>
+                {t('language.de')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => toggleLanguage('en')} className={language === 'en' ? 'bg-muted' : ''}>
+                {t('language.en')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {isLoggedIn ? (
             <>
               <Link to="/dashboard">
                 <Button variant="ghost" size="sm" className="flex items-center gap-1">
                   <User size={16} />
-                  <span>Dashboard</span>
+                  <span>{t('nav.dashboard')}</span>
                 </Button>
               </Link>
               <Link to="/cart">
                 <Button variant="ghost" size="sm" className="flex items-center gap-1 relative">
                   <ShoppingCart size={16} />
-                  <span>Cart</span>
+                  <span>{t('nav.cart')}</span>
                   <span className="absolute -top-2 -right-2 bg-nova-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                     0
                   </span>
@@ -94,12 +126,12 @@ const Navbar = () => {
             <>
               <Link to="/login">
                 <Button variant="ghost" size="sm">
-                  Login
+                  {t('nav.login')}
                 </Button>
               </Link>
               <Link to="/register">
                 <Button variant="default" size="sm">
-                  Register
+                  {t('nav.register')}
                 </Button>
               </Link>
             </>
@@ -107,7 +139,24 @@ const Navbar = () => {
         </div>
 
         {/* Mobile menu button */}
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden flex items-center space-x-2">
+          {/* Mobile Sprachumschalter */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="flex items-center justify-center p-1">
+                <Globe size={20} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => toggleLanguage('de')} className={language === 'de' ? 'bg-muted' : ''}>
+                {t('language.de')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => toggleLanguage('en')} className={language === 'en' ? 'bg-muted' : ''}>
+                {t('language.en')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
           <button
             type="button"
             className="text-gray-700 dark:text-gray-200 hover:text-nova-500 dark:hover:text-nova-400 focus:outline-none"
@@ -153,14 +202,14 @@ const Navbar = () => {
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Link>
                 <Link
                   to="/cart"
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Cart
+                  {t('nav.cart')}
                 </Link>
               </>
             ) : (
@@ -170,14 +219,14 @@ const Navbar = () => {
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Login
+                  {t('nav.login')}
                 </Link>
                 <Link
                   to="/register"
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-nova-600 dark:text-gray-300 dark:hover:text-nova-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Register
+                  {t('nav.register')}
                 </Link>
               </>
             )}
