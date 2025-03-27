@@ -106,6 +106,7 @@ export type Database = {
           name: string
           origin: string | null
           price: number
+          pzn: string | null
           short_description: string
           stock: number
           terpenes: string[] | null
@@ -125,6 +126,7 @@ export type Database = {
           name: string
           origin?: string | null
           price: number
+          pzn?: string | null
           short_description: string
           stock?: number
           terpenes?: string[] | null
@@ -144,6 +146,7 @@ export type Database = {
           name?: string
           origin?: string | null
           price?: number
+          pzn?: string | null
           short_description?: string
           stock?: number
           terpenes?: string[] | null

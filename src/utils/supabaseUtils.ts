@@ -22,6 +22,7 @@ export const convertProductFromDB = (item: any): Product => ({
   dosage: item.dosage,
   effects: item.effects,
   origin: item.origin,
+  pzn: item.pzn, // Added PZN field mapping
   createdAt: new Date(item.created_at),
   updatedAt: new Date(item.updated_at)
 });
@@ -48,7 +49,7 @@ export const convertProductToDB = (
     dosage: product.dosage || product.recommendedDosage,
     effects: product.effects,
     origin: product.origin,
-    pzn: product.pzn,
+    pzn: product.pzn, // Added PZN field
   };
 };
 
@@ -119,6 +120,7 @@ export const convertProductUpdatesToDB = (updates: Partial<Product>): Record<str
   if (updates.recommendedDosage !== undefined) result.dosage = updates.recommendedDosage;
   if (updates.effects !== undefined) result.effects = updates.effects;
   if (updates.origin !== undefined) result.origin = updates.origin;
+  if (updates.pzn !== undefined) result.pzn = updates.pzn; // Added PZN field
   
   return result;
 };

@@ -24,6 +24,7 @@ export interface Database extends Omit<OriginalDatabase, 'public'> {
           dosage?: string;
           effects?: string[];
           origin?: string;
+          pzn?: string; // Added PZN field
           created_at: string;
           updated_at: string;
         };
@@ -38,6 +39,7 @@ export interface Database extends Omit<OriginalDatabase, 'public'> {
           name: string;
           origin?: string | null;
           price: number;
+          pzn?: string | null; // Added PZN field
           short_description: string;
           stock?: number;
           terpenes?: string[] | null;
@@ -54,6 +56,7 @@ export interface Database extends Omit<OriginalDatabase, 'public'> {
           name: string;
           origin?: string | null;
           price: number;
+          pzn?: string | null; // Added PZN field
           short_description: string;
           stock: number;
           terpenes?: string[] | null;
