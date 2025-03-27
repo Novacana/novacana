@@ -22,13 +22,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit }) => {
     ? {
         ...product,
         terpenes: product.terpenes ? product.terpenes.join(", ") : "",
+        imageUrl: product.imageUrl || "/placeholder.svg", // Default placeholder
       }
     : {
         name: "",
         description: "",
         shortDescription: "",
         price: 0,
-        imageUrl: "",
+        imageUrl: "/placeholder.svg", // Default placeholder
         category: "",
         stock: 0,
         thcContent: "",
@@ -38,6 +39,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit }) => {
         recommendedDosage: "",
         manufacturer: "",
         countryOfOrigin: "",
+        pzn: "",
       };
 
   // Setup form with validation
@@ -51,6 +53,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit }) => {
     // Format terpenes back to array if provided
     const formattedValues = {
       ...values,
+      // Use placeholder image if no image URL is provided
+      imageUrl: values.imageUrl || "/placeholder.svg",
       terpenes: values.terpenes 
         ? values.terpenes.split(",").map(t => t.trim()).filter(t => t) 
         : [],

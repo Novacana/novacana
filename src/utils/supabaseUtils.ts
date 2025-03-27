@@ -1,4 +1,3 @@
-
 import { Product, Order, OrderItem, Address } from "@/types";
 import { Json } from "@/integrations/supabase/types";
 import { toSnakeCase, toCamelCase } from "@/types/supabase";
@@ -38,7 +37,7 @@ export const convertProductToDB = (
     name: product.name,
     description: product.description,
     short_description: product.shortDescription,
-    image_url: product.imageUrl,
+    image_url: product.imageUrl || "/placeholder.svg", // Use placeholder if no image
     category: product.category,
     price: product.price,
     stock: product.stock || 0,
@@ -48,7 +47,8 @@ export const convertProductToDB = (
     weight: product.weight,
     dosage: product.dosage || product.recommendedDosage,
     effects: product.effects,
-    origin: product.origin
+    origin: product.origin,
+    pzn: product.pzn,
   };
 };
 

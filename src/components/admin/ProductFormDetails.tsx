@@ -18,14 +18,15 @@ interface ProductFormDetailsProps {
 const ProductFormDetails = ({ form }: ProductFormDetailsProps) => {
   return (
     <div className="space-y-6">
+      {/* PZN field added first - important for pharmacies */}
       <FormField
         control={form.control}
-        name="imageUrl"
+        name="pzn"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Image URL*</FormLabel>
+            <FormLabel>PZN (Pharmazentralnummer)</FormLabel>
             <FormControl>
-              <Input placeholder="https://example.com/image.jpg" {...field} />
+              <Input placeholder="z.B. 12345678" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -40,7 +41,7 @@ const ProductFormDetails = ({ form }: ProductFormDetailsProps) => {
             <FormItem>
               <FormLabel>THC Content</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., 18%" {...field} />
+                <Input placeholder="z.B. 18%" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -54,7 +55,7 @@ const ProductFormDetails = ({ form }: ProductFormDetailsProps) => {
             <FormItem>
               <FormLabel>CBD Content</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., 0.2%" {...field} />
+                <Input placeholder="z.B. 0.2%" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -69,7 +70,7 @@ const ProductFormDetails = ({ form }: ProductFormDetailsProps) => {
           <FormItem>
             <FormLabel>Terpenes</FormLabel>
             <FormControl>
-              <Input placeholder="Comma separated, e.g.: Myrcene, Pinene" {...field} />
+              <Input placeholder="Kommagetrennt, z.B.: Myrcene, Pinene" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -84,7 +85,7 @@ const ProductFormDetails = ({ form }: ProductFormDetailsProps) => {
             <FormItem>
               <FormLabel>Weight</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., 10g" {...field} />
+                <Input placeholder="z.B. 10g" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -98,7 +99,7 @@ const ProductFormDetails = ({ form }: ProductFormDetailsProps) => {
             <FormItem>
               <FormLabel>Recommended Dosage</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., 0.1g - 0.3g" {...field} />
+                <Input placeholder="z.B. 0.1g - 0.3g" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -114,7 +115,7 @@ const ProductFormDetails = ({ form }: ProductFormDetailsProps) => {
             <FormItem>
               <FormLabel>Manufacturer</FormLabel>
               <FormControl>
-                <Input placeholder="Enter manufacturer" {...field} />
+                <Input placeholder="Hersteller eingeben" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -128,13 +129,28 @@ const ProductFormDetails = ({ form }: ProductFormDetailsProps) => {
             <FormItem>
               <FormLabel>Country of Origin</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Germany" {...field} />
+                <Input placeholder="z.B. Germany" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
       </div>
+      
+      {/* Image URL moved to the bottom as optional field */}
+      <FormField
+        control={form.control}
+        name="imageUrl"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Image URL (Optional)</FormLabel>
+            <FormControl>
+              <Input placeholder="https://example.com/image.jpg" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 };
