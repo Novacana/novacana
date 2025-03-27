@@ -23,11 +23,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [redirectTriggered, setRedirectTriggered] = useState(false);
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
   
   // Überprüfen, ob der Benutzer Admin-Rechte hat
   useEffect(() => {
     let isMounted = true;
+    
+    // Only run this effect once
+    if (hasCheckedAuth) return;
     
     const checkAdminAccess = async () => {
       try {
@@ -38,14 +41,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         if (!session?.user) {
           console.log("AdminLayout - Kein Benutzer gefunden, Weiterleitung zum Login");
           
-          if (isMounted && !redirectTriggered) {
-            setRedirectTriggered(true);
+          if (isMounted) {
             toast({
               title: "Zugriff verweigert",
               description: "Sie müssen angemeldet sein, um den Admin-Bereich zu nutzen.",
               variant: "destructive"
             });
             navigate("/login?returnUrl=/admin");
+            setHasCheckedAuth(true);
           }
           return;
         }
@@ -56,14 +59,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         if (!adminStatus) {
           console.log("AdminLayout - Kein Admin-Zugriff, Weiterleitung zum Dashboard");
           
-          if (isMounted && !redirectTriggered) {
-            setRedirectTriggered(true);
+          if (isMounted) {
             toast({
               title: "Zugriff verweigert",
               description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
               variant: "destructive"
             });
             navigate("/dashboard");
+            setHasCheckedAuth(true);
           }
           return;
         }
@@ -72,18 +75,19 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         if (isMounted) {
           setIsAdmin(true);
           setLoading(false);
+          setHasCheckedAuth(true);
         }
       } catch (error) {
         console.error("AdminLayout - Fehler beim Überprüfen der Admin-Rechte:", error);
         
-        if (isMounted && !redirectTriggered) {
-          setRedirectTriggered(true);
+        if (isMounted) {
           toast({
             title: "Fehler",
             description: "Bei der Überprüfung Ihrer Berechtigungen ist ein Fehler aufgetreten.",
             variant: "destructive"
           });
           navigate("/dashboard");
+          setHasCheckedAuth(true);
         }
       }
     };
@@ -93,7 +97,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [navigate, toast, redirectTriggered]);
+  }, [navigate, toast, hasCheckedAuth]);
   
   // Zeige Ladeanimation, wenn noch geprüft wird
   if (loading) {

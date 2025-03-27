@@ -27,6 +27,7 @@ const ProtectedRoute = ({
   const [isAdmin, setIsAdmin] = useState(false);
   const [isPharmacist, setIsPharmacist] = useState(false);
   const [checkedStatus, setCheckedStatus] = useState(false);
+  const [hasShownToast, setHasShownToast] = useState(false);
   const { toast } = useToast();
   const location = useLocation();
 
@@ -64,7 +65,10 @@ const ProtectedRoute = ({
     console.log("ProtectedRoute initialisiert, adminOnly:", adminOnly, "pharmacistOnly:", pharmacistOnly);
     let isMounted = true;
     
-    // First, set up auth state listener
+    // Skip if we've already checked the status
+    if (checkedStatus) return;
+    
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         console.log("Auth-Status geändert:", event, currentSession?.user?.email);
@@ -83,20 +87,24 @@ const ProtectedRoute = ({
             console.log("Status-Prüfung: Admin =", adminResult, "Apotheker =", pharmacistResult);
           }
           
-          setLoading(false);
-          setCheckedStatus(true);
+          if (isMounted) {
+            setLoading(false);
+            setCheckedStatus(true);
+          }
         } else {
-          setIsAdmin(false);
-          setIsPharmacist(false);
-          setLoading(false);
-          setCheckedStatus(true);
+          if (isMounted) {
+            setIsAdmin(false);
+            setIsPharmacist(false);
+            setLoading(false);
+            setCheckedStatus(true);
+          }
         }
       }
     );
 
-    // Then check for existing session
+    // Check for existing session
     const checkSession = async () => {
-      if (checkedStatus) return; // Prevent multiple checks
+      if (checkedStatus) return;
       
       try {
         console.log("Suche nach bestehender Session...");
@@ -121,8 +129,10 @@ const ProtectedRoute = ({
           setIsPharmacist(false);
         }
         
-        setLoading(false);
-        setCheckedStatus(true);
+        if (isMounted) {
+          setLoading(false);
+          setCheckedStatus(true);
+        }
       } catch (error) {
         console.error("Fehler beim Abrufen der Session:", error);
         if (isMounted) {
@@ -168,13 +178,14 @@ const ProtectedRoute = ({
 
   // If not authenticated, redirect to login with return path
   if (!session || !user) {
-    // Prevent multiple toast calls
-    if (!loading && checkedStatus) {
+    // Show toast only once
+    if (!hasShownToast && !loading && checkedStatus) {
       toast({
         title: "Zugriff verweigert",
         description: "Sie müssen angemeldet sein, um auf diese Seite zuzugreifen.",
         variant: "destructive"
       });
+      setHasShownToast(true);
     }
     
     return (
@@ -188,13 +199,14 @@ const ProtectedRoute = ({
   // If admin only route, check user role
   if (adminOnly && !isAdmin) {
     console.log("Zugriff verweigert: Admin-Rechte erforderlich");
-    // Prevent multiple toast calls
-    if (!loading && checkedStatus) {
+    // Show toast only once
+    if (!hasShownToast && !loading && checkedStatus) {
       toast({
         title: "Zugriff verweigert",
         description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
         variant: "destructive"
       });
+      setHasShownToast(true);
     }
     
     return (
@@ -208,13 +220,14 @@ const ProtectedRoute = ({
   // If pharmacist only route, check user role
   if (pharmacistOnly && !isPharmacist && !isAdmin) {
     console.log("Zugriff verweigert: Apotheker-Rechte erforderlich");
-    // Prevent multiple toast calls
-    if (!loading && checkedStatus) {
+    // Show toast only once
+    if (!hasShownToast && !loading && checkedStatus) {
       toast({
         title: "Zugriff verweigert",
         description: "Sie benötigen Apotheker-Rechte, um auf diese Seite zuzugreifen.",
         variant: "destructive"
       });
+      setHasShownToast(true);
     }
     
     return (
