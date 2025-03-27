@@ -6,6 +6,7 @@ import { Session, User } from "@supabase/supabase-js";
 import DocCheckStatus from "./DocCheckStatus";
 import { useToast } from "@/hooks/use-toast";
 import { checkIsAdmin } from "@/utils/authUtils";
+import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -43,7 +44,7 @@ const ProtectedRoute = ({
     console.log("ProtectedRoute initialisiert");
     let isMounted = true;
     
-    // First set up the auth state listener
+    // Erst Authentifizierungs-Listener einrichten
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         console.log("Auth-Status geändert:", event, currentSession?.user?.email);
@@ -55,8 +56,7 @@ const ProtectedRoute = ({
         
         if (currentSession?.user) {
           console.log("Benutzer eingeloggt, prüfe Admin-Status...");
-          const isAdminUser = await checkAdminStatus(currentSession.user.id);
-          console.log("Admin-Status nach Prüfung:", isAdminUser);
+          await checkAdminStatus(currentSession.user.id);
         } else {
           setIsAdmin(false);
         }
@@ -65,11 +65,12 @@ const ProtectedRoute = ({
       }
     );
 
-    // Then check for existing session
+    // Dann nach bestehender Session suchen
     const checkSession = async () => {
       try {
+        console.log("Suche nach bestehender Session...");
         const { data: { session: currentSession } } = await supabase.auth.getSession();
-        console.log("Bestehende Session gefunden:", currentSession?.user?.email);
+        console.log("Session-Prüfung Ergebnis:", currentSession?.user?.email);
         
         if (!isMounted) return;
         
@@ -78,8 +79,7 @@ const ProtectedRoute = ({
         
         if (currentSession?.user) {
           console.log("Benutzer hat aktive Session, prüfe Admin-Status...");
-          const isAdminUser = await checkAdminStatus(currentSession.user.id);
-          console.log("Admin-Status nach Prüfung:", isAdminUser);
+          await checkAdminStatus(currentSession.user.id);
         } else {
           setIsAdmin(false);
         }
@@ -109,8 +109,9 @@ const ProtectedRoute = ({
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nova-600"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-nova-600 mb-4" />
+        <p className="text-gray-600 dark:text-gray-400">Authentifizierung wird überprüft...</p>
       </div>
     );
   }

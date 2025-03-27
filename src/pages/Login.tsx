@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import LoginForm from "@/components/auth/LoginForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Pill, HeartPulse } from "lucide-react";
+import { AlertCircle, Pill, HeartPulse, Info } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Login = () => {
@@ -21,6 +21,14 @@ const Login = () => {
               <AlertCircle className="h-4 w-4 text-gray-700 dark:text-gray-300" />
               <AlertDescription>
                 Nur für medizinisches Fachpersonal und Apotheken zugänglich. Sie können sich mit Ihren Daten anmelden oder bei erstmaliger Nutzung registrieren.
+              </AlertDescription>
+            </Alert>
+            
+            <Alert className="mb-6 bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300">
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                <p>Hinweis zur E-Mail-Bestätigung: Bitte bestätigen Sie Ihre E-Mail-Adresse nach der Registrierung durch Klicken auf den Link in der an Sie gesendeten E-Mail. Überprüfen Sie auch Ihren Spam-Ordner.</p>
+                <p className="mt-1 text-sm">Wenn Sie Probleme beim Anmelden haben, können Sie eine neue Bestätigungs-E-Mail anfordern.</p>
               </AlertDescription>
             </Alert>
             
