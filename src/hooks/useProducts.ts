@@ -48,7 +48,15 @@ export const useProducts = () => {
       
       if (productData.length > 0) {
         // Convert all products to database format
-        const productsToInsert = productData.map(product => convertProductToDB(product));
+        const productsToInsert = productData.map(product => {
+          // Ensure terpenes is always an array before conversion
+          const productWithValidTerpenes = {
+            ...product,
+            terpenes: Array.isArray(product.terpenes) ? product.terpenes : 
+                      (product.terpenes ? [product.terpenes] : [])
+          };
+          return convertProductToDB(productWithValidTerpenes);
+        });
         
         // Validate all products have required fields
         for (const product of productsToInsert) {

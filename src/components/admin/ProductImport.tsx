@@ -32,6 +32,10 @@ const ProductImport: React.FC<ProductImportProps> = ({ onProductsImported }) => 
       
       // Map Excel columns to product fields
       const mappedProducts = jsonData.map((row: any) => {
+        // Convert any terpenes string to an array
+        const terpenesString = row["Terpene"] || "";
+        const terpenesArray = terpenesString ? terpenesString.split(',').map((t: string) => t.trim()) : [];
+        
         // Convert Excel row to product object
         return {
           name: row["Vollständige Bezeichnung"] || "",
@@ -48,7 +52,7 @@ const ProductImport: React.FC<ProductImportProps> = ({ onProductsImported }) => 
           weight: row["Packungsgröße"] || "",
           thcContent: "",
           cbdContent: "",
-          terpenes: "",
+          terpenes: terpenesArray, // Now correctly using an array
           // Additional fields from Excel
           cultivator: row["Anbauer"] || "",
           pzn: row["PZN"] || "",
