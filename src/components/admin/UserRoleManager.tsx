@@ -90,19 +90,29 @@ const UserRoleManager: React.FC = () => {
       
       console.log("Erstelle neuen Benutzer:", values.email, "mit Rolle:", values.role);
       
-      // Direct call of the create_user function
-      const { data, error } = await supabase.rpc('create_user', {
+      // Benutzer mit signUp erstellen und dann die Rolle hinzufügen
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
-        user_role: values.role
       });
       
-      if (error) {
-        console.error("Fehler vom Server:", error);
-        throw new Error(`Fehler beim Erstellen des Benutzers: ${error.message}`);
+      if (signUpError) {
+        console.error("Fehler bei der Benutzer-Registrierung:", signUpError);
+        throw new Error(`Fehler bei der Benutzer-Registrierung: ${signUpError.message}`);
       }
       
-      console.log("Benutzer erstellt:", data);
+      if (!signUpData.user) {
+        throw new Error("Benutzer konnte nicht erstellt werden: Keine Benutzer-ID erhalten");
+      }
+      
+      console.log("Benutzer erstellt:", signUpData.user);
+      
+      // Rolle hinzufügen
+      const success = await addUserRole(signUpData.user.id, values.role as any);
+      
+      if (!success) {
+        throw new Error(`Rolle "${values.role}" konnte nicht hinzugefügt werden`);
+      }
       
       toast({
         title: "Benutzer erstellt",
