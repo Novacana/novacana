@@ -9,11 +9,15 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
-// This simulates checking for DocCheck authentication
-// In a real implementation, this would verify with the DocCheck API
+// Funktion zum Überprüfen der DocCheck-Authentifizierung
 const isAuthenticated = (): boolean => {
   return localStorage.getItem("doccheck_auth") === "true";
 };
+
+// DocCheck Redirect URL-Konfiguration
+const DOCCHECK_LOGIN_ID = "d279f3d6ef165e8ccd90bb8a52a149"; // Beispiel Login-ID - durch echte ersetzen
+const DOCCHECK_LOGIN_URL = `https://login.doccheck.com/code/${DOCCHECK_LOGIN_ID}/`;
+const REDIRECT_URL = window.location.origin + "/doccheck-callback";
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { toast } = useToast();
@@ -22,28 +26,55 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
   useEffect(() => {
-    // Check if user is already authenticated
+    // Überprüfen, ob Benutzer bereits authentifiziert ist
     if (isAuthenticated()) {
       setShowContent(true);
     }
-  }, []);
 
-  const handleDocCheckAuth = () => {
+    // DocCheck-Callback-Parameter überprüfen (wenn Benutzer von DocCheck zurückkehrt)
+    const urlParams = new URLSearchParams(window.location.search);
+    const dc_uid = urlParams.get("dc_uid");
+    const dc_pwh = urlParams.get("dc_pwh");
+    
+    if (dc_uid && dc_pwh) {
+      handleDocCheckCallback(dc_uid, dc_pwh);
+    }
+  }, [location]);
+
+  // Funktion zum Verarbeiten des DocCheck-Callbacks
+  const handleDocCheckCallback = (dc_uid: string, dc_pwh: string) => {
     setIsVerifying(true);
     
-    // Simulate DocCheck authentication process
-    // In a real implementation, this would redirect to DocCheck login
+    // In einer realen Anwendung würden Sie diese Werte auf Ihrem Server validieren
+    // Hier setzen wir den Auth-Status direkt für Demo-Zwecke
     setTimeout(() => {
-      // Simulate successful authentication
+      // Speichern der DocCheck-Auth-Daten im localStorage
       localStorage.setItem("doccheck_auth", "true");
+      localStorage.setItem("doccheck_uid", dc_uid);
+      
       setShowContent(true);
       setIsVerifying(false);
+      
+      // Automatisch die URL-Parameter entfernen (für bessere Benutzererfahrung)
+      window.history.replaceState({}, document.title, location.pathname);
       
       toast({
         title: "Authentifizierung erfolgreich",
         description: "Sie wurden als Angehöriger eines Heilberufs verifiziert.",
       });
-    }, 2000);
+    }, 1000);
+  };
+
+  // Funktion zur Weiterleitung zu DocCheck
+  const handleDocCheckAuth = () => {
+    setIsVerifying(true);
+    
+    // Zu DocCheck weiterleiten mit Rückleitung zur aktuellen URL
+    const currentPath = encodeURIComponent(location.pathname);
+    const loginUrl = `${DOCCHECK_LOGIN_URL}?dc_referer=${REDIRECT_URL}?returnTo=${currentPath}`;
+    
+    // In einer realen Anwendung würden Sie hier direkt zu DocCheck weiterleiten
+    window.location.href = loginUrl;
   };
 
   if (showContent) {

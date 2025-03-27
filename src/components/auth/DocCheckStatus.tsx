@@ -8,16 +8,19 @@ import { ShieldCheck, LogOut } from "lucide-react";
 const DocCheckStatus: React.FC = () => {
   const { toast } = useToast();
   const isAuthenticated = localStorage.getItem("doccheck_auth") === "true";
+  const doccheckUid = localStorage.getItem("doccheck_uid") || "Unbekannt";
 
   const handleLogout = () => {
+    // DocCheck-Authentifizierung zurücksetzen
     localStorage.removeItem("doccheck_auth");
+    localStorage.removeItem("doccheck_uid");
     
     toast({
       title: "Abgemeldet",
       description: "Sie wurden erfolgreich von DocCheck abgemeldet.",
     });
     
-    // Force reload to update authentication state everywhere
+    // Seite neu laden, um Authentifizierungsstatus überall zu aktualisieren
     window.location.reload();
   };
 
@@ -30,6 +33,10 @@ const DocCheckStatus: React.FC = () => {
       <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1 px-2 py-1">
         <ShieldCheck size={14} />
         <span className="text-xs">Verifiziert</span>
+      </Badge>
+      
+      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 flex items-center gap-1 px-2 py-1">
+        <span className="text-xs">DocCheck ID: {doccheckUid.substring(0, 8)}...</span>
       </Badge>
       
       <Button 
