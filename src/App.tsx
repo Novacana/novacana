@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -60,7 +61,7 @@ const App = () => {
               } />
               <Route path="/imprint" element={<Imprint />} />
               <Route path="/privacy" element={<Privacy />} />
-              <Route path="/doccheck-callback" element={<ProtectedRoute showDocCheckCallback={true}><Products /></ProtectedRoute>} />
+              
               {/* Admin routes */}
               <Route path="/admin" element={
                 <ProtectedRoute adminOnly={true}>
@@ -87,6 +88,7 @@ const App = () => {
                   <PharmacyVerifications />
                 </ProtectedRoute>
               } />
+              
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
