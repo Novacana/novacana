@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,23 @@ import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Package, FileText, Users } from "lucide-react";
 import FirstAdminSetup from "@/components/auth/FirstAdminSetup";
 import PharmacyVerification from "@/components/auth/PharmacyVerification";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Fetch the current user's ID when the component mounts
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      }
+    };
+
+    getCurrentUser();
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -31,7 +45,7 @@ const Dashboard = () => {
           <FirstAdminSetup />
           
           {/* Apotheken-Verifizierungskomponente - nur für nicht-verifizierte Apotheken anzeigen */}
-          <PharmacyVerification />
+          {userId && <PharmacyVerification userId={userId} />}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
