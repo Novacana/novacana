@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { addUserRole, checkAdminExists } from "@/utils/authUtils";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
@@ -31,9 +30,20 @@ const FirstAdminSetup = () => {
         
         setUser(session.user);
         
-        // Prüfen, ob bereits Admin-Benutzer existieren
-        const adminExists = await checkAdminExists();
-        console.log("Admin Existenz-Check:", adminExists);
+        // Direkte Abfrage statt über die Hilfsfunktion
+        const { count, error } = await supabase
+          .from('user_roles')
+          .select('*', { count: 'exact', head: true })
+          .eq('role', 'admin');
+        
+        if (error) {
+          console.error("Fehler beim Prüfen des Admin-Status:", error);
+          setLoading(false);
+          return;
+        }
+        
+        console.log("Admin-Prüfung Ergebnis:", count);
+        const adminExists = count !== null && count > 0;
         
         setNeedsAdmin(!adminExists);
         setLoading(false);
@@ -53,35 +63,46 @@ const FirstAdminSetup = () => {
     setProcessing(true);
     
     try {
-      // Direkter Zugriff auf die Supabase-Tabelle, um die RLS-Richtlinien zu umgehen
+      // Service-Role API verwenden (wenn verfügbar)
+      // Oder alternativ durch Admin-Funktion
       const { data, error } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: user.id,
-          role: 'admin'
-        })
-        .select();
+        .rpc('create_admin', {
+          new_admin_id: user.id
+        });
       
       if (error) {
         console.error("Fehler beim Hinzufügen der Admin-Rolle:", error);
         
-        // Detaillierte Fehlermeldung für die Diagnose
-        toast({
-          title: "Fehler",
-          description: `Fehler beim Hinzufügen der Rolle: ${JSON.stringify(error)}`,
-          variant: "destructive"
-        });
-        
-        return;
+        // Direkte Einfügung versuchen
+        const insertResult = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: user.id,
+            role: 'admin'
+          });
+          
+        if (insertResult.error) {
+          console.error("Fehler bei direkter Einfügung:", insertResult.error);
+          toast({
+            title: "Fehler",
+            description: `Fehler beim Hinzufügen der Rolle: ${JSON.stringify(insertResult.error)}`,
+            variant: "destructive"
+          });
+          setProcessing(false);
+          return;
+        }
       }
-      
-      console.log("Administrator-Rolle hinzugefügt:", data);
       
       toast({
         title: "Administrator erstellt",
         description: "Sie wurden erfolgreich zum Administrator ernannt.",
         variant: "default"
       });
+      
+      // Seite nach kurzer Verzögerung neu laden, um die neuen Rechte zu aktualisieren
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
       
       setNeedsAdmin(false);
     } catch (error) {
