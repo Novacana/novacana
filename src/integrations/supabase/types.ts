@@ -54,6 +54,45 @@ export type Database = {
         }
         Relationships: []
       }
+      pharmacy_verification: {
+        Row: {
+          business_documents: string[]
+          contact_details: Json
+          id: string
+          license_id: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          submitted_at: string
+          user_id: string
+          verification_status: string
+        }
+        Insert: {
+          business_documents: string[]
+          contact_details: Json
+          id?: string
+          license_id: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          submitted_at?: string
+          user_id: string
+          verification_status?: string
+        }
+        Update: {
+          business_documents?: string[]
+          contact_details?: Json
+          id?: string
+          license_id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          submitted_at?: string
+          user_id?: string
+          verification_status?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string

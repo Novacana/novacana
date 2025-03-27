@@ -101,6 +101,67 @@ export interface Database extends Omit<OriginalDatabase, 'public'> {
         }>;
         Relationships: [];
       };
+      user_roles: {
+        Row: {
+          id: string;
+          user_id: string;
+          role: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          role?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<{
+          user_id: string;
+          role: string;
+          created_at: string;
+          updated_at: string;
+        }>;
+        Relationships: [];
+      };
+      pharmacy_verification: {
+        Row: {
+          id: string;
+          user_id: string;
+          license_id: string;
+          business_documents: string[];
+          contact_details: Json;
+          verification_status: string;
+          submitted_at: string;
+          reviewed_at: string | null;
+          reviewer_id: string | null;
+          rejection_reason: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          license_id: string;
+          business_documents: string[];
+          contact_details: Json;
+          verification_status?: string;
+          submitted_at?: string;
+          reviewed_at?: string | null;
+          reviewer_id?: string | null;
+          rejection_reason?: string | null;
+        };
+        Update: Partial<{
+          user_id: string;
+          license_id: string;
+          business_documents: string[];
+          contact_details: Json;
+          verification_status: string;
+          submitted_at: string;
+          reviewed_at: string | null;
+          reviewer_id: string | null;
+          rejection_reason: string | null;
+        }>;
+        Relationships: [];
+      };
     };
     Views: OriginalDatabase['public']['Views'];
     Functions: OriginalDatabase['public']['Functions'];

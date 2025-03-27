@@ -40,7 +40,7 @@ const AdminSidebar = () => {
       icon: <Users size={18} />
     },
     {
-      name: "Apothekenverifizierung",
+      name: "Pharmacy Verification",
       path: "/admin/pharmacy-verifications",
       icon: <Stethoscope size={18} />
     },
