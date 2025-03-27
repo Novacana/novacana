@@ -22,8 +22,8 @@ const About = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-gray-200/30 to-gray-300/30 dark:from-gray-800/20 dark:to-gray-700/20 rounded-2xl blur-xl transform rotate-3 scale-95"></div>
               <div className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl">
                 <img 
-                  src="/lovable-uploads/6f98e186-03e5-4093-849e-c97a26a093b3.png" 
-                  alt="Supply Chain" 
+                  src="/lovable-uploads/b8e522e4-7a6e-483b-8d83-33bf4e6d3014.png" 
+                  alt={t('aboutUs.supplyChain.title')} 
                   className="w-full h-auto object-cover"
                   onError={(e) => {
                     console.error("Image failed to load:", e);
@@ -33,10 +33,10 @@ const About = () => {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                    {t('about.card.title')}
+                    {t('aboutUs.supplyChain.title')}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                    {t('about.card.description')}
+                    {t('aboutUs.supplyChain.description')}
                   </p>
                   <div className="pt-2 flex justify-between items-center">
                     <div className="text-xs text-gray-500 dark:text-gray-400 inline-block rounded-full px-3 py-1 bg-gray-100 dark:bg-gray-700">

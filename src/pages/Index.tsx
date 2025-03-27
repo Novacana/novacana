@@ -17,9 +17,10 @@ const Index = () => {
     
     // Lade Status von Bildern überprüfen
     const preloadImages = [
-      "/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png",
-      "/lovable-uploads/8e38db3b-c618-4827-bc84-c89ef43ebef7.png",
-      "/images/medical-research.jpg"
+      "/lovable-uploads/66045f1f-4643-4ce0-9479-3d9a29387536.png", // Logo
+      "/lovable-uploads/8e38db3b-c618-4827-bc84-c89ef43ebef7.png", // Hero Bild
+      "/lovable-uploads/6f98e186-03e5-4093-849e-c97a26a093b3.png", // Supply Chain Bild
+      "/lovable-uploads/b8e522e4-7a6e-483b-8d83-33bf4e6d3014.png", // Neues Supply Chain Bild
     ];
     
     preloadImages.forEach(src => {

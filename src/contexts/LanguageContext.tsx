@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'de' | 'en';
@@ -70,6 +69,10 @@ const translations = {
     'about.card.gmp.desc': 'Good Manufacturing Practice zertifiziert',
     'about.card.gdp': 'GDP-Zertifiziert',
     'about.card.wholesaler': 'Großhandelserlaubnis',
+    
+    // Supply Chain
+    'aboutUs.supplyChain.title': 'Unsere Lieferkette',
+    'aboutUs.supplyChain.description': 'Wir sorgen für eine lückenlose und transparente Lieferkette, um die höchste Qualität und Sicherheit unserer medizinischen Cannabisprodukte zu gewährleisten.',
     
     // Contact
     'contact.title': 'Kontakt',
@@ -215,6 +218,10 @@ const translations = {
     'about.card.gdp': 'GDP Certified',
     'about.card.wholesaler': 'Pharmaceutical Wholesale License',
     
+    // Supply Chain
+    'aboutUs.supplyChain.title': 'Our Supply Chain',
+    'aboutUs.supplyChain.description': 'We ensure a seamless and transparent supply chain to guarantee the highest quality and safety of our medical cannabis products.',
+    
     // Contact
     'contact.title': 'Contact',
     'contact.description': 'Have questions about our products or services? Reach out to our team.',
@@ -255,8 +262,8 @@ const translations = {
     'aboutUs.passion.research.desc': 'We continuously invest in research to deepen our understanding of cannabis and its therapeutic properties.',
     'aboutUs.passion.education.title': 'Education & Awareness',
     'aboutUs.passion.education.desc': 'We are committed to educating about the therapeutic benefits of medical cannabis and sharing our knowledge with pharmacies and healthcare professionals.',
-    'aboutUs.terpenes.title': 'Our Expertise: Terpenes in Cannabis',
-    'aboutUs.terpenes.intro': 'Terpenes are aromatic compounds that give cannabis its characteristic smell and contribute significantly to its therapeutic properties. At Novacana, we pay special attention to the terpene profile of our products.',
+    'aboutUs.terpenes.title': 'Our Expertise: Terpene in Cannabis',
+    'aboutUs.terpenes.intro': 'Terpene are aromatic compounds that give cannabis its characteristic smell and contribute significantly to its therapeutic properties. At Novacana, we pay special attention to the terpene profile of our products.',
     'aboutUs.terpenes.benefits.title': 'Therapeutic Benefits',
     'aboutUs.terpenes.benefits.1': 'Myrcene – known for its sedative and muscle relaxant properties',
     'aboutUs.terpenes.benefits.2': 'Limonene – can improve mood and has antibacterial properties',
