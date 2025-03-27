@@ -20,6 +20,7 @@ import Privacy from "./pages/Privacy";
 import Admin from "./pages/Admin";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
+import AdminUsers from "./pages/admin/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,11 @@ const App = () => {
               <Route path="/admin/orders" element={
                 <ProtectedRoute adminOnly={true}>
                   <AdminOrders />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/users" element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminUsers />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

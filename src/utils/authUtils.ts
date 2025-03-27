@@ -6,26 +6,106 @@ import { supabase } from "@/integrations/supabase/client";
  * @param userId - Die ID des Benutzers
  */
 export const checkIsAdmin = async (userId: string): Promise<boolean> => {
-  // Wenn ein Benutzer-Profil-System implementiert wird, 
-  // würde hier die Rolle aus der Datenbank überprüft werden
-  
-  // Einfache E-Mail-Überprüfung als vorläufige Implementierung
-  const { data, error } = await supabase.auth.admin.getUserById(userId);
-  
-  if (error) {
-    console.error("Fehler beim Abrufen des Benutzers:", error);
+  try {
+    // Prüfen, ob der Benutzer die Admin-Rolle hat
+    const { data, error } = await supabase.rpc('has_role', {
+      _user_id: userId,
+      _role: 'admin'
+    });
+    
+    if (error) {
+      console.error("Fehler beim Überprüfen der Admin-Rolle:", error);
+      return false;
+    }
+    
+    return data || false;
+  } catch (error) {
+    console.error("Fehler beim Überprüfen des Admin-Status:", error);
     return false;
   }
-  
-  return data?.user?.email === "admin@example.com";
+};
+
+/**
+ * Holt alle Rollen eines Benutzers
+ * @param userId - Die ID des Benutzers
+ */
+export const getUserRoles = async (userId: string): Promise<string[]> => {
+  try {
+    const { data, error } = await supabase.rpc('get_user_roles', {
+      _user_id: userId
+    });
+    
+    if (error) {
+      console.error("Fehler beim Abrufen der Benutzerrollen:", error);
+      return [];
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error("Fehler beim Abrufen der Benutzerrollen:", error);
+    return [];
+  }
+};
+
+/**
+ * Fügt einem Benutzer eine Rolle hinzu
+ * @param userId - Die ID des Benutzers
+ * @param role - Die hinzuzufügende Rolle
+ */
+export const addUserRole = async (userId: string, role: 'admin' | 'user' | 'pharmacist'): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('user_roles')
+      .insert({
+        user_id: userId,
+        role: role
+      });
+    
+    if (error) {
+      console.error("Fehler beim Hinzufügen der Rolle:", error);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Fehler beim Hinzufügen der Rolle:", error);
+    return false;
+  }
+};
+
+/**
+ * Entfernt eine Rolle von einem Benutzer
+ * @param userId - Die ID des Benutzers
+ * @param role - Die zu entfernende Rolle
+ */
+export const removeUserRole = async (userId: string, role: 'admin' | 'user' | 'pharmacist'): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('user_roles')
+      .delete()
+      .match({
+        user_id: userId,
+        role: role
+      });
+    
+    if (error) {
+      console.error("Fehler beim Entfernen der Rolle:", error);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Fehler beim Entfernen der Rolle:", error);
+    return false;
+  }
 };
 
 /**
  * Anleitung zum Hinzufügen eines Admin-Benutzers
  * 
- * Derzeit können Sie einen Admin-Benutzer hinzufügen, indem Sie:
- * 1. Einen neuen Benutzer mit der E-Mail "admin@example.com" registrieren
- * 2. Mit diesem Benutzer anmelden
+ * Nach der Registrierung eines neuen Benutzers muss ein bestehender Administrator
+ * die Admin-Rolle zuweisen. Dies kann über die Admin-Benutzeroberfläche erfolgen.
  * 
- * In einer robusten Implementierung würde ein User-Roles-System in der Datenbank verwendet werden.
+ * Für den ersten Admin-Benutzer wurde beim Datenbanksetup automatisch der Benutzer
+ * mit der E-Mail "admin@example.com" als Administrator eingerichtet.
  */

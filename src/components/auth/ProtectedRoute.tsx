@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 import DocCheckStatus from "./DocCheckStatus";
 import { useToast } from "@/hooks/use-toast";
+import { checkIsAdmin } from "@/utils/authUtils";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -27,16 +28,8 @@ const ProtectedRoute = ({
   // Check if user is an admin
   const checkAdminStatus = async (userId: string) => {
     try {
-      // First method: check if email is admin@example.com (fallback method)
-      if (user?.email === "admin@example.com") {
-        setIsAdmin(true);
-        return;
-      }
-      
-      // This is where you would check the database for admin role
-      // For now, we're using the simple email check above
-      
-      setIsAdmin(false);
+      const hasAdminRole = await checkIsAdmin(userId);
+      setIsAdmin(hasAdminRole);
     } catch (error) {
       console.error("Fehler beim Überprüfen des Admin-Status:", error);
       setIsAdmin(false);
