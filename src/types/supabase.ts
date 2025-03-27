@@ -1,32 +1,78 @@
-
 import { Database as OriginalDatabase } from '@/integrations/supabase/types';
 import { Product, Order } from '@/types';
 
-// Erweiterte Datenbank-Definition
+// Extended Database Definition
 export interface Database extends OriginalDatabase {
-  Tables: {
-    products: {
-      Row: Product;
-      Insert: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>;
-      Update: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>>;
+  public: {
+    Tables: {
+      products: {
+        Row: {
+          id: string;
+          name: string;
+          description: string;
+          short_description: string;
+          price: number;
+          image_url: string;
+          category: string;
+          stock: number;
+          thc_content?: string;
+          cbd_content?: string;
+          terpenes?: string[];
+          weight?: string;
+          dosage?: string;
+          effects?: string[];
+          origin?: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>;
+        Update: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>>;
+      };
+      orders: {
+        Row: {
+          id: string;
+          user_id: string;
+          products: any[];
+          total_amount: number;
+          status: string;
+          tracking_number?: string;
+          shipping_address: {
+            name: string;
+            street: string;
+            city: string;
+            postalCode: string;
+            country: string;
+          };
+          billing_address: {
+            name: string;
+            street: string;
+            city: string;
+            postalCode: string;
+            country: string;
+          };
+          payment_method: string;
+          notes?: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>;
+        Update: Partial<Omit<Order, 'id' | 'createdAt' | 'updatedAt'>>;
+      };
     };
-    orders: {
-      Row: Order;
-      Insert: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>;
-      Update: Partial<Omit<Order, 'id' | 'createdAt' | 'updatedAt'>>;
-    };
+    Views: OriginalDatabase['public']['Views'];
+    Functions: OriginalDatabase['public']['Functions'];
+    Enums: OriginalDatabase['public']['Enums'];
+    CompositeTypes: OriginalDatabase['public']['CompositeTypes'];
   };
 }
 
-// Hilfsfunktion zum Konvertieren von camelCase zu snake_case für Supabase
+// Utility function to convert camelCase to snake_case for Supabase
 export const toSnakeCase = (obj: Record<string, any>): Record<string, any> => {
   const result: Record<string, any> = {};
   
   Object.keys(obj).forEach(key => {
-    // Konvertiere camelCase zu snake_case (z.B. shortDescription zu short_description)
     const snakeCaseKey = key.replace(/([A-Z])/g, "_$1").toLowerCase();
     
-    // Behandle verschachtelte Objekte rekursiv
     if (obj[key] !== null && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
       result[snakeCaseKey] = toSnakeCase(obj[key]);
     } else {
@@ -37,15 +83,13 @@ export const toSnakeCase = (obj: Record<string, any>): Record<string, any> => {
   return result;
 };
 
-// Hilfsfunktion zum Konvertieren von snake_case zu camelCase für Supabase
+// Utility function to convert snake_case to camelCase for Supabase
 export const toCamelCase = (obj: Record<string, any>): Record<string, any> => {
   const result: Record<string, any> = {};
   
   Object.keys(obj).forEach(key => {
-    // Konvertiere snake_case zu camelCase (z.B. short_description zu shortDescription)
     const camelCaseKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
     
-    // Behandle verschachtelte Objekte rekursiv
     if (obj[key] !== null && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
       result[camelCaseKey] = toCamelCase(obj[key]);
     } else {

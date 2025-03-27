@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Order } from "@/types";
+import { Order, OrderItem, Address } from "@/types";
 import AdminLayout from "@/components/layout/AdminLayout";
-import { toSnakeCase } from "@/types/supabase";
+import { toSnakeCase, toCamelCase } from "@/types/supabase";
 
 // Status color map
 const statusColorMap: {
@@ -54,15 +54,15 @@ const AdminOrders = () => {
       if (error) throw error;
       
       // Convert data to our Order type
-      const convertedData = data.map(item => ({
+      const convertedData: Order[] = data.map(item => ({
         id: item.id,
         userId: item.user_id,
         products: item.products,
         totalAmount: item.total_amount,
-        status: item.status,
+        status: item.status as 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled',
         trackingNumber: item.tracking_number,
-        shippingAddress: item.shipping_address,
-        billingAddress: item.billing_address,
+        shippingAddress: item.shipping_address as Address,
+        billingAddress: item.billing_address as Address,
         paymentMethod: item.payment_method,
         notes: item.notes,
         createdAt: new Date(item.created_at),

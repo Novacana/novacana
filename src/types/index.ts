@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   name: string;
@@ -24,9 +25,9 @@ export interface Product {
   cbdContent?: string;
   terpenes?: string[];
   weight?: string;
-  recommendedDosage?: string;
-  manufacturer?: string;
-  countryOfOrigin?: string;
+  dosage?: string;
+  effects?: string[];
+  origin?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,31 +35,42 @@ export interface Product {
 export interface OrderItem {
   id: string;
   productId: string;
-  productName: string;
+  name: string; 
   quantity: number;
-  unitPrice: number;
-  totalPrice: number;
+  price: number;
+}
+
+export interface Address {
+  name: string;
+  street: string;
+  city: string;
+  postalCode: string;
+  country: string;
 }
 
 export interface Order {
   id: string;
   userId: string;
-  pharmacyName: string;
-  pharmacyId: string;
-  orderNumber: string;
-  items: OrderItem[];
-  subtotal: number;
-  tax: number;
-  total: number;
+  products: OrderItem[];
+  totalAmount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  paymentMethod: 'invoice' | 'bank_transfer' | 'credit_card';
-  paymentStatus: 'pending' | 'paid' | 'failed';
-  shippingAddress: string;
-  billingAddress: string;
   trackingNumber?: string;
+  shippingAddress: Address;
+  billingAddress: Address;
+  paymentMethod: string;
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
+  
+  // Additional fields from original Order interface
+  pharmacyName?: string;
+  pharmacyId?: string;
+  orderNumber?: string;
+  items?: OrderItem[];
+  subtotal?: number;
+  tax?: number;
+  total?: number;
+  paymentStatus?: 'pending' | 'paid' | 'failed';
 }
 
 export interface CartItem {

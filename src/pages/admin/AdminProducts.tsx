@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger 
 } from "@/components/ui/dialog";
-import { toSnakeCase } from "@/types/supabase";
+import { toSnakeCase, toCamelCase } from "@/types/supabase";
 
 const AdminProducts = () => {
   const { toast } = useToast();
@@ -41,7 +41,7 @@ const AdminProducts = () => {
       if (error) throw error;
       
       // Convert data to our Product type
-      const convertedData = data.map(item => ({
+      const convertedData: Product[] = data.map(item => ({
         id: item.id,
         name: item.name,
         description: item.description,

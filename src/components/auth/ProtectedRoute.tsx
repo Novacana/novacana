@@ -86,7 +86,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     try {
       // In a real app, check user role from Supabase
       // For now, we'll use a simple check (replace with actual logic)
-      const { data, error } = await supabase.rpc('is_admin');
+      const { data, error } = await supabase.rpc('is_admin') as { data: boolean | null, error: Error | null };
       
       if (error) throw error;
       
