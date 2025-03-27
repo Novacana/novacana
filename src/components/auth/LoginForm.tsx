@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -42,8 +41,8 @@ const LoginForm = () => {
   const resetEmailConfirmation = async (userEmail: string) => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.resetByEmail(userEmail, {
-        redirectTo: `${window.location.origin}/login`
+      const { error } = await supabase.auth.resendConfirmationEmail({
+        email: userEmail
       });
       
       if (error) {
@@ -209,7 +208,15 @@ const LoginForm = () => {
               onClick={(e) => {
                 e.preventDefault();
                 if (email) {
-                  resetEmailConfirmation(email);
+                  supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/login`
+                  }).then(({ error }) => {
+                    if (error) {
+                      setError(`Fehler beim Passwort-Reset: ${error.message}`);
+                    } else {
+                      setSuccessMessage("Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet.");
+                    }
+                  });
                 } else {
                   setError("Bitte geben Sie Ihre E-Mail-Adresse ein, um ein Passwort-Reset anzufordern.");
                 }
