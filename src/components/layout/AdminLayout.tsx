@@ -1,12 +1,9 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { checkIsAdmin } from "@/utils/authUtils";
-import { supabase } from "@/integrations/supabase/client";
+import { ArrowLeft } from "lucide-react";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -20,97 +17,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   backUrl = "/admin" 
 }) => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
   
-  // Überprüfen, ob der Benutzer Admin-Rechte hat
-  useEffect(() => {
-    let isMounted = true;
-    
-    // Only run this effect once
-    if (hasCheckedAuth) return;
-    
-    const checkAdminAccess = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        console.log("AdminLayout - Session geprüft:", session?.user?.email);
-        
-        if (!session?.user) {
-          console.log("AdminLayout - Kein Benutzer gefunden, Weiterleitung zum Login");
-          
-          if (isMounted) {
-            toast({
-              title: "Zugriff verweigert",
-              description: "Sie müssen angemeldet sein, um den Admin-Bereich zu nutzen.",
-              variant: "destructive"
-            });
-            navigate("/login?returnUrl=/admin");
-            setHasCheckedAuth(true);
-          }
-          return;
-        }
-        
-        const adminStatus = await checkIsAdmin(session.user.id);
-        console.log("AdminLayout - Admin-Status für Benutzer:", session.user.id, adminStatus);
-        
-        if (!adminStatus) {
-          console.log("AdminLayout - Kein Admin-Zugriff, Weiterleitung zum Dashboard");
-          
-          if (isMounted) {
-            toast({
-              title: "Zugriff verweigert",
-              description: "Sie benötigen Administrator-Rechte, um auf diese Seite zuzugreifen.",
-              variant: "destructive"
-            });
-            navigate("/dashboard");
-            setHasCheckedAuth(true);
-          }
-          return;
-        }
-        
-        // Admin-Rechte bestätigt
-        if (isMounted) {
-          setIsAdmin(true);
-          setLoading(false);
-          setHasCheckedAuth(true);
-        }
-      } catch (error) {
-        console.error("AdminLayout - Fehler beim Überprüfen der Admin-Rechte:", error);
-        
-        if (isMounted) {
-          toast({
-            title: "Fehler",
-            description: "Bei der Überprüfung Ihrer Berechtigungen ist ein Fehler aufgetreten.",
-            variant: "destructive"
-          });
-          navigate("/dashboard");
-          setHasCheckedAuth(true);
-        }
-      }
-    };
-    
-    checkAdminAccess();
-    
-    return () => {
-      isMounted = false;
-    };
-  }, [navigate, toast, hasCheckedAuth]);
-  
-  // Zeige Ladeanimation, wenn noch geprüft wird
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <Loader2 className="h-12 w-12 animate-spin text-nova-600 mb-4" />
-        <p className="text-gray-600 dark:text-gray-400">Authentifizierung wird überprüft...</p>
-      </div>
-    );
-  }
-  
-  // Nur rendern, wenn Admin-Rechte bestätigt wurden
-  return isAdmin ? (
+  // Admin-Bereich ohne Zugriffsbeschränkung rendern
+  return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-6">
@@ -141,7 +50,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         </div>
       </div>
     </div>
-  ) : null;
+  );
 };
 
 export default AdminLayout;
