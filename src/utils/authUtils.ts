@@ -186,8 +186,8 @@ export const verifyPharmacy = async (userId: string, verificationData: {
         license_id: verificationData.licenseId,
         business_documents: verificationData.businessDocuments,
         contact_details: verificationData.contactDetails,
-        verification_status: verificationData.verificationStatus || 'pending',
-        submitted_at: new Date()
+        verification_status: verificationData.verificationStatus || 'pending'
+        // submitted_at wird automatisch durch den DEFAULT-Wert in der Datenbank gesetzt
       });
     
     if (error) {

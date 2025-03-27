@@ -63,7 +63,7 @@ const ProtectedRoute = ({
     console.log("ProtectedRoute initialisiert, adminOnly:", adminOnly, "pharmacistOnly:", pharmacistOnly);
     let isMounted = true;
     
-    // Erst Authentifizierungs-Listener einrichten
+    // First, set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         console.log("Auth-Status geändert:", event, currentSession?.user?.email);
@@ -90,7 +90,7 @@ const ProtectedRoute = ({
       }
     );
 
-    // Dann nach bestehender Session suchen
+    // Then check for existing session
     const checkSession = async () => {
       try {
         console.log("Suche nach bestehender Session...");
