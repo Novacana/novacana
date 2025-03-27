@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -41,7 +42,15 @@ export const useProducts = () => {
   const addProduct = async (productData: Omit<Product, "id" | "createdAt" | "updatedAt">[]) => {
     try {
       if (productData.length > 0) {
+        // Convert the product to database format
         const productToInsert = convertProductToDB(productData[0]);
+
+        // Ensure all required fields are present
+        if (!productToInsert.name || !productToInsert.description || 
+            !productToInsert.short_description || !productToInsert.image_url || 
+            !productToInsert.category || productToInsert.price === undefined) {
+          throw new Error("Missing required product fields");
+        }
 
         const { error } = await supabase
           .from('products')

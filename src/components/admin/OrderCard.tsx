@@ -7,7 +7,11 @@ import { Order } from "@/types";
 
 interface OrderCardProps {
   order: Order;
-  onStatusUpdate: (orderId: string, updates: { status?: string; trackingNumber?: string; notes?: string }) => void;
+  onStatusUpdate: (orderId: string, updates: { 
+    status?: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'; 
+    trackingNumber?: string; 
+    notes?: string 
+  }) => void;
   getNextStatus: (currentStatus: string) => string;
   statusColorMap: {
     [key: string]: {
@@ -105,7 +109,11 @@ const OrderCard = ({ order, onStatusUpdate, getNextStatus, statusColorMap }: Ord
 
 interface OrderActionsProps {
   order: Order;
-  onStatusUpdate: (orderId: string, updates: { status?: string; trackingNumber?: string; notes?: string }) => void;
+  onStatusUpdate: (orderId: string, updates: { 
+    status?: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'; 
+    trackingNumber?: string; 
+    notes?: string 
+  }) => void;
   getNextStatus: (currentStatus: string) => string;
 }
 
@@ -116,7 +124,7 @@ const OrderActions = ({ order, onStatusUpdate, getNextStatus }: OrderActionsProp
         <Button
           onClick={() =>
             onStatusUpdate(order.id, {
-              status: getNextStatus(order.status),
+              status: getNextStatus(order.status) as 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled',
             })
           }
         >

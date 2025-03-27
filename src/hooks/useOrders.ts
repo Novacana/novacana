@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -37,7 +38,11 @@ export const useOrders = () => {
 
   const updateOrderStatus = async (
     orderId: string,
-    updates: { status?: string; trackingNumber?: string; notes?: string }
+    updates: { 
+      status?: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'; 
+      trackingNumber?: string; 
+      notes?: string 
+    }
   ) => {
     try {
       // Convert camelCase to snake_case for Supabase
