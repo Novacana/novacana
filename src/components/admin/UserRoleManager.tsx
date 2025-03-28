@@ -33,21 +33,40 @@ const UserRoleManager: React.FC = () => {
       setLoading(true);
       console.log("Lade Benutzer und Rollen...");
       
-      // Benutzer über die get_all_users Funktion holen
-      const { data, error } = await supabase.rpc('get_all_users');
+      // Direkter Zugriff auf die auth.users-Tabelle und Rollen
+      // Dies funktioniert mit dem Administratortoken im Backend
+      const { data: authUsersData, error: authUsersError } = await supabase.auth.admin.listUsers();
       
-      if (error) {
-        console.error("Error beim Laden der Benutzer:", error);
-        throw new Error(`Fehler beim Laden der Benutzer: ${error.message}`);
+      if (authUsersError) {
+        throw new Error(`Fehler beim Laden der Benutzer: ${authUsersError.message}`);
       }
       
-      console.log("Geladene Benutzer:", data);
+      // Alle Benutzerrollen abrufen
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
       
-      const formattedUsers = data?.map(user => ({
+      if (rolesError) {
+        throw new Error(`Fehler beim Laden der Benutzerrollen: ${rolesError.message}`);
+      }
+      
+      // Rollen nach Benutzer-ID gruppieren
+      const rolesByUserId: Record<string, string[]> = {};
+      rolesData?.forEach(role => {
+        if (!rolesByUserId[role.user_id]) {
+          rolesByUserId[role.user_id] = [];
+        }
+        rolesByUserId[role.user_id].push(role.role);
+      });
+      
+      // Benutzerdaten mit Rollen kombinieren
+      const formattedUsers = authUsersData?.users.map(user => ({
         id: user.id,
-        email: user.email,
-        roles: user.roles || []
+        email: user.email || 'Keine E-Mail',
+        roles: rolesByUserId[user.id] || []
       })) || [];
+      
+      console.log("Geladene Benutzer:", formattedUsers);
       
       setUsers(formattedUsers);
     } catch (error) {

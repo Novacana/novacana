@@ -48,14 +48,20 @@ export const useAuthentication = (
         if (currentSession?.user) {
           console.log("Benutzer eingeloggt, prüfe Status...");
           
-          // Adminrechte prüfen, wenn nötig
-          if (adminRequired) {
-            updatedState.isAdmin = await checkIsAdmin(currentSession.user.id);
-          }
-          
-          // Apothekerstatus prüfen, wenn nötig
-          if (pharmacistRequired || adminRequired) {
-            updatedState.isPharmacist = await checkIsPharmacist(currentSession.user.id);
+          try {
+            // Adminrechte prüfen, wenn nötig
+            if (adminRequired) {
+              updatedState.isAdmin = await checkIsAdmin(currentSession.user.id);
+              console.log("Admin-Status geprüft:", updatedState.isAdmin);
+            }
+            
+            // Apothekerstatus prüfen, wenn nötig
+            if (pharmacistRequired || adminRequired) {
+              updatedState.isPharmacist = await checkIsPharmacist(currentSession.user.id);
+              console.log("Apotheker-Status geprüft:", updatedState.isPharmacist);
+            }
+          } catch (error) {
+            console.error("Fehler bei der Rollenprüfung:", error);
           }
           
           if (isMounted) {
@@ -100,14 +106,20 @@ export const useAuthentication = (
         if (currentSession?.user) {
           console.log("Benutzer hat aktive Session, prüfe Status...");
           
-          // Adminrechte prüfen, wenn nötig
-          if (adminRequired) {
-            updatedState.isAdmin = await checkIsAdmin(currentSession.user.id);
-          }
-          
-          // Apothekerstatus prüfen, wenn nötig
-          if (pharmacistRequired || adminRequired) {
-            updatedState.isPharmacist = await checkIsPharmacist(currentSession.user.id);
+          try {
+            // Adminrechte prüfen, wenn nötig
+            if (adminRequired) {
+              updatedState.isAdmin = await checkIsAdmin(currentSession.user.id);
+              console.log("Admin-Status geprüft:", updatedState.isAdmin);
+            }
+            
+            // Apothekerstatus prüfen, wenn nötig
+            if (pharmacistRequired || adminRequired) {
+              updatedState.isPharmacist = await checkIsPharmacist(currentSession.user.id);
+              console.log("Apotheker-Status geprüft:", updatedState.isPharmacist);
+            }
+          } catch (error) {
+            console.error("Fehler bei der Rollenprüfung:", error);
           }
         } else {
           updatedState.isAdmin = false;
