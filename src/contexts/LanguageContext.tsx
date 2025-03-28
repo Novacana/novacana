@@ -51,6 +51,9 @@ const translations = {
     'features.support.desc': 'Unser engagiertes Kundendienstteam steht Ihnen jederzeit zur Verfügung.',
     'features.documentation': 'Vereinfachte Dokumentation',
     'features.documentation.desc': 'Wir kümmern uns um alle notwendigen Unterlagen und erleichtern den Bestellprozess für Apotheken.',
+    'features.cta.title': 'Beginnen Sie heute mit Novacana',
+    'features.cta.description': 'Entdecken Sie unsere breite Palette an hochwertigen medizinischen Cannabisprodukten und erfahren Sie, wie wir Ihnen als Apotheke helfen können.',
+    'features.cta.button': 'Kontaktieren Sie uns',
     
     // About
     'about.badge': 'Über Novacana',
@@ -199,6 +202,9 @@ const translations = {
     'features.support.desc': 'Our dedicated customer service team is available to assist you whenever needed.',
     'features.documentation': 'Simplified Documentation',
     'features.documentation.desc': 'We handle all necessary documentation, making the ordering process easier for pharmacies.',
+    'features.cta.title': 'Get Started with Novacana Today',
+    'features.cta.description': 'Discover our wide range of high-quality medical cannabis products and learn how we can assist your pharmacy.',
+    'features.cta.button': 'Contact Us',
     
     // About
     'about.badge': 'About Novacana',
