@@ -23,7 +23,7 @@ const About = () => {
               <div className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl">
                 <img 
                   src="/lovable-uploads/b8e522e4-7a6e-483b-8d83-33bf4e6d3014.png" 
-                  alt={t('aboutUs.supplyChain.title') || "Unsere Supply Chain"} 
+                  alt={t('aboutUs.supplyChain.title')} 
                   className="w-full h-auto object-cover"
                   onError={(e) => {
                     console.error("Image failed to load:", e);
@@ -33,14 +33,14 @@ const About = () => {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                    {t('aboutUs.supplyChain.title') || "Unsere Supply Chain"}
+                    {t('aboutUs.supplyChain.title')}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                    {t('aboutUs.supplyChain.description') || "Vom Produzenten bis zur Apotheke - Qualität in jedem Schritt"}
+                    {t('aboutUs.supplyChain.description')}
                   </p>
                   <div className="pt-2 flex justify-between items-center">
                     <div className="text-xs text-gray-500 dark:text-gray-400 inline-block rounded-full px-3 py-1 bg-gray-100 dark:bg-gray-700">
-                      {t('about.card.established') || "Gegründet 2019"}
+                      {t('about.card.established')}
                     </div>
                     <div className="flex space-x-3">
                       <span className="text-xs font-medium text-gray-700 dark:text-gray-300">WDA</span>
@@ -55,22 +55,22 @@ const About = () => {
 
           <div className="order-1 lg:order-2">
             <span className="inline-block animate-fade-in text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {t('about.badge') || "Über uns"}
+              {t('about.badge')}
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-              {t('about.title') || "Qualität und Expertise seit 2019"}
+              {t('about.title')}
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-              {t('about.description') || "Wir sind ein spezialisierter pharmazeutischer Großhändler mit Teilsortiment Cannabis, der Apotheken in ganz Deutschland mit hochwertigen medizinischen Cannabisprodukten versorgt."}
+              {t('about.description')}
             </p>
             
             <div className="space-y-4 mb-8 animate-fade-in" style={{ animationDelay: "0.3s" }}>
               <div className="flex items-start">
                 <CheckCircle size={20} className="text-gray-700 dark:text-gray-300 mt-1 mr-3 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">{t('about.quality') || "Höchste Qualität"}</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white">{t('about.quality')}</h4>
                   <p className="text-gray-600 dark:text-gray-300">
-                    {t('about.quality.desc') || "Wir arbeiten nur mit Produzenten zusammen, die unsere strengen Qualitätsstandards erfüllen."}
+                    {t('about.quality.desc')}
                   </p>
                 </div>
               </div>
@@ -78,9 +78,9 @@ const About = () => {
               <div className="flex items-start">
                 <CheckCircle size={20} className="text-gray-700 dark:text-gray-300 mt-1 mr-3 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">{t('about.expertise') || "Fachkompetenz"}</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white">{t('about.expertise')}</h4>
                   <p className="text-gray-600 dark:text-gray-300">
-                    {t('about.expertise.desc') || "Unser Team verfügt über fundiertes Wissen zu medizinischem Cannabis und seinen therapeutischen Anwendungen."}
+                    {t('about.expertise.desc')}
                   </p>
                 </div>
               </div>
@@ -88,9 +88,9 @@ const About = () => {
               <div className="flex items-start">
                 <CheckCircle size={20} className="text-gray-700 dark:text-gray-300 mt-1 mr-3 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">{t('about.reliability') || "Zuverlässigkeit"}</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white">{t('about.reliability')}</h4>
                   <p className="text-gray-600 dark:text-gray-300">
-                    {t('about.reliability.desc') || "Vertrauen Sie auf unsere zuverlässige Lieferung und konstante Produktqualität."}
+                    {t('about.reliability.desc')}
                   </p>
                 </div>
               </div>
@@ -99,7 +99,7 @@ const About = () => {
             <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
               <Link to="/about">
                 <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white flex items-center group">
-                  {t('about.button') || "Mehr über uns"}
+                  {t('about.button')}
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -112,14 +112,14 @@ const About = () => {
       <div className="container-content mt-20">
         <div className="bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/40 dark:to-blue-900/40 p-8 rounded-3xl text-center shadow-lg">
           <h3 className="text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            {t('aboutUs.cta.title') || "Bereit für höchste Qualität?"}
+            {t('aboutUs.cta.title')}
           </h3>
           <p className="text-gray-700 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
-            {t('aboutUs.cta.description') || "Entdecken Sie unser Sortiment an hochwertigen medizinischen Cannabisprodukten für Ihre Apotheke."}
+            {t('aboutUs.cta.description')}
           </p>
           <Link to="/contact">
             <Button size="lg" variant="gradient" rounded="full" className="group px-8">
-              {t('aboutUs.cta.button') || "Jetzt Kontakt aufnehmen"} 
+              {t('aboutUs.cta.button')}
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
