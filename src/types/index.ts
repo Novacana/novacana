@@ -29,11 +29,12 @@ export interface Product {
   origin?: string;
   createdAt: Date;
   updatedAt: Date;
-  // Adding these properties explicitly since they appear in the code
   manufacturer?: string;
   countryOfOrigin?: string;
   recommendedDosage?: string;
-  pzn?: string; // Added PZN (Pharmacy Central Number) property
+  pzn?: string;
+  isNew?: boolean;
+  rating?: number;
 }
 
 export interface OrderItem {
@@ -65,7 +66,6 @@ export interface Order {
   createdAt: Date;
   updatedAt: Date;
   
-  // Additional fields for UI purposes
   pharmacyName?: string;
   pharmacyId?: string;
   orderNumber?: string;

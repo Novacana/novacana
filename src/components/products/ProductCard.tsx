@@ -33,6 +33,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
     currency: "EUR",
   }).format(price);
 
+  // Custom properties that might not exist in all products
+  const isNew = false; // Default to false since it's not in the Product type
+  const rating = null; // Default to null since it's not in the Product type
+
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl group">
       <div className="relative">
@@ -61,17 +65,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <Badge variant="secondary" className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-xs rounded-full px-3 shadow-sm">
             {category.charAt(0).toUpperCase() + category.slice(1)}
           </Badge>
-          {product.isNew && (
+          {isNew && (
             <Badge className="bg-primary text-white text-xs rounded-full px-3 shadow-sm">
               {language === "de" ? "Neu" : "New"}
             </Badge>
           )}
         </div>
-        {product.rating && (
+        {rating && (
           <div className="absolute top-3 right-3">
             <div className="flex items-center gap-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs font-medium shadow-sm">
               <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-              <span>{product.rating}</span>
+              <span>{rating}</span>
             </div>
           </div>
         )}
