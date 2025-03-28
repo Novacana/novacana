@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,42 +32,17 @@ const UserRoleManager: React.FC = () => {
       setLoading(true);
       console.log("Lade Benutzer und Rollen...");
       
-      // Direkter Zugriff auf die auth.users-Tabelle und Rollen
-      // Dies funktioniert mit dem Administratortoken im Backend
-      const { data: authUsersData, error: authUsersError } = await supabase.auth.admin.listUsers();
+      // Edge-Funktion aufrufen, um Benutzer und Rollen zu laden
+      const { data, error } = await supabase.functions.invoke('get-users');
       
-      if (authUsersError) {
-        throw new Error(`Fehler beim Laden der Benutzer: ${authUsersError.message}`);
+      if (error) {
+        console.error("Fehler beim Laden der Benutzer und Rollen:", error);
+        throw new Error(`Fehler beim Laden der Benutzer und Rollen: ${error.message}`);
       }
       
-      // Alle Benutzerrollen abrufen
-      const { data: rolesData, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
+      console.log("Geladene Benutzer:", data?.users);
       
-      if (rolesError) {
-        throw new Error(`Fehler beim Laden der Benutzerrollen: ${rolesError.message}`);
-      }
-      
-      // Rollen nach Benutzer-ID gruppieren
-      const rolesByUserId: Record<string, string[]> = {};
-      rolesData?.forEach(role => {
-        if (!rolesByUserId[role.user_id]) {
-          rolesByUserId[role.user_id] = [];
-        }
-        rolesByUserId[role.user_id].push(role.role);
-      });
-      
-      // Benutzerdaten mit Rollen kombinieren
-      const formattedUsers = authUsersData?.users.map(user => ({
-        id: user.id,
-        email: user.email || 'Keine E-Mail',
-        roles: rolesByUserId[user.id] || []
-      })) || [];
-      
-      console.log("Geladene Benutzer:", formattedUsers);
-      
-      setUsers(formattedUsers);
+      setUsers(data?.users || []);
     } catch (error) {
       console.error("Fehler beim Laden der Benutzer und Rollen:", error);
       toast({
