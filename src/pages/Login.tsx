@@ -4,13 +4,10 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import LoginForm from "@/components/auth/LoginForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Pill, HeartPulse, Info } from "lucide-react";
+import { AlertCircle, Pill, HeartPulse } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { checkAdminExists } from "@/utils/authUtils";
 import FirstAdminSetup from "@/components/auth/FirstAdminSetup";
-import MasterAdminCreator from "@/components/auth/MasterAdminCreator";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Login = () => {
   const { t } = useLanguage();
@@ -20,8 +17,6 @@ const Login = () => {
     success: false
   });
   const [adminExists, setAdminExists] = useState<boolean | null>(null);
-  const [showMasterAdmin, setShowMasterAdmin] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
   
   useEffect(() => {
     const checkForAdmins = async () => {
@@ -76,23 +71,6 @@ const Login = () => {
                   <FirstAdminSetup />
                 </div>
               )}
-
-              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="w-full">
-                      <Info className="h-4 w-4 mr-2" />
-                      Master Admin zugriff
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Master Admin erstellen</DialogTitle>
-                    </DialogHeader>
-                    <MasterAdminCreator />
-                  </DialogContent>
-                </Dialog>
-              </div>
             </div>
           </div>
         </div>
