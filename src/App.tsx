@@ -22,6 +22,7 @@ import Admin from "./pages/Admin";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminInvoices from "./pages/admin/AdminInvoices";
 import PharmacyVerifications from "./pages/admin/PharmacyVerifications";
 import Documentation from "./pages/Documentation";
 
@@ -73,6 +74,7 @@ const App = () => {
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
               <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/invoices" element={<AdminInvoices />} />
               <Route path="/admin/pharmacy-verifications" element={<PharmacyVerifications />} />
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

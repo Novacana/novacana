@@ -63,6 +63,55 @@
   .btn-modern {
     @apply rounded-xl px-6 py-3 font-medium transition-all duration-300 hover:-translate-y-0.5 shadow-sm hover:shadow;
   }
+  
+  /* Invoice print styles */
+  @media print {
+    body {
+      @apply bg-white text-black;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .invoice-print-only {
+      display: block !important;
+    }
+    
+    .no-print {
+      display: none !important;
+    }
+    
+    /* Ensure the invoice card expands to full page */
+    .invoice-card {
+      @apply shadow-none border-none;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+  }
+  
+  /* Status badge styles for invoices */
+  .invoice-status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .invoice-status-badge-draft {
+    @apply bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300;
+  }
+  
+  .invoice-status-badge-sent {
+    @apply bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300;
+  }
+  
+  .invoice-status-badge-paid {
+    @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300;
+  }
+  
+  .invoice-status-badge-overdue {
+    @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300;
+  }
+  
+  .invoice-status-badge-cancelled {
+    @apply bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300;
+  }
 }
 
 /* Smooth scrolling and transitions */
@@ -196,4 +245,30 @@
 /* Glass card effect */
 .glass-card {
   @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/20 rounded-2xl shadow-lg;
+}
+
+/* Admin dashboard module hover effect */
+.admin-module-card {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+}
+
+/* Invoice status colors for better visual cues */
+.invoice-status-accent-draft {
+  @apply border-l-4 border-gray-400;
+}
+
+.invoice-status-accent-sent {
+  @apply border-l-4 border-blue-500;
+}
+
+.invoice-status-accent-paid {
+  @apply border-l-4 border-green-500;
+}
+
+.invoice-status-accent-overdue {
+  @apply border-l-4 border-red-500;
+}
+
+.invoice-status-accent-cancelled {
+  @apply border-l-4 border-gray-400;
 }

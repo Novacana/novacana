@@ -1,109 +1,121 @@
 
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  Users, 
-  Settings, 
+import { Separator } from "@/components/ui/separator";
+import {
+  Package,
+  ShoppingCart,
+  User,
+  Settings,
+  BarChart,
   FileText,
-  TrendingUp,
-  Stethoscope
+  Building,
+  FileCheck,
+  Receipt
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 const AdminSidebar = () => {
-  const navigate = useNavigate();
   const location = useLocation();
-  
-  const navItems = [
-    {
-      name: "Dashboard",
-      path: "/admin",
-      icon: <LayoutDashboard size={18} />
-    },
-    {
-      name: "Products",
-      path: "/admin/products",
-      icon: <Package size={18} />
-    },
-    {
-      name: "Orders",
-      path: "/admin/orders",
-      icon: <ShoppingCart size={18} />
-    },
-    {
-      name: "Users",
-      path: "/admin/users",
-      icon: <Users size={18} />
-    },
-    {
-      name: "Pharmacy Verification",
-      path: "/admin/pharmacy-verifications",
-      icon: <Stethoscope size={18} />
-    },
-    {
-      name: "Reports",
-      path: "/admin/reports",
-      icon: <FileText size={18} />
-    },
-    {
-      name: "Analytics",
-      path: "/admin/analytics",
-      icon: <TrendingUp size={18} />
-    },
-    {
-      name: "Settings",
-      path: "/admin/settings",
-      icon: <Settings size={18} />
-    }
-  ];
-  
+  const isActive = (path: string) => location.pathname === path;
+
   return (
-    <div className="w-full md:w-64 flex-shrink-0">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-6">
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="font-medium text-lg">Admin Panel</h2>
-        </div>
-        <div className="p-4">
-          <div className="space-y-1">
-            {navItems.map((item) => (
-              <Button
-                key={item.path}
-                variant="ghost"
-                className={cn(
-                  "w-full justify-start",
-                  location.pathname === item.path
-                    ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-                    : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                )}
-                onClick={() => navigate(item.path)}
+    <aside className="w-full md:w-64 shrink-0 bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden h-fit">
+      <div className="p-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Admin Portal</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Verwaltung & Steuerung</p>
+      </div>
+      <Separator />
+      <nav className="p-4">
+        <ul className="space-y-1">
+          <li>
+            <Link to="/admin">
+              <Button 
+                variant={isActive("/admin") ? "secondary" : "ghost"} 
+                className="w-full justify-start text-left"
               >
-                <span className="mr-2">{item.icon}</span>
-                {item.name}
+                <BarChart className="mr-2" size={18} />
+                Dashboard
               </Button>
-            ))}
-          </div>
-        </div>
-      </div>
-      
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-        <div className="flex items-center space-x-3 mb-3">
-          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-            <span className="text-gray-600 dark:text-gray-300 font-medium">NA</span>
-          </div>
-          <div>
-            <p className="font-medium">Novacana Admin</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">admin@novacana.de</p>
-          </div>
-        </div>
-        <Button variant="outline" className="w-full" onClick={() => navigate('/')}>
-          View Website
-        </Button>
-      </div>
-    </div>
+            </Link>
+          </li>
+          <li>
+            <Link to="/admin/products">
+              <Button 
+                variant={isActive("/admin/products") ? "secondary" : "ghost"} 
+                className="w-full justify-start text-left"
+              >
+                <Package className="mr-2" size={18} />
+                Produkte
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link to="/admin/orders">
+              <Button 
+                variant={isActive("/admin/orders") ? "secondary" : "ghost"} 
+                className="w-full justify-start text-left"
+              >
+                <ShoppingCart className="mr-2" size={18} />
+                Bestellungen
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link to="/admin/invoices">
+              <Button 
+                variant={isActive("/admin/invoices") ? "secondary" : "ghost"} 
+                className="w-full justify-start text-left"
+              >
+                <Receipt className="mr-2" size={18} />
+                Rechnungen
+                <Badge className="ml-auto bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">Neu</Badge>
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link to="/admin/users">
+              <Button 
+                variant={isActive("/admin/users") ? "secondary" : "ghost"} 
+                className="w-full justify-start text-left"
+              >
+                <User className="mr-2" size={18} />
+                Benutzer
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link to="/admin/pharmacy-verifications">
+              <Button 
+                variant={isActive("/admin/pharmacy-verifications") ? "secondary" : "ghost"} 
+                className="w-full justify-start text-left"
+              >
+                <FileCheck className="mr-2" size={18} />
+                Verifizierungen
+              </Button>
+            </Link>
+          </li>
+        </ul>
+        
+        <Separator className="my-4" />
+        
+        <ul className="space-y-1">
+          <li>
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start text-left"
+              asChild
+            >
+              <Link to="/admin/settings">
+                <Settings className="mr-2" size={18} />
+                Einstellungen
+              </Link>
+            </Button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
   );
 };
 

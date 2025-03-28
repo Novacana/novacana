@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Package, ShoppingCart, User, Settings, FileText, TrendingUp } from "lucide-react";
+import { Package, ShoppingCart, User, Settings, FileText, TrendingUp, Receipt, CreditCard } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import AdminLayout from "@/components/layout/AdminLayout";
 
@@ -75,17 +75,19 @@ const Admin = () => {
         <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-xl">Einstellungen</CardTitle>
-              <Settings className="text-gray-600 dark:text-gray-400" size={24} />
+              <CardTitle className="text-xl">Finanzen</CardTitle>
+              <Receipt className="text-teal-600 dark:text-teal-400" size={24} />
             </div>
-            <CardDescription>Systemeinstellungen konfigurieren</CardDescription>
+            <CardDescription>Rechnungen und Zahlungen</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold mb-4">
-              <span className="text-sm font-normal text-gray-500">System v1.0.0</span>
-            </div>
-            <Button variant="outline" className="w-full" onClick={() => navigate('/admin/settings')}>
-              Einstellungen
+            <div className="text-2xl font-bold mb-4">8</div>
+            <Button 
+              variant="invoice" 
+              onClick={() => navigate('/admin/invoices')} 
+              className="w-full"
+            >
+              Rechnungen anzeigen
             </Button>
           </CardContent>
         </Card>
@@ -151,6 +153,13 @@ const Admin = () => {
                 <span className="text-sm text-gray-500 dark:text-gray-400">vor 2 Stunden</span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-300">Bestellung #ORD-25-03-18-0001 von MediPharm Berlin</p>
+            </li>
+            <li className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div className="flex justify-between">
+                <span className="font-medium">Rechnung überfällig</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">vor 6 Stunden</span>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Rechnung #INV-2023-0003 an CannaMed Hamburg ist überfällig</p>
             </li>
             <li className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <div className="flex justify-between">
