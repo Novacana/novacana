@@ -1,10 +1,10 @@
 import React from "react";
 import { Leaf, Shield, Truck, Award, Clock, FileCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Link } from "react-router-dom";
+
 const Features = () => {
-  const {
-    t
-  } = useLanguage();
+  const { t } = useLanguage();
   const features = [{
     title: t('features.pharmaceutical'),
     description: t('features.pharmaceutical.desc'),
@@ -43,12 +43,10 @@ const Features = () => {
     delay: 0.5
   }];
   return <section className="py-24 bg-gradient-to-b from-purple-50 to-white dark:from-gray-800 dark:to-gray-900 relative overflow-hidden">
-      {/* Decorative elements */}
       <div className="absolute inset-0 z-0">
         <div className="absolute left-0 bottom-0 w-64 h-64 rounded-full bg-primary/5 dark:bg-primary/5 blur-3xl"></div>
         <div className="absolute right-1/4 top-0 w-80 h-80 rounded-full bg-secondary/5 dark:bg-secondary/5 blur-3xl"></div>
         
-        {/* Animated elements */}
         <div className="absolute -left-16 top-1/3 w-32 h-32 bg-purple-200/10 dark:bg-purple-400/5 rounded-full animate-pulse-soft"></div>
         <div className="absolute right-0 bottom-1/4 w-48 h-48 bg-teal-200/10 dark:bg-teal-400/5 rounded-full animate-pulse-soft" style={{
         animationDelay: '1.5s'
@@ -84,14 +82,22 @@ const Features = () => {
         
         <div className="text-center mt-16 animate-fade-in">
           <div className="bg-gradient-to-r from-purple-100 to-teal-100 dark:from-purple-900/30 dark:to-teal-900/30 p-8 md:p-12 rounded-3xl max-w-4xl mx-auto">
-            <h3 className="text-2xl md:text-3xl font-bold mb-6 gradient-text">{t('features.cta.title')}</h3>
-            <p className="text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">{t('features.cta.description')}</p>
-            <a href="#contact" className="btn-primary inline-block hover-lift animate-pulse-soft">
+            <h3 className="text-2xl md:text-3xl font-bold mb-6 gradient-text">
+              {t('features.cta.title')}
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+              {t('features.cta.description')}
+            </p>
+            <Link 
+              to="/#contact" 
+              className="btn-primary inline-block hover-lift animate-pulse-soft"
+            >
               {t('features.cta.button')}
-            </a>
+            </Link>
           </div>
         </div>
       </div>
     </section>;
 };
+
 export default Features;
