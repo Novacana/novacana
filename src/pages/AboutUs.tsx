@@ -56,7 +56,7 @@ const AboutUs = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 gradient-text tracking-tight">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent tracking-tight">
                 {t('aboutUs.title') || "Über Novacana"}
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
@@ -110,7 +110,7 @@ const AboutUs = () => {
                   viewport={{ once: true }}
                 >
                   <Link to="/contact">
-                    <Button size="lg" className="group">
+                    <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white group">
                       {t('aboutUs.story.cta') || "Kontaktiere uns"}
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Button>
@@ -401,14 +401,14 @@ const AboutUs = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 gradient-text">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 {t('aboutUs.cta.title') || "Bereit für höchste Qualität?"}
               </h2>
               <p className="text-lg text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
                 {t('aboutUs.cta.description') || "Entdecken Sie unser Sortiment an hochwertigen medizinischen Cannabisprodukten für Ihre Apotheke."}
               </p>
               <Link to="/contact">
-                <Button size="lg" className="btn-primary text-base px-8 py-6 rounded-full group">
+                <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-6 rounded-full group">
                   {t('aboutUs.cta.button') || "Jetzt Kontakt aufnehmen"}
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>

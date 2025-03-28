@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const About = () => {
@@ -98,12 +98,31 @@ const About = () => {
             
             <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
               <Link to="/about">
-                <Button size="lg" className="bg-black hover:bg-gray-800 text-white">
+                <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white flex items-center group">
                   {t('about.button') || "Mehr über uns"}
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="container-content mt-20">
+        <div className="bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/40 dark:to-blue-900/40 p-8 rounded-3xl text-center shadow-lg">
+          <h3 className="text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            {t('aboutUs.cta.title') || "Bereit für höchste Qualität?"}
+          </h3>
+          <p className="text-gray-700 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+            {t('aboutUs.cta.description') || "Entdecken Sie unser Sortiment an hochwertigen medizinischen Cannabisprodukten für Ihre Apotheke."}
+          </p>
+          <Link to="/contact">
+            <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-full px-8 group">
+              {t('aboutUs.cta.button') || "Jetzt Kontakt aufnehmen"} 
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
