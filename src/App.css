@@ -21,12 +21,12 @@
   
   /* Modern UI components */
   .modern-input {
-    @apply px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg 
-    focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+    @apply px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl 
+    focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 shadow-sm;
   }
   
   .pill-badge {
-    @apply px-3 py-1 text-xs font-semibold rounded-full inline-flex items-center;
+    @apply px-3 py-1 text-xs font-semibold rounded-full inline-flex items-center shadow-sm;
   }
 
   .hover-lift {
@@ -53,11 +53,21 @@
     -webkit-mask-composite: xor;
     mask-composite: exclude;
   }
+  
+  /* Modern Card styles */
+  .modern-card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+  
+  /* Button styles */
+  .btn-modern {
+    @apply rounded-xl px-6 py-3 font-medium transition-all duration-300 hover:-translate-y-0.5 shadow-sm hover:shadow;
+  }
 }
 
 /* Smooth scrolling and transitions */
 .section-transition {
-  @apply transition-all duration-300 ease-in-out;
+  @apply transition-all duration-500 ease-in-out;
 }
 
 /* Animated underline for links */
@@ -110,13 +120,20 @@
   opacity: 0;
 }
 
+/* Animation Delay Classes */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
 /* New modern design elements */
 .blob-shape {
   border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
 }
 
 .glass-effect {
-  @apply bg-white/10 backdrop-blur-md border border-white/20;
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl;
 }
 
 .floating-element {
@@ -165,4 +182,18 @@
   100% {
     box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
   }
+}
+
+/* Highlight on hover */
+.highlight-hover {
+  @apply transition-all duration-300;
+}
+
+.highlight-hover:hover {
+  @apply bg-primary/10 -translate-y-1 shadow-md;
+}
+
+/* Glass card effect */
+.glass-card {
+  @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/20 rounded-2xl shadow-lg;
 }
