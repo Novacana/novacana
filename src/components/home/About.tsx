@@ -118,7 +118,7 @@ const About = () => {
             {t('aboutUs.cta.description') || "Entdecken Sie unser Sortiment an hochwertigen medizinischen Cannabisprodukten für Ihre Apotheke."}
           </p>
           <Link to="/contact">
-            <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-full px-8 group">
+            <Button size="lg" variant="gradient" rounded="full" className="group px-8">
               {t('aboutUs.cta.button') || "Jetzt Kontakt aufnehmen"} 
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
