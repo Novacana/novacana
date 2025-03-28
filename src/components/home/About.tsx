@@ -98,7 +98,7 @@ const About = () => {
             
             <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
               <Link to="/about">
-                <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white flex items-center group">
+                <Button size="lg" variant="gradient" rounded="full" className="group">
                   {t('about.button')}
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
