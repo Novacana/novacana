@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Phone, Mail, MapPin, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -25,16 +26,29 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission - in production, this would make an API call to send the email
-    setTimeout(() => {
-      console.log("Contact form submitted:", {
+    try {
+      // Senden der Kontaktanfrage über die Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke("send-contact-email", {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          pharmacyName: formData.pharmacyName,
+          message: formData.message
+        }
+      });
+      
+      if (error) {
+        throw new Error(error.message || "Fehler beim Senden der Nachricht");
+      }
+      
+      console.log("Kontaktformular erfolgreich gesendet:", {
         to: "info@novacana.de",
         from: formData.email,
-        subject: `Kontaktanfrage von ${formData.name} (${formData.pharmacyName})`,
+        subject: `Kontaktanfrage von ${formData.name} (${formData.pharmacyName || 'Keine Apotheke angegeben'})`,
         message: formData.message
       });
       
@@ -43,14 +57,24 @@ const Contact = () => {
         description: t('contact.message.confirmation') || "Vielen Dank für Ihre Nachricht. Wir werden uns in Kürze bei Ihnen melden.",
       });
       
+      // Formular zurücksetzen
       setFormData({
         name: "",
         email: "",
         pharmacyName: "",
         message: "",
       });
+    } catch (error) {
+      console.error("Fehler beim Senden des Kontaktformulars:", error);
+      
+      toast({
+        title: t('contact.message.error') || "Fehler",
+        description: t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        variant: "destructive"
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (

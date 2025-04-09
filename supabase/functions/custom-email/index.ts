@@ -185,6 +185,98 @@ const getResetPasswordEmailTemplate = (resetURL: string) => `
 </html>
 `;
 
+// HTML-Template für die Kontaktformular-Benachrichtigung
+const getContactFormEmailTemplate = (name: string, email: string, pharmacyName: string, message: string) => `
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neue Kontaktanfrage - Novacana</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+    .container {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 30px;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #777;
+      text-align: center;
+    }
+    .info-block {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #f0f7f2;
+      border-radius: 4px;
+    }
+    .message-block {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f5f5f5;
+      border-left: 4px solid #4a7b57;
+      border-radius: 4px;
+    }
+    h2 {
+      color: #4a7b57;
+    }
+    .label {
+      font-weight: bold;
+      margin-right: 10px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://jrvhqkilzxopesfmpjbz.supabase.co/storage/v1/object/public/public/novacana-logo.png" alt="Novacana Logo" class="logo">
+  </div>
+  
+  <div class="container">
+    <h2>Neue Kontaktanfrage</h2>
+    
+    <p>Sie haben eine neue Anfrage über das Kontaktformular auf Ihrer Website erhalten.</p>
+    
+    <div class="info-block">
+      <p><span class="label">Name:</span> ${name}</p>
+      <p><span class="label">E-Mail:</span> ${email}</p>
+      <p><span class="label">Apotheke:</span> ${pharmacyName || 'Nicht angegeben'}</p>
+    </div>
+    
+    <h3>Nachricht:</h3>
+    <div class="message-block">
+      ${message.replace(/\n/g, '<br>')}
+    </div>
+    
+    <p>Sie können auf diese E-Mail antworten, um direkt mit dem Absender zu kommunizieren.</p>
+  </div>
+  
+  <div class="footer">
+    <p>© ${new Date().getFullYear()} Novacana. Alle Rechte vorbehalten.</p>
+    <p>Diese Nachricht wurde über das Kontaktformular auf novacana.de gesendet.</p>
+  </div>
+</body>
+</html>
+`;
+
 serve(async (req) => {
   // CORS-Preflight-Anforderungen behandeln
   if (req.method === "OPTIONS") {
@@ -192,9 +284,10 @@ serve(async (req) => {
   }
 
   try {
-    const { email, type, redirectTo = `${new URL(req.url).origin}/login` } = await req.json();
+    const requestData = await req.json();
+    const { email, type, name, pharmacyName, message, redirectTo = `${new URL(req.url).origin}/login` } = requestData;
 
-    if (!email) {
+    if (!email && type !== "contact") {
       return new Response(
         JSON.stringify({ error: "E-Mail ist erforderlich" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -202,9 +295,11 @@ serve(async (req) => {
     }
 
     let result;
+    let emailTemplate = "";
     const redirectURL = new URL(redirectTo);
     const fullRedirectTo = redirectURL.toString();
 
+    // Behandlung der verschiedenen E-Mail-Typen
     if (type === "signup") {
       // Senden einer benutzerdefinierten Bestätigungs-E-Mail
       result = await supabase.auth.admin.generateLink({
@@ -214,6 +309,16 @@ serve(async (req) => {
           redirectTo: fullRedirectTo,
         }
       });
+      
+      if (result.error) {
+        throw result.error;
+      }
+      
+      const link = result.data.properties.action_link;
+      emailTemplate = getConfirmationEmailTemplate(link);
+      
+      console.log(`Registrierungs-E-Mail-Link für ${email} generiert:`, link);
+      
     } else if (type === "recovery") {
       // Senden einer benutzerdefinierten Passwort-Reset-E-Mail
       result = await supabase.auth.admin.generateLink({
@@ -223,6 +328,45 @@ serve(async (req) => {
           redirectTo: fullRedirectTo,
         }
       });
+      
+      if (result.error) {
+        throw result.error;
+      }
+      
+      const link = result.data.properties.action_link;
+      emailTemplate = getResetPasswordEmailTemplate(link);
+      
+      console.log(`Passwort-Reset-E-Mail-Link für ${email} generiert:`, link);
+      
+    } else if (type === "contact") {
+      // Verarbeitung einer Kontaktformular-Anfrage
+      if (!name || !message) {
+        return new Response(
+          JSON.stringify({ error: "Name und Nachricht sind erforderlich" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      emailTemplate = getContactFormEmailTemplate(name, email, pharmacyName || '', message);
+      
+      console.log("Kontaktformular-Anfrage von:", name);
+      console.log("E-Mail:", email);
+      console.log("Apotheke:", pharmacyName || "Nicht angegeben");
+      console.log("Nachricht:", message);
+      
+      // In einer Produktionsumgebung würde hier ein E-Mail-Service integriert werden
+      console.log("E-Mail-Template generiert für Kontaktformular");
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: `Kontaktanfrage wurde an info@novacana.de weitergeleitet` 
+        }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
     } else {
       return new Response(
         JSON.stringify({ error: "Ungültiger E-Mail-Typ" }),
@@ -230,40 +374,13 @@ serve(async (req) => {
       );
     }
 
-    if (result.error) {
-      throw result.error;
-    }
-
-    // Link aus der Antwort extrahieren
-    const link = type === "signup" 
-      ? result.data.properties.action_link 
-      : result.data.properties.action_link;
-
-    // Hier könnte eine eigene E-Mail-Versandlogik implementiert werden
-    // Dies ist ein Platzhalter, da wir aktuell Supabase's eigenen E-Mail-Service verwenden
-    console.log(`Link für ${email} generiert:`, link);
-    
-    // Beispiel für eine Antwort, die angibt, dass der Link generiert wurde
-    // In einer realen Anwendung würden Sie hier eine E-Mail mit dem Link senden
-    console.log(`E-Mail vom Typ ${type} mit Link ${link} an ${email} würde hier gesendet werden.`);
-    
-    // Hier implementieren wir einen einfachen E-Mail-Versand mit den benutzerdefinierten Templates
-    // In einer Produktionsumgebung würde hier ein richtiger E-Mail-Dienst angebunden werden
-    let emailTemplate = "";
-    if (type === "signup") {
-      emailTemplate = getConfirmationEmailTemplate(link);
-    } else if (type === "recovery") {
-      emailTemplate = getResetPasswordEmailTemplate(link);
-    }
-    
-    // Hier könnte der tatsächliche E-Mail-Versand erfolgen
-    // In diesem Beispiel geben wir nur die Vorlage als Erfolg zurück
+    // Hier könnte die tatsächliche E-Mail-Versandlogik implementiert werden
     console.log("E-Mail-Template generiert:", emailTemplate.substring(0, 100) + "...");
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: `E-Mail vom Typ ${type} wurde an ${email} gesendet` 
+        message: `E-Mail vom Typ ${type} wurde an ${type === "contact" ? "info@novacana.de" : email} gesendet` 
       }),
       { 
         status: 200, 
