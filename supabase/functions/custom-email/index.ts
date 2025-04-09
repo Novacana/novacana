@@ -285,7 +285,15 @@ serve(async (req) => {
 
   try {
     const requestData = await req.json();
-    const { email, type, name, pharmacyName, message, redirectTo = `${new URL(req.url).origin}/login` } = requestData;
+    const { 
+      email, 
+      type, 
+      name, 
+      pharmacyName, 
+      message, 
+      fromEmail = "noreply@novacana.de",
+      redirectTo = `${new URL(req.url).origin}/login` 
+    } = requestData;
 
     if (!email && type !== "contact") {
       return new Response(
@@ -318,6 +326,7 @@ serve(async (req) => {
       emailTemplate = getConfirmationEmailTemplate(link);
       
       console.log(`Registrierungs-E-Mail-Link für ${email} generiert:`, link);
+      console.log(`E-Mail würde gesendet werden von: ${fromEmail}`);
       
     } else if (type === "recovery") {
       // Senden einer benutzerdefinierten Passwort-Reset-E-Mail
@@ -337,6 +346,7 @@ serve(async (req) => {
       emailTemplate = getResetPasswordEmailTemplate(link);
       
       console.log(`Passwort-Reset-E-Mail-Link für ${email} generiert:`, link);
+      console.log(`E-Mail würde gesendet werden von: ${fromEmail}`);
       
     } else if (type === "contact") {
       // Verarbeitung einer Kontaktformular-Anfrage
@@ -353,6 +363,8 @@ serve(async (req) => {
       console.log("E-Mail:", email);
       console.log("Apotheke:", pharmacyName || "Nicht angegeben");
       console.log("Nachricht:", message);
+      console.log(`E-Mail würde gesendet werden von: ${fromEmail}`);
+      console.log("E-Mail würde gesendet werden an: info@novacana.de");
       
       // In einer Produktionsumgebung würde hier ein E-Mail-Service integriert werden
       console.log("E-Mail-Template generiert für Kontaktformular");
@@ -360,7 +372,8 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: true, 
-          message: `Kontaktanfrage wurde an info@novacana.de weitergeleitet` 
+          message: `Kontaktanfrage wurde an info@novacana.de weitergeleitet`,
+          from: fromEmail
         }),
         { 
           status: 200, 
@@ -380,7 +393,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: `E-Mail vom Typ ${type} wurde an ${type === "contact" ? "info@novacana.de" : email} gesendet` 
+        message: `E-Mail vom Typ ${type} wurde an ${type === "contact" ? "info@novacana.de" : email} gesendet`,
+        from: fromEmail
       }),
       { 
         status: 200, 

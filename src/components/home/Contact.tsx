@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,8 +45,8 @@ const Contact = () => {
       }
       
       console.log("Kontaktformular erfolgreich gesendet:", {
+        from: "noreply@novacana.de",
         to: "info@novacana.de",
-        from: formData.email,
         subject: `Kontaktanfrage von ${formData.name} (${formData.pharmacyName || 'Keine Apotheke angegeben'})`,
         message: formData.message
       });

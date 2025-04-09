@@ -42,14 +42,32 @@ serve(async (req) => {
     console.log("Apotheke:", pharmacyName || "Nicht angegeben");
     console.log("Nachricht:", message);
 
-    // In einer Produktionsumgebung würde hier der E-Mail-Versand erfolgen
-    // z.B. mit Resend, SendGrid oder einem anderen E-Mail-Service
+    // Weiterleitung an die custom-email Funktion für den tatsächlichen E-Mail-Versand
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY") || "";
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Simulierter E-Mail-Versand (im Log sichtbar)
-    console.log("E-Mail würde gesendet werden an:", "info@novacana.de");
-    console.log("Von:", email);
-    console.log("Betreff:", `Kontaktanfrage von ${name} ${pharmacyName ? `(${pharmacyName})` : ""}`);
-    console.log("Inhalt:", message);
+    const { data, error } = await supabase.functions.invoke("custom-email", {
+      body: {
+        type: "contact",
+        name: name,
+        email: email,
+        pharmacyName: pharmacyName,
+        message: message,
+        fromEmail: "noreply@novacana.de"
+      }
+    });
+
+    if (error) {
+      throw new Error(error.message || "Fehler beim Senden der E-Mail");
+    }
+
+    console.log("E-Mail erfolgreich weitergeleitet:", {
+      from: "noreply@novacana.de",
+      to: "info@novacana.de",
+      subject: `Kontaktanfrage von ${name} ${pharmacyName ? `(${pharmacyName})` : ""}`,
+      message: message
+    });
 
     // Erfolgsantwort
     return new Response(
