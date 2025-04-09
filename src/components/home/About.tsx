@@ -1,10 +1,8 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-
 const About = () => {
   const {
     t
@@ -120,23 +118,7 @@ const About = () => {
 
       {/* CTA Section */}
       <div className="container-content mt-24">
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-10 rounded-3xl text-center shadow-xl transform transition-all duration-500 hover:scale-[1.01]">
-          <div className="inline-flex items-center justify-center mb-4 bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-md">
-            <Sparkles className="text-amber-500 h-6 w-6 animate-pulse" />
-          </div>
-          <h3 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            {t('aboutUs.cta.title')}
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto text-lg">
-            {t('aboutUs.cta.description')}
-          </p>
-          <Link to="/contact">
-            <Button size="xl" variant="gradient" rounded="full" className="group px-10">
-              {t('aboutUs.cta.button')}
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </Link>
-        </div>
+        
       </div>
     </section>;
 };
