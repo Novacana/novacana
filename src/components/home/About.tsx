@@ -1,15 +1,13 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-
 const About = () => {
-  const { t } = useLanguage();
-  
-  return (
-    <section id="about" className="py-24 md:py-32 relative overflow-hidden">
+  const {
+    t
+  } = useLanguage();
+  return <section id="about" className="py-24 md:py-32 relative overflow-hidden">
       {/* Background design elements */}
       <div className="absolute inset-0 z-0">
         <div className="absolute right-0 bottom-1/3 w-96 h-96 rounded-full bg-purple-100/80 dark:bg-purple-900/20 blur-3xl"></div>
@@ -22,16 +20,11 @@ const About = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-b from-purple-200/40 to-blue-200/40 dark:from-purple-800/30 dark:to-blue-800/30 rounded-3xl blur-xl transform rotate-3 scale-95"></div>
               <div className="relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-xl transform transition-all duration-500 hover:scale-[1.02] hover:-rotate-1">
-                <img 
-                  src="/lovable-uploads/b8e522e4-7a6e-483b-8d83-33bf4e6d3014.png" 
-                  alt={t('aboutUs.supplyChain.title')} 
-                  className="w-full h-auto object-cover"
-                  onError={(e) => {
-                    console.error("Image failed to load:", e);
-                    const target = e.target as HTMLImageElement;
-                    target.src = "https://placehold.co/1170x640/gray/white?text=Supply+Chain";
-                  }}
-                />
+                <img alt={t('aboutUs.supplyChain.title')} className="w-full h-auto object-cover" onError={e => {
+                console.error("Image failed to load:", e);
+                const target = e.target as HTMLImageElement;
+                target.src = "https://placehold.co/1170x640/gray/white?text=Supply+Chain";
+              }} src="/lovable-uploads/fadfb4e3-c435-4eb1-8028-555c909db39d.jpg" />
                 <div className="p-8">
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                     {t('aboutUs.supplyChain.title')}
@@ -58,14 +51,20 @@ const About = () => {
             <span className="inline-block animate-fade-in text-sm font-medium bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text mb-2">
               {t('about.badge')}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 animate-fade-in leading-tight" style={{ animationDelay: "0.1s" }}>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 animate-fade-in leading-tight" style={{
+            animationDelay: "0.1s"
+          }}>
               {t('about.title')}
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 animate-fade-in leading-relaxed" style={{ animationDelay: "0.2s" }}>
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 animate-fade-in leading-relaxed" style={{
+            animationDelay: "0.2s"
+          }}>
               {t('about.description')}
             </p>
             
-            <div className="space-y-6 mb-10 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+            <div className="space-y-6 mb-10 animate-fade-in" style={{
+            animationDelay: "0.3s"
+          }}>
               <div className="flex items-start group bg-white dark:bg-gray-800/50 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                 <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-xl text-purple-600 dark:text-purple-400 mr-4 group-hover:scale-110 transition-transform duration-300">
                   <CheckCircle size={22} />
@@ -103,7 +102,9 @@ const About = () => {
               </div>
             </div>
             
-            <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            <div className="animate-fade-in" style={{
+            animationDelay: "0.4s"
+          }}>
               <Link to="/about">
                 <Button size="lg" variant="gradient" rounded="full" className="group">
                   {t('about.button')}
@@ -135,8 +136,6 @@ const About = () => {
           </Link>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default About;
