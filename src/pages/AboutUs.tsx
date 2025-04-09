@@ -1,4 +1,3 @@
-
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -12,7 +11,6 @@ import { Link } from "react-router-dom";
 const AboutUs = () => {
   const { t } = useLanguage();
   
-  // Animation variants for staggered animations
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -40,9 +38,7 @@ const AboutUs = () => {
       <Navbar />
       
       <main className="flex-1">
-        {/* Hero Section with Gradient Background */}
         <section className="py-20 md:py-28 relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/30">
-          {/* Decorative Elements */}
           <div className="absolute inset-0 z-0">
             <div className="absolute left-0 bottom-0 w-96 h-96 rounded-full bg-purple-100/50 dark:bg-purple-900/20 blur-3xl"></div>
             <div className="absolute right-1/4 top-0 w-80 h-80 rounded-full bg-blue-100/50 dark:bg-blue-900/20 blur-3xl"></div>
@@ -66,7 +62,6 @@ const AboutUs = () => {
           </div>
         </section>
         
-        {/* Our Story Section */}
         <section className="py-16 relative">
           <div className="container-content">
             <motion.div 
@@ -145,7 +140,6 @@ const AboutUs = () => {
           </div>
         </section>
         
-        {/* Supply Chain Section */}
         <section className="py-16 bg-gray-50 dark:bg-gray-800/50 relative overflow-hidden">
           <div className="absolute inset-0 z-0">
             <div className="absolute left-1/4 bottom-0 w-80 h-80 rounded-full bg-blue-100/30 dark:bg-blue-900/10 blur-3xl"></div>
@@ -235,7 +229,6 @@ const AboutUs = () => {
           </div>
         </section>
         
-        {/* Our Passion Section */}
         <section className="py-16 relative">
           <div className="container-content">
             <motion.h2 
@@ -261,7 +254,7 @@ const AboutUs = () => {
                     <div className="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center text-green-600 dark:text-green-400 mb-6 transform transition-transform duration-300 hover:scale-110 hover:rotate-3">
                       <Leaf size={28} />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                       {t('aboutUs.passion.quality.title') || "Höchste Qualitätsstandards"}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">
@@ -277,7 +270,7 @@ const AboutUs = () => {
                     <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6 transform transition-transform duration-300 hover:scale-110 hover:rotate-3">
                       <Box size={28} />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                       {t('aboutUs.passion.research.title') || "Forschung & Entwicklung"}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">
@@ -293,7 +286,7 @@ const AboutUs = () => {
                     <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400 mb-6 transform transition-transform duration-300 hover:scale-110 hover:rotate-3">
                       <Users size={28} />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                       {t('aboutUs.passion.education.title') || "Bildung & Aufklärung"}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">
@@ -306,7 +299,6 @@ const AboutUs = () => {
           </div>
         </section>
         
-        {/* Terpenes Section */}
         <section className="py-16 bg-gradient-to-br from-white to-purple-50 dark:from-gray-900 dark:to-purple-900/20 relative overflow-hidden">
           <div className="absolute inset-0 z-0">
             <div className="absolute left-0 top-0 w-96 h-96 rounded-full bg-green-100/30 dark:bg-green-900/10 blur-3xl"></div>
@@ -391,7 +383,6 @@ const AboutUs = () => {
           </div>
         </section>
         
-        {/* CTA Section */}
         <section className="py-16 relative">
           <div className="container-content">
             <motion.div 
@@ -402,14 +393,14 @@ const AboutUs = () => {
               viewport={{ once: true }}
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                {t('aboutUs.cta.title') || "Bereit für höchste Qualität?"}
+                {t('features.cta.title')}
               </h2>
               <p className="text-lg text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-                {t('aboutUs.cta.description') || "Entdecken Sie unser Sortiment an hochwertigen medizinischen Cannabisprodukten für Ihre Apotheke."}
+                {t('features.cta.description')}
               </p>
               <Link to="/contact">
                 <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-8 py-6 rounded-full group">
-                  {t('aboutUs.cta.button') || "Jetzt Kontakt aufnehmen"}
+                  {t('features.cta.button')}
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>

@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.3";
 
@@ -54,7 +53,8 @@ serve(async (req) => {
         email: email,
         pharmacyName: pharmacyName,
         message: message,
-        fromEmail: "noreply@novacana.de"
+        fromEmail: "noreply@novacana.de",
+        toEmail: "info@novacana.de"
       }
     });
 
