@@ -42,23 +42,26 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
     setIsSubmitting(true);
     
     try {
-      console.log("Sending contact form data:", formData);
-      
       // Senden der Kontaktanfrage über die Supabase Edge Function
       const { data, error } = await supabase.functions.invoke("send-contact-email", {
-        body: formData
+        body: {
+          name: formData.name,
+          email: formData.email,
+          pharmacyName: formData.pharmacyName,
+          message: formData.message
+        }
       });
       
       if (error) {
-        console.error("Supabase function error:", error);
         throw new Error(error.message || "Fehler beim Senden der Nachricht");
       }
       
-      if (!data) {
-        throw new Error("Keine Antwort vom Server erhalten");
-      }
-      
-      console.log("Contact form submission successful:", data);
+      console.log("Kontaktformular erfolgreich gesendet:", {
+        from: "noreply@novacana.de",
+        to: "info@novacana.de",
+        subject: `Kontaktanfrage von ${formData.name} (${formData.pharmacyName || 'Keine Apotheke angegeben'})`,
+        message: formData.message
+      });
       
       toast({
         title: t('contact.message.sent') || "Nachricht gesendet",
@@ -72,12 +75,12 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
         pharmacyName: "",
         message: "",
       });
-    } catch (error: any) {
-      console.error("Error submitting contact form:", error);
+    } catch (error) {
+      console.error("Fehler beim Senden des Kontaktformulars:", error);
       
       toast({
         title: t('contact.message.error') || "Fehler",
-        description: error.message || t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        description: t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
         variant: "destructive"
       });
     } finally {
@@ -93,7 +96,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t('contact.form.name') || "Name"}*
+            {t('contact.form.name') || "Name"}
           </label>
           <Input
             id="name"
@@ -108,7 +111,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
         
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t('contact.form.email') || "E-Mail"}*
+            {t('contact.form.email') || "E-Mail"}
           </label>
           <Input
             id="email"
@@ -138,7 +141,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
         
         <div>
           <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t('contact.form.message') || "Nachricht"}*
+            {t('contact.form.message') || "Nachricht"}
           </label>
           <Textarea
             id="message"
@@ -150,10 +153,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
             rows={4}
             className="w-full"
           />
-        </div>
-        
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          * Pflichtfelder
         </div>
         
         <Button type="submit" disabled={isSubmitting} className="w-full">
@@ -172,11 +171,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
             </span>
           )}
         </Button>
-        
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-4">
-          Durch Absenden dieses Formulars stimmen Sie zu, dass Ihre Daten gemäß unserer Datenschutzerklärung verarbeitet werden. 
-          Ihre Daten werden nur für die Bearbeitung Ihrer Anfrage verwendet.
-        </div>
       </form>
     </div>
   );
