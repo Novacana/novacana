@@ -3,12 +3,18 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { Link as ScrollLink } from "react-scroll";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Hero: React.FC = () => {
   const { t } = useLanguage();
+
+  const scrollToContact = () => {
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <section className="relative min-h-[90vh] flex items-center bg-white dark:bg-gray-900 overflow-hidden">
@@ -35,12 +41,14 @@ const Hero: React.FC = () => {
               {t('hero.subtitle') || "Wir beliefern Apotheken in ganz Deutschland mit hochwertigen Cannabis-basierten Arzneimitteln und bieten einen vollständigen Kundenservice."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <ScrollLink to="contact" smooth={true} duration={500} offset={-100}>
-                <Button size="lg" className="w-full sm:w-auto">
-                  {t('hero.contact') || "Kontaktieren Sie uns"}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </ScrollLink>
+              <Button 
+                size="lg" 
+                className="w-full sm:w-auto"
+                onClick={scrollToContact}
+              >
+                {t('hero.contact') || "Kontaktieren Sie uns"}
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
               <Link to="/about">
                 <Button variant="outline" size="lg" className="w-full sm:w-auto">
                   {t('hero.about') || "Über uns"}
