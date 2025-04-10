@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -114,11 +115,6 @@ const About = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="container-content mt-24">
-        
       </div>
     </section>;
 };
