@@ -25,12 +25,15 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Received contact form submission");
+    
     // Parse request body
     const body: ContactRequest = await req.json();
     const { name, email, pharmacyName, message } = body;
 
     // Validate required fields
     if (!name || !email || !message) {
+      console.error("Missing required fields:", { name, email, message });
       return new Response(
         JSON.stringify({ error: "Name, E-Mail und Nachricht sind erforderlich" }),
         { 
@@ -44,10 +47,16 @@ serve(async (req) => {
     console.log("Kontaktformular gesendet von:", name);
     console.log("E-Mail:", email);
     console.log("Apotheke:", pharmacyName || "Nicht angegeben");
-    console.log("Nachricht:", message);
+    console.log("Nachrichtenlänge:", message.length);
 
     // Initialize email service with Resend API key
-    const emailService = new EmailService(Deno.env.get("RESEND_API_KEY") || "");
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      console.error("RESEND_API_KEY is not set in the environment variables");
+      throw new Error("E-Mail-Dienst ist nicht richtig konfiguriert");
+    }
+    
+    const emailService = new EmailService(resendApiKey);
 
     // Generate email templates
     const notificationTemplate = getNotificationEmailTemplate(name, email, pharmacyName || "", message);
