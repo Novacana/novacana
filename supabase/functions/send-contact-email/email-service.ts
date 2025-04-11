@@ -9,6 +9,10 @@ export class EmailService {
   private readonly defaultFromAddress: string = "Novacana <noreply@novacana.de>";
   private readonly notificationAddress: string = "info@novacana.de";
 
+  /**
+   * Initialize the email service with Resend API key
+   * @param apiKey The Resend API key
+   */
   constructor(apiKey: string) {
     if (!apiKey) {
       throw new Error("Resend API key is not provided");
@@ -36,18 +40,13 @@ export class EmailService {
         text: `Vielen Dank für Ihre Anfrage, ${name}. Wir werden uns so schnell wie möglich bei Ihnen melden.`
       });
 
-      console.log("Confirmation email API response:", result);
-
-      if (!result || !result.id) {
-        console.error("Invalid response from email server:", result);
-        throw new Error("Fehler beim Senden der Bestätigungs-E-Mail: Keine gültige Antwort vom E-Mail-Server");
-      }
-
+      this.validateEmailResult(result, "confirmation");
+      
       console.log(`Confirmation email sent with ID: ${result.id}`);
       return result;
     } catch (error) {
       console.error("Error sending confirmation email:", error);
-      throw error;
+      throw this.enhanceError(error, "confirmation");
     }
   }
 
@@ -71,18 +70,45 @@ export class EmailService {
         text: `Neue Kontaktanfrage über das Formular auf novacana.de. Bitte prüfen Sie den HTML-Inhalt für Details.`
       });
 
-      console.log("Notification email API response:", result);
-
-      if (!result || !result.id) {
-        console.error("Invalid response from email server:", result);
-        throw new Error("Fehler beim Senden der Benachrichtigungs-E-Mail: Keine gültige Antwort vom E-Mail-Server");
-      }
-
+      this.validateEmailResult(result, "notification");
+      
       console.log(`Notification email sent with ID: ${result.id}`);
       return result;
     } catch (error) {
       console.error("Error sending notification email:", error);
-      throw error;
+      throw this.enhanceError(error, "notification");
     }
+  }
+
+  /**
+   * Validates the email sending result to ensure it was successful
+   * @param result The result from the Resend API
+   * @param emailType The type of email (confirmation or notification)
+   */
+  private validateEmailResult(result: any, emailType: string): void {
+    console.log(`${emailType} email API response:`, result);
+
+    if (!result || !result.id) {
+      console.error(`Invalid response from email server for ${emailType} email:`, result);
+      throw new Error(`Fehler beim Senden der ${emailType === "confirmation" ? "Bestätigungs" : "Benachrichtigungs"}-E-Mail: Keine gültige Antwort vom E-Mail-Server`);
+    }
+  }
+
+  /**
+   * Enhances an error with more descriptive information
+   * @param error The original error
+   * @param emailType The type of email (confirmation or notification)
+   * @returns Enhanced error with more descriptive message
+   */
+  private enhanceError(error: any, emailType: string): Error {
+    const emailTypeDE = emailType === "confirmation" ? "Bestätigungs" : "Benachrichtigungs";
+    
+    if (error.statusCode) {
+      return new Error(`Fehler beim Senden der ${emailTypeDE}-E-Mail: Status ${error.statusCode} - ${error.message || "Unbekannter Fehler"}`);
+    }
+    
+    return error instanceof Error 
+      ? error 
+      : new Error(`Fehler beim Senden der ${emailTypeDE}-E-Mail: ${error?.toString() || "Unbekannter Fehler"}`);
   }
 }
