@@ -1,10 +1,9 @@
 
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
@@ -26,6 +25,7 @@ import AdminInvoices from "./pages/admin/AdminInvoices";
 import PharmacyVerifications from "./pages/admin/PharmacyVerifications";
 import Documentation from "./pages/Documentation";
 
+// Create QueryClient for React Query
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -67,7 +67,7 @@ const App = () => {
               <Route path="/imprint" element={<Imprint />} />
               <Route path="/privacy" element={<Privacy />} />
               
-              {/* Admin routes - temporär ohne Zugriffsbeschränkung */}
+              {/* Admin routes */}
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
@@ -75,11 +75,12 @@ const App = () => {
               <Route path="/admin/invoices" element={<AdminInvoices />} />
               <Route path="/admin/pharmacy-verifications" element={<PharmacyVerifications />} />
               
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* Catch-all route for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            
+            {/* Toast notifications */}
             <Toaster />
-            <Sonner />
           </BrowserRouter>
         </LanguageProvider>
       </TooltipProvider>

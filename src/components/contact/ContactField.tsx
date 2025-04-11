@@ -2,35 +2,36 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
-interface ContactFormFieldProps {
+interface ContactFieldProps {
   id: string;
   name: string;
+  label: string;
   type?: "text" | "email" | "textarea";
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   placeholder: string;
   required?: boolean;
-  label: string;
   className?: string;
 }
 
-const ContactFormField: React.FC<ContactFormFieldProps> = ({
+const ContactField: React.FC<ContactFieldProps> = ({
   id,
   name,
+  label,
   type = "text",
   value,
   onChange,
   placeholder,
   required = false,
-  label,
   className = "",
 }) => {
   return (
-    <div className={className}>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-        {label}
-      </label>
+    <div className={`space-y-2 ${className}`}>
+      <Label htmlFor={id} className="text-sm font-medium">
+        {label} {required && <span className="text-red-500">*</span>}
+      </Label>
       
       {type === "textarea" ? (
         <Textarea
@@ -40,8 +41,8 @@ const ContactFormField: React.FC<ContactFormFieldProps> = ({
           onChange={onChange}
           placeholder={placeholder}
           required={required}
-          rows={4}
-          className="w-full"
+          rows={5}
+          className="resize-none w-full"
         />
       ) : (
         <Input
@@ -59,4 +60,4 @@ const ContactFormField: React.FC<ContactFormFieldProps> = ({
   );
 };
 
-export default ContactFormField;
+export default ContactField;
