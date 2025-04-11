@@ -19,6 +19,8 @@ interface ContactRequest {
 
 // Main function handler
 serve(async (req) => {
+  console.log("Contact form request received");
+  
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,6 +33,7 @@ serve(async (req) => {
 
     // Validate required fields
     if (!name || !email || !message) {
+      console.error("Validation error: Missing required fields");
       return new Response(
         JSON.stringify({ 
           error: "Name, E-Mail und Nachricht sind erforderlich",
@@ -46,6 +49,7 @@ serve(async (req) => {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      console.error("Validation error: Invalid email format");
       return new Response(
         JSON.stringify({ 
           error: "Ungültige E-Mail-Adresse", 
@@ -82,12 +86,14 @@ serve(async (req) => {
 
     // Initialize email service with Resend API key
     const emailService = new EmailService(resendApiKey);
+    console.log("Email service initialized");
 
     // Generate email templates
     const notificationTemplate = getNotificationEmailTemplate(name, email, pharmacyName || "", message);
     const confirmationTemplate = getConfirmationEmailTemplate(name);
 
     try {
+      console.log("Attempting to send notification email to Novacana");
       // Send notification email to Novacana
       const notificationEmail = await emailService.sendNotificationEmail(
         email,
@@ -98,6 +104,7 @@ serve(async (req) => {
       // Log notification email response
       console.log("Benachrichtigungs-E-Mail gesendet:", notificationEmail);
 
+      console.log("Attempting to send confirmation email to user");
       // Send confirmation email to the sender
       const confirmationEmail = await emailService.sendConfirmationEmail(
         email,

@@ -14,6 +14,7 @@ export class EmailService {
       throw new Error("Resend API key is not provided");
     }
     this.resend = new Resend(apiKey);
+    console.log("EmailService initialized with Resend API");
   }
 
   /**
@@ -35,7 +36,10 @@ export class EmailService {
         text: `Vielen Dank für Ihre Anfrage, ${name}. Wir werden uns so schnell wie möglich bei Ihnen melden.`
       });
 
+      console.log("Confirmation email API response:", result);
+
       if (!result || !result.id) {
+        console.error("Invalid response from email server:", result);
         throw new Error("Fehler beim Senden der Bestätigungs-E-Mail: Keine gültige Antwort vom E-Mail-Server");
       }
 
@@ -67,7 +71,10 @@ export class EmailService {
         text: `Neue Kontaktanfrage über das Formular auf novacana.de. Bitte prüfen Sie den HTML-Inhalt für Details.`
       });
 
+      console.log("Notification email API response:", result);
+
       if (!result || !result.id) {
+        console.error("Invalid response from email server:", result);
         throw new Error("Fehler beim Senden der Benachrichtigungs-E-Mail: Keine gültige Antwort vom E-Mail-Server");
       }
 

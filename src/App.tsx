@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -32,8 +33,6 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <LanguageProvider>
-          <Toaster />
-          <Sonner />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -80,6 +79,7 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Toaster />
+            <Sonner />
           </BrowserRouter>
         </LanguageProvider>
       </TooltipProvider>

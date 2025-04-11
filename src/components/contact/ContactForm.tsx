@@ -99,6 +99,10 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
         throw new Error(error.message || "Fehler beim Senden der Nachricht");
       }
       
+      if (!data || !data.success) {
+        throw new Error(data?.error || "Unbekannter Fehler beim Senden der Nachricht");
+      }
+      
       toast({
         title: t('contact.message.sent') || "Nachricht gesendet",
         description: t('contact.message.confirmation') || "Vielen Dank für Ihre Nachricht. Wir werden uns in Kürze bei Ihnen melden.",
@@ -114,11 +118,18 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
     } catch (error: any) {
       console.error("Error sending contact form:", error);
       
-      setFormError(error.message || t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.");
+      let errorMessage = error.message;
+      if (typeof error === 'object' && error !== null) {
+        if (error.error === "Edge Function returned a non-2xx status code") {
+          errorMessage = "Das Kontaktformular kann derzeit nicht gesendet werden. Bitte versuchen Sie es später erneut oder kontaktieren Sie uns direkt per E-Mail.";
+        }
+      }
+      
+      setFormError(errorMessage || t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.");
       
       toast({
         title: t('contact.message.error') || "Fehler",
-        description: error.message || t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        description: errorMessage || t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
         variant: "destructive"
       });
     } finally {
