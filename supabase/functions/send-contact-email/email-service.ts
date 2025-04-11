@@ -10,6 +10,9 @@ export class EmailService {
   private readonly notificationAddress: string = "info@novacana.de";
 
   constructor(apiKey: string) {
+    if (!apiKey) {
+      throw new Error("Resend API key is not provided");
+    }
     this.resend = new Resend(apiKey);
   }
 
@@ -21,17 +24,27 @@ export class EmailService {
    * @returns Response from the Resend API
    */
   async sendConfirmationEmail(recipientEmail: string, name: string, htmlContent: string) {
-    console.log(`Sending confirmation email to ${recipientEmail}`);
-    
-    const result = await this.resend.emails.send({
-      from: this.defaultFromAddress,
-      to: recipientEmail,
-      subject: "Vielen Dank für Ihre Anfrage bei Novacana",
-      html: htmlContent
-    });
+    try {
+      console.log(`Sending confirmation email to ${recipientEmail}`);
+      
+      const result = await this.resend.emails.send({
+        from: this.defaultFromAddress,
+        to: recipientEmail,
+        subject: "Vielen Dank für Ihre Anfrage bei Novacana",
+        html: htmlContent,
+        text: `Vielen Dank für Ihre Anfrage, ${name}. Wir werden uns so schnell wie möglich bei Ihnen melden.`
+      });
 
-    console.log(`Confirmation email sent with ID: ${result.id}`);
-    return result;
+      if (!result || !result.id) {
+        throw new Error("Fehler beim Senden der Bestätigungs-E-Mail: Keine gültige Antwort vom E-Mail-Server");
+      }
+
+      console.log(`Confirmation email sent with ID: ${result.id}`);
+      return result;
+    } catch (error) {
+      console.error("Error sending confirmation email:", error);
+      throw error;
+    }
   }
 
   /**
@@ -42,17 +55,27 @@ export class EmailService {
    * @returns Response from the Resend API
    */
   async sendNotificationEmail(senderEmail: string, subject: string, htmlContent: string) {
-    console.log(`Sending notification email to ${this.notificationAddress}`);
-    
-    const result = await this.resend.emails.send({
-      from: "Novacana Kontaktformular <noreply@novacana.de>",
-      to: this.notificationAddress,
-      subject: subject,
-      html: htmlContent,
-      reply_to: senderEmail
-    });
+    try {
+      console.log(`Sending notification email to ${this.notificationAddress}`);
+      
+      const result = await this.resend.emails.send({
+        from: "Novacana Kontaktformular <noreply@novacana.de>",
+        to: this.notificationAddress,
+        subject: subject,
+        html: htmlContent,
+        reply_to: senderEmail,
+        text: `Neue Kontaktanfrage über das Formular auf novacana.de. Bitte prüfen Sie den HTML-Inhalt für Details.`
+      });
 
-    console.log(`Notification email sent with ID: ${result.id}`);
-    return result;
+      if (!result || !result.id) {
+        throw new Error("Fehler beim Senden der Benachrichtigungs-E-Mail: Keine gültige Antwort vom E-Mail-Server");
+      }
+
+      console.log(`Notification email sent with ID: ${result.id}`);
+      return result;
+    } catch (error) {
+      console.error("Error sending notification email:", error);
+      throw error;
+    }
   }
 }

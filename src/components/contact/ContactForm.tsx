@@ -7,6 +7,7 @@ import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ContactFormProps {
   className?: string;
@@ -29,20 +30,60 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user starts typing again
+    if (formError) {
+      setFormError(null);
+    }
+  };
+
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      return t('contact.form.error.name') || "Bitte geben Sie Ihren Namen ein";
+    }
+    
+    if (!formData.email.trim()) {
+      return t('contact.form.error.email') || "Bitte geben Sie Ihre E-Mail-Adresse ein";
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      return t('contact.form.error.emailInvalid') || "Bitte geben Sie eine gültige E-Mail-Adresse ein";
+    }
+    
+    if (!formData.message.trim()) {
+      return t('contact.form.error.message') || "Bitte geben Sie eine Nachricht ein";
+    }
+    
+    return null;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Reset form error
+    setFormError(null);
+    
+    // Form validation
+    const validationError = validateForm();
+    if (validationError) {
+      setFormError(validationError);
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
-      // Senden der Kontaktanfrage über die Supabase Edge Function
+      console.log("Sending contact form data:", formData);
+      
+      // Invoke the Edge Function
       const { data, error } = await supabase.functions.invoke("send-contact-email", {
         body: {
           name: formData.name,
@@ -52,35 +93,32 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
         }
       });
       
+      console.log("Edge function response:", { data, error });
+      
       if (error) {
         throw new Error(error.message || "Fehler beim Senden der Nachricht");
       }
-      
-      console.log("Kontaktformular erfolgreich gesendet:", {
-        from: "noreply@novacana.de",
-        to: "info@novacana.de",
-        subject: `Kontaktanfrage von ${formData.name} (${formData.pharmacyName || 'Keine Apotheke angegeben'})`,
-        message: formData.message
-      });
       
       toast({
         title: t('contact.message.sent') || "Nachricht gesendet",
         description: t('contact.message.confirmation') || "Vielen Dank für Ihre Nachricht. Wir werden uns in Kürze bei Ihnen melden.",
       });
       
-      // Formular zurücksetzen
+      // Reset form data
       setFormData({
         name: "",
         email: "",
         pharmacyName: "",
         message: "",
       });
-    } catch (error) {
-      console.error("Fehler beim Senden des Kontaktformulars:", error);
+    } catch (error: any) {
+      console.error("Error sending contact form:", error);
+      
+      setFormError(error.message || t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.");
       
       toast({
         title: t('contact.message.error') || "Fehler",
-        description: t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        description: error.message || t('contact.message.error.description') || "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
         variant: "destructive"
       });
     } finally {
@@ -93,6 +131,13 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
       <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
         {t('contact.form.title') || "Senden Sie uns eine Nachricht"}
       </h3>
+      
+      {formError && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{formError}</AlertDescription>
+        </Alert>
+      )}
+      
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -165,7 +210,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
               {t('contact.form.sending') || "Wird gesendet..."}
             </span>
           ) : (
-            <span className="flex items-center">
+            <span className="flex items-center justify-center">
               <Send size={16} className="mr-2" />
               {t('contact.form.send') || "Nachricht senden"}
             </span>
